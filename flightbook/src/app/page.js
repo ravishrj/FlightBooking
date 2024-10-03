@@ -6,6 +6,7 @@ import Section3 from "./_components/section3/page";
 import Section4 from "./_components/section4/page";
 import Footer from "./_components/footer/page";
 import Copyright from "./_components/copyright/page";
+
 export default function Home() {
   return (
    <>
@@ -15,6 +16,7 @@ export default function Home() {
      <Section4 />
      <Footer />
       <Copyright />
+    
      </>
   );
 }

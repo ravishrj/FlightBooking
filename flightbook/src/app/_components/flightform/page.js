@@ -1,11 +1,19 @@
 "use client"
 
 import { useState } from "react";
+import Calender from "../calender/page";
+import CustomCalendar from "../calendar_2/page";
 
 const FlightForm=()=>{
 
     const [oneWay, setOneway] = useState(false);
     const [srcClickedToggeled, setSrcClickedToggle] =  useState(false);
+    const [srcClickedToToggeled, setSrcClickedToToggle] =  useState(false);
+    const [srcClickedDepartToggeled, setSrcClickedDepartToggle] =  useState(false);
+    const [srcClickedReturnToggeled, setSrcClickedReturnToggle] =  useState(false);
+    const [srcClickedTravellersToggeled, setSrcClickedTravellersToggle] =  useState(false);
+    const [srcClickedCoachToggeled, setSrcClickedCoachToggle] =  useState(false);
+    const [srcClickedSearchFlightToggeled, setSrcClickedSearchFlightToggle] =  useState(false);
 
     return <div
     className="flighttab hide active"
@@ -65,10 +73,18 @@ const FlightForm=()=>{
             <span>From</span>
             <div className="SearchOverlay txtOriginCodeOverlay"
               
-             style={{zIndex: srcClickedToggeled ? 11 : -1, opacity: srcClickedToggeled ?  1 : 0}}>
+             style={{zIndex: srcClickedToggeled ||srcClickedSearchFlightToggeled? 11 : -1, opacity: srcClickedToggeled ||srcClickedSearchFlightToggeled?  1 : 0,
+             
+             }}
+             >
               <h4 className="g-orange" >
                 Origin
-                <a href="javascript:;" className="close-ol" onClick={()=> setSrcClickedToggle(false)}>
+                <a href="" className="close-ol" onClick={()=>{
+                  setSrcClickedToggle(false);
+                  setSrcClickedSearchFlightToggle(false)
+                } 
+
+                } >
                   x
                 </a>
               </h4>
@@ -109,13 +125,13 @@ const FlightForm=()=>{
               Please select origin
             </span>
           </div>
-          <div className="full searchSec" onClick={()=> setSrcClickedToggle(true) }>
+          <div className="full searchSec" onClick={()=> setSrcClickedToToggle(true) }>
             <span>To</span>
             <div className="SearchOverlay txtDestCodeOverlay"
-             style={{zIndex: srcClickedToggeled ? 11 : -1, opacity: srcClickedToggeled ?  1 : 0}}>
+             style={{zIndex: srcClickedToToggeled ? 11 : -1, opacity: srcClickedToToggeled ?  1 : 0}}>
               <h4 className="g-orange">
                 Destination
-                <a href="javascript:;" className="close-ol" onClick={()=> setSrcClickedToggle(false) }>
+                <a href="" className="close-ol" onClick={()=> setSrcClickedToToggle(false) }>
                   x
                 </a>
               </h4>
@@ -159,7 +175,10 @@ const FlightForm=()=>{
         </div>
         {/*DATE Start*/}
         <div className="f-tabs dte">
-          <div className={`searchSec Date ${oneWay ? "oneway" : ""}`} id="divDepartSecton">
+          <div className={`searchSec Date ${oneWay ? "oneway" : ""}`} id="divDepartSecton" onClick={()=>{
+            setSrcClickedDepartToggle(true);
+           
+          }}>
             <span>Depart</span>
             <input
               type="text"
@@ -187,7 +206,11 @@ const FlightForm=()=>{
           <div
             className="searchSec Date"
             id="divReturnSection"
-            style={{ display: !oneWay ? "inline" : "none" }}
+            style={{ display: !oneWay ? "inline" : "none" }
+          } onClick={()=>{
+            setSrcClickedReturnToggle(true);
+           
+          }}
           >
             <span>Return</span>
             <input
@@ -215,7 +238,9 @@ const FlightForm=()=>{
           </div>
         </div>
         <div className="f-tabs clspsgr">
-          <div className="travel searchSec">
+          <div className="travel searchSec " onClick={()=>{
+            setSrcClickedTravellersToggle(true);
+          }}>
             <span>Travelers</span>
             <div className="traveldetails">
               <div>
@@ -236,12 +261,16 @@ const FlightForm=()=>{
               </div>
             </div>
           </div>
-          <div className="searchSec classP">
+          <div className="searchSec classP"  onClick={()=>{
+            setSrcClickedCoachToggle(true);
+          }}>
             <span>Class</span>
             <p id="txtClassType">Coach</p>
           </div>
         </div>
-        <div className="smbtbtn">
+        <div className="smbtbtn" onClick={()=>{
+            setSrcClickedSearchFlightToggle(true);
+          }}>
           <button
             type="button"
             style={{ display: "none" }}
@@ -250,7 +279,9 @@ const FlightForm=()=>{
           >
             Search Now
           </button>
-          <button type="button" className="" id="BtnSearchFare_RTOW">
+          <button type="button" onClick={()=>{
+            setSrcClickedSearchFlightToggle(true)
+          }}  className="" id="BtnSearchFare_RTOW">
             Search Flights
           </button>
         </div>
@@ -318,7 +349,8 @@ const FlightForm=()=>{
       <div
         id="divPassengerDDL"
         className="overhdng pasenger-popup"
-        style={{ display: "none" }}
+        
+        style={{ display: srcClickedTravellersToggeled?"":"none" }}
       >
         <h4 className="g-orange">Select Travelers</h4>
         <div className="">
@@ -483,7 +515,7 @@ const FlightForm=()=>{
               </div>
             </div>
           </div>
-          <div className="btsy">
+          <div className="btsy" onClick={()=> setSrcClickedTravellersToggle(false)}>
             <a className="g-orange" id="btnPassengerDone">
               Done
             </a>
@@ -495,7 +527,7 @@ const FlightForm=()=>{
       <div
         id="divClassTypeDDL"
         className="pasenger-popup overhdng class-mpopup"
-        style={{ display: "none" }}
+        style={{ display: srcClickedCoachToggeled?"":"none" }}
       >
         <h4 className="g-orange">Class</h4>
         <div className="pnlInner">
@@ -529,7 +561,7 @@ const FlightForm=()=>{
               </ul>
             </div>
           </div>
-          <div className="btsy">
+          <div className="btsy" onClick={()=> setSrcClickedCoachToggle(false)}>
             <a className="g-orange" id="btnClassTypeDone">
               Done
             </a>
@@ -539,13 +571,18 @@ const FlightForm=()=>{
       {/*End Class*/}
     </form>
     {/* New Calander */}
-    <div className="calanderoverly">
+    <div className="calanderoverly"
+     style={{ display: srcClickedDepartToggeled||srcClickedReturnToggeled?"block":"none" }}>
       <h4 className="g-orange">
         <span>When are you departing?</span>
         <a
           href="javascript:;"
-          onclick="CloseFlightCalenderOverlay()"
+         
           className="close-ol-flight"
+          onClick={()=>{
+            setSrcClickedReturnToggle(false)         
+            setSrcClickedDepartToggle(false);
+          }}
         >
           x
         </a>
@@ -582,6 +619,11 @@ const FlightForm=()=>{
           </span>
         </div>
       </div>
+      <div className="calendar-container">
+          <CustomCalendar />
+        </div>
+      
+
     </div>
     {/* End New Calander */}
   </div>
