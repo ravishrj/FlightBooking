@@ -3,9 +3,14 @@
 import { useState } from "react";
 import Calender from "../calender/page";
 import CustomCalendar from "../calendar_2/page";
+import { searchFlight }  from "../_services/operations/searchFlightApi";
+import axios from "axios";
+const REACT_APP_AMADEUS_CLIENT_ID="6KjF3w8cmzm5jvgkePQnLAB9ufdMiUnH";
+const REACT_APP_AMADEUS_CLIENT_SECRET="hx7l3jSMq1AK9lFx"
+
 
 const FlightForm=()=>{
-
+    //const url=  `https://api.amadeus.com/v2/shopping/flight-offers?origin=${"delhi"}&destination=${"kolkata"}&departureDate=${"02/12/2024"}`;
     const [oneWay, setOneway] = useState(false);
     const [srcClickedToggeled, setSrcClickedToggle] =  useState(false);
     const [srcClickedToToggeled, setSrcClickedToToggle] =  useState(false);
@@ -14,6 +19,75 @@ const FlightForm=()=>{
     const [srcClickedTravellersToggeled, setSrcClickedTravellersToggle] =  useState(false);
     const [srcClickedCoachToggeled, setSrcClickedCoachToggle] =  useState(false);
     const [srcClickedSearchFlightToggeled, setSrcClickedSearchFlightToggle] =  useState(false);
+    const [formData, setFormData] = useState({
+     
+      OriginCode: "",
+        
+      
+    
+  })
+
+   const [OriginCode, setOrigin] = useState('');
+  // const [destination, setDestination] = useState('');
+  // const [departureDate, setDepartureDate] = useState('');
+  // const [adults, setAdults] = useState(1);
+  const [flights, setFlights] = useState([]);
+  const [error, setError] = useState('');
+
+  const handleOnSubmit = async(e) => {
+    // e.preventDefault();
+    
+    // const results = await searchFlight(url);
+    // console.log(results);
+  
+    try {
+     
+      // Get the access token
+      const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', new URLSearchParams({
+          'grant_type': 'client_credentials',
+          'client_id': REACT_APP_AMADEUS_CLIENT_ID,
+          'client_secret': REACT_APP_AMADEUS_CLIENT_SECRET
+      }), {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+      
+      const accessToken = tokenResponse.data.access_token;
+
+      // Search for flights
+      const response = await axios.get('https://test.api.amadeus.com/v2/shopping/flight-offers', {
+          headers: {
+              Authorization: `Bearer ${accessToken}`,
+          },
+          params: {
+              originLocationCode: 'JFK',
+              destinationLocationCode: 'SFO',
+              departureDate: '2024-10-15',
+              adults: 1,
+          },
+      });
+      console.log(response.data.data);
+      setFlights(response.data.data.data);
+      // console.log(flights);
+  } catch (error) {
+    console.log(process.env.REACT_APP_AMADEUS_CLIENT_ID);
+    console.log(process.env.REACT_APP_AMADEUS_CLIENT_SECRET);
+      console.error('Error fetching flight offers:', error);
+      setError('Failed to fetch flight offers. Please try again.');
+  }
+
+    
+  
+
+}
+
+    const handleOnChange = (e) => {
+      setFormData((prevData) => ({
+          ...prevData,
+          [e.target.name]: e.target.value,
+      }))
+  }
+
+
 
     return <div
     className="flighttab hide active"
@@ -97,6 +171,8 @@ const FlightForm=()=>{
                 defaultValue=""
                 required=""
                 placeholder="Enter Origin City / Airport"
+               
+              
               />
               <i
                 className="fa fa-times-circle demo-label"
@@ -111,7 +187,10 @@ const FlightForm=()=>{
               required=""
               placeholder="Airport"
             />
-            <input name="OriginCode" type="hidden" id="hdnOriginCode" />
+            <input name="OriginCode" type="hidden" id="hdnOriginCode"
+           
+             value={OriginCode}
+             onChange={handleOnChange} />
             <span
               id="spanOriginCityName"
               style={{ display: "none" }}
@@ -121,6 +200,7 @@ const FlightForm=()=>{
               id="spnOriginErrMsg"
               className="error-message"
               style={{ display: "none" }}
+              
             >
               Please select origin
             </span>
@@ -273,15 +353,18 @@ const FlightForm=()=>{
           }}>
           <button
             type="button"
-            style={{ display: "none" }}
+            style={{ display: "" }}
             className=""
             id="BtnSearchFare_RTOW_Deal"
+           onClick={ handleOnSubmit}
           >
             Search Now
           </button>
           <button type="button" onClick={()=>{
-            setSrcClickedSearchFlightToggle(true)
-          }}  className="" id="BtnSearchFare_RTOW">
+            setSrcClickedSearchFlightToggle(true);
+           
+          }}  className="" id="BtnSearchFare_RTOW"
+        >
             Search Flights
           </button>
         </div>
