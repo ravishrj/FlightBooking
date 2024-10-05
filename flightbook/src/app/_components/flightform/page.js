@@ -4,30 +4,44 @@ import { useState } from "react";
 import Calender from "../calender/page";
 import CustomCalendar from "../calendar_2/page";
 import { searchFlight }  from "../_services/operations/searchFlightApi";
+import handler from "../_services/operations/handler";
 import axios from "axios";
 const REACT_APP_AMADEUS_CLIENT_ID="6KjF3w8cmzm5jvgkePQnLAB9ufdMiUnH";
 const REACT_APP_AMADEUS_CLIENT_SECRET="hx7l3jSMq1AK9lFx"
 
+const debounce = (func, delay) => {
+  let timeoutId;
+  return (...args) => {
+      if (timeoutId) {
+          clearTimeout(timeoutId);
+      }
+      timeoutId = setTimeout(() => {
+          func.apply(null, args);
+      }, delay);
+  };
+};
 
 const FlightForm=()=>{
     //const url=  `https://api.amadeus.com/v2/shopping/flight-offers?origin=${"delhi"}&destination=${"kolkata"}&departureDate=${"02/12/2024"}`;
     const [oneWay, setOneway] = useState(false);
-    const [srcClickedToggeled, setSrcClickedToggle] =  useState(false);
+    //const [srcClickedToggel, setSrcClickedToggle] =  useState(false);
     const [srcClickedToToggeled, setSrcClickedToToggle] =  useState(false);
     const [srcClickedDepartToggeled, setSrcClickedDepartToggle] =  useState(false);
     const [srcClickedReturnToggeled, setSrcClickedReturnToggle] =  useState(false);
     const [srcClickedTravellersToggeled, setSrcClickedTravellersToggle] =  useState(false);
     const [srcClickedCoachToggeled, setSrcClickedCoachToggle] =  useState(false);
     const [srcClickedSearchFlightToggeled, setSrcClickedSearchFlightToggle] =  useState(false);
-    const [formData, setFormData] = useState({
+   
+   
+  //   const [formData, setFormData] = useState({
      
-      OriginCode: "",
+  //     OriginCode: "",
         
       
     
-  })
+  // })
 
-   const [OriginCode, setOrigin] = useState('');
+  // const [OriginCode, setOrigin] = useState('');
   // const [destination, setDestination] = useState('');
   // const [departureDate, setDepartureDate] = useState('');
   // const [adults, setAdults] = useState(1);
@@ -41,7 +55,7 @@ const FlightForm=()=>{
     // console.log(results);
   
     try {
-     
+     const keyword={}
       // Get the access token
       const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', new URLSearchParams({
           'grant_type': 'client_credentials',
@@ -75,19 +89,90 @@ const FlightForm=()=>{
       setError('Failed to fetch flight offers. Please try again.');
   }
 
-    
+  
+ 
+
+ 
   
 
 }
 
-    const handleOnChange = (e) => {
-      setFormData((prevData) => ({
-          ...prevData,
-          [e.target.name]: e.target.value,
-      }))
+  //   const handleOnChange = (e) => {
+  //     setFormData((prevData) => ({
+  //         ...prevData,
+  //         [e.target.name]: e.target.value,
+  //     }))
+  // }
+
+
+   const [srcClickedToggle, setSrcClickedToggle] = useState(false);
+    const [input, setInput] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+    const [OriginCode, setOriginCode] = useState('');
+
+    const handleInputChange = async (event) => {
+        const query = event.target.value;
+        setInput(query);
+
+        if (query.length < 2) {
+            setSuggestions([]);
+            return;
+        }
+
+        try {
+            // Step 1: Get the access token
+            const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', new URLSearchParams({
+              'grant_type': 'client_credentials',
+              'client_id': REACT_APP_AMADEUS_CLIENT_ID,
+              'client_secret': REACT_APP_AMADEUS_CLIENT_SECRET
+          }), {
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          });
+          
+          const accessToken = tokenResponse.data.access_token;
+
+            // Step 2: Fetch location suggestions
+            const response = await axios.get('https://test.api.amadeus.com/v1/reference-data/locations', {
+                params: {
+                    subType: 'AIRPORT',
+                    keyword: query
+                },
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            setSuggestions(response.data.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setSuggestions([]);
+        }
+    };
+
+    const filterDesAirportValue = async () => {
+      try {
+          let response = await fetch(`https://api.amadeus.com/v1/reference-data/locations?subType=CITY,AIRPORT&keyword=${desInputValue}&page%5Blimit%5D=10&page%5Boffset%5D=0&sort=analytics.travelers.score&view=FULL`, {
+              headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`
+              }
+          });
+          let result = await response.json()
+          let options = result.data.map(a => { return { label: `${a.iataCode} - ${a.name}, ${a.address.cityName}, ${a.address.countryCode}`, value: a.iataCode } })
+          setDesAirportList(options);
+      } catch (err) {
+          console.log(err);
+      }
   }
 
+    const selectAirport = (airport) => {
+        setInput(`${airport.name} (${airport.iataCode})`);
+        setOriginCode(airport.iataCode);
+        setSuggestions([]);
+        setSrcClickedToggle(false);
+    };
 
+    const debouncedHandleInputChange = debounce(handleInputChange, 300);
 
     return <div
     className="flighttab hide active"
@@ -143,7 +228,7 @@ const FlightForm=()=>{
           defaultValue={oneWay ? 2: 1}
         />
         <div className="f-tabs lsn">
-          <div className="searchSec"   onClick={()=> setSrcClickedToggle(true) }>
+          {/* <div className="searchSec"   onClick={()=> setSrcClickedToggle(true) }>
             <span>From</span>
             <div className="SearchOverlay txtOriginCodeOverlay"
               
@@ -204,7 +289,146 @@ const FlightForm=()=>{
             >
               Please select origin
             </span>
-          </div>
+          </div> */}
+
+         {/* <div className="searchSec" onClick={() => setSrcClickedToggle(true)}>
+            <span>From</span>
+            <div className="SearchOverlay txtOriginCodeOverlay"
+                style={{
+                    zIndex: srcClickedToggle ||srcClickedSearchFlightToggeled ? 11 : -1,
+                    opacity: srcClickedToggle ||srcClickedSearchFlightToggeled ? 1 : 0,
+                }}
+            >
+                <h4 className="g-orange">
+                    Origin
+                    <a href="" className="close-ol" onClick={() => {
+                        setSrcClickedToggle(false);
+                    }}>
+                        x
+                    </a>
+                </h4>
+                <input
+                    id="txtOriginCode"
+                    type="text"
+                    className="ui-autocomplete-input"
+                    autoComplete="off"
+                    required
+                    placeholder="Enter Origin City / Airport"
+                    value={input}
+                    onChange={handleInputChange}
+                />
+                <i className="fa fa-times-circle demo-label" style={{ display: "none" }} />
+                {suggestions.length > 0 && (
+                    <div id="suggestions">
+                        {suggestions.map((airport) => (
+                            <div
+                                key={airport.iataCode}
+                                className="suggestion-item"
+                                onClick={() => selectAirport(airport)}
+                            >
+                                {airport.name} ({airport.iataCode})
+                            </div>
+                        ))}
+                    </div>
+                )}
+                <input
+                    type="text"
+                    className="txtOriginCode"
+                    defaultValue=""
+                    autoComplete="off"
+                    required
+                    placeholder="Airport"
+                />
+                <input
+                    name="OriginCode"
+                    type="hidden"
+                    id="hdnOriginCode"
+                    value={OriginCode}
+                    
+                />
+                <span
+                    id="spanOriginCityName"
+                    style={{ display: "none" }}
+                    className="spanCity"
+                />
+                <span
+                    id="spnOriginErrMsg"
+                    className="error-message"
+                    style={{ display: "none" }}
+                >
+                    Please select origin
+                </span>
+            </div>
+        </div> */}
+
+<div className="searchSec" onClick={() => setSrcClickedToggle(true)}>
+            <span>From</span>
+            <div className="SearchOverlay txtOriginCodeOverlay"
+                style={{
+                    zIndex: srcClickedToggle ? 11 : -1,
+                    opacity: srcClickedToggle ? 1 : 0,
+                }}
+            >
+                <h4 className="g-orange">
+                    Origin
+                    <a href="" className="close-ol" onClick={() => setSrcClickedToggle(false)}>
+                        x
+                    </a>
+                </h4>
+                <input
+                    id="txtOriginCode"
+                    type="text"
+                    className="ui-autocomplete-input"
+                    autoComplete="off"
+                    required
+                    placeholder="Enter Origin City / Airport"
+                    value={input}
+                    onChange={handleInputChange}
+                />
+                <i className="fa fa-times-circle demo-label" style={{ display: "none" }} />
+                {suggestions.length > 0 && (
+                    <div id="suggestions">
+                        {suggestions.map((airport) => (
+                            <div
+                                key={airport.iataCode}
+                                className="suggestion-item"
+                                onClick={() => selectAirport(airport)}
+                            >
+                                {airport.name} ({airport.iataCode})
+                            </div>
+                        ))}
+                    </div>
+                )}
+                <input
+                    type="text"
+                    className="txtOriginCode"
+                    defaultValue=""
+                    autoComplete="off"
+                    required
+                    placeholder="Airport"
+                />
+                <input
+                    name="OriginCode"
+                    type="hidden"
+                    id="hdnOriginCode"
+                    value={OriginCode}
+                />
+                <span
+                    id="spanOriginCityName"
+                    style={{ display: "none" }}
+                    className="spanCity"
+                />
+                <span
+                    id="spnOriginErrMsg"
+                    className="error-message"
+                    style={{ display: "none" }}
+                >
+                    Please select origin
+                </span>
+            </div>
+        </div>
+
+
           <div className="full searchSec" onClick={()=> setSrcClickedToToggle(true) }>
             <span>To</span>
             <div className="SearchOverlay txtDestCodeOverlay"
