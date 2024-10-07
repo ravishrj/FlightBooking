@@ -6,6 +6,7 @@ import CustomCalendar from "../calendar_2/page";
 import { searchFlight }  from "../_services/operations/searchFlightApi";
 import handler from "../_services/operations/handler";
 import axios from "axios";
+import FlightResultCard from "../FlightResultCard/page";
 const REACT_APP_AMADEUS_CLIENT_ID="6KjF3w8cmzm5jvgkePQnLAB9ufdMiUnH";
 const REACT_APP_AMADEUS_CLIENT_SECRET="hx7l3jSMq1AK9lFx"
 
@@ -110,18 +111,18 @@ const FlightForm=()=>{
     const [suggestions, setSuggestions] = useState([]);
     const [OriginCode, setOriginCode] = useState('');
 
-    const handleInputChange = async (event) => {
-        const query = event.target.value;
-        setInput(query);
-
-        if (query.length < 2) {
-            setSuggestions([]);
-            return;
-        }
-
-        try {
-            // Step 1: Get the access token
-            const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', new URLSearchParams({
+    const handleInputChange = async (event, limit = 20, offset = 0) => {
+      const query = event.target.value;
+      setInput(query);
+  
+      if (query.length < 2) {
+          setSuggestions([]);
+          return;
+      }
+  
+      try {
+          // Step 1: Get the access token
+          const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', new URLSearchParams({
               'grant_type': 'client_credentials',
               'client_id': REACT_APP_AMADEUS_CLIENT_ID,
               'client_secret': REACT_APP_AMADEUS_CLIENT_SECRET
@@ -130,24 +131,57 @@ const FlightForm=()=>{
           });
           
           const accessToken = tokenResponse.data.access_token;
-
-            // Step 2: Fetch location suggestions
-            const response = await axios.get('https://test.api.amadeus.com/v1/reference-data/locations', {
-                params: {
-                    subType: 'AIRPORT',
-                    keyword: query
-                },
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
-
-            setSuggestions(response.data.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setSuggestions([]);
-        }
-    };
+  
+          // Step 2: Fetch location suggestions
+          const response = await axios.get('https://test.api.amadeus.com/v1/reference-data/locations', {
+              params: {
+                  subType: 'CITY,AIRPORT',  // Searching for both city and airport
+                  keyword: query,
+                  'page[limit]': limit || 10, // Set the limit for the number of results
+                  'page[offset]': offset || 0, // Set the offset for pagination
+                  sort: 'analytics.travelers.score', // Sorting by traveler score
+                  view: 'FULL' // Requesting full view of data
+              },
+              headers: {
+                  'Authorization': `Bearer ${accessToken}`
+              }
+          });
+  
+          // Step 3: Process response to group airports by city
+          const suggestions = response.data.data;
+          const cityAirportMap = {};
+  
+          // Group airports by city
+          suggestions.forEach(item => {
+              const cityName = item.city || item.name; // Adjust based on your data structure
+              const airportInfo = {
+                  iataCode: item.iataCode,
+                  name: item.name,
+                  city: item.city,
+                  country: item.country,
+                  // other properties as needed
+              };
+  
+              if (!cityAirportMap[cityName]) {
+                  cityAirportMap[cityName] = {
+                      city: cityName,
+                      airports: [airportInfo] // Initialize with the first airport
+                  };
+              } else {
+                  cityAirportMap[cityName].airports.push(airportInfo); // Add airport to existing city
+              }
+          });
+  
+          // Convert the cityAirportMap back to an array
+          const processedSuggestions = Object.values(cityAirportMap);
+          console.log(processedSuggestions);
+          setSuggestions(processedSuggestions);
+      } catch (error) {
+          console.error('Error fetching data:', error);
+          setSuggestions([]);
+      }
+  };
+  
 
     const filterDesAirportValue = async () => {
       try {
@@ -386,19 +420,51 @@ const FlightForm=()=>{
                     onChange={handleInputChange}
                 />
                 <i className="fa fa-times-circle demo-label" style={{ display: "none" }} />
-                {suggestions.length > 0 && (
-                    <div id="suggestions">
-                        {suggestions.map((airport) => (
-                            <div
-                                key={airport.iataCode}
-                                className="suggestion-item"
-                                onClick={() => selectAirport(airport)}
-                            >
-                                {airport.name} ({airport.iataCode})
-                            </div>
-                        ))}
-                    </div>
-                )}
+              
+        {suggestions.length > 0 && (
+       <ul
+        id="ui-id-1"
+        tabIndex={0}
+        className="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front"
+        style={{ top: 88, left: "37.5px", width: "338.5px", display: !suggestions && "none" }} // Ensure display is block
+    >
+      
+        {suggestions.map((city) => {
+          console.log(city, "city parent");
+         return <FlightResultCard city={city} />
+            // <li
+            //     key={airport.iataCode}
+            //     tabIndex={-1}
+            //     className="ui-menu-item-wrapper"
+            //     onClick={() => selectAirport(airport)}
+            // >
+            //     {/* <span className="highlight-auto-list">{airport.name}</span> (
+            //     <span className="highlight-auto-list">{airport.iataCode}</span>),
+            //     {airport.city}, {airport.country} Adjust according to your data structure */}
+            //     <span className="airport-name highlight-auto-list">{airport.name}</span> (
+            //     <span className="iata-code highlight-auto-list">{airport.iataCode}</span>),
+            //     <span className="airport-city">{airport.city}</span>,
+            //     <span className="airport-country">{airport.country}</span>
+            // </li>
+            // <li key={cityiataCode} className="airList parent-auto-list ui-menu-item ">
+            //     {/* You can replace this <span> with an <img> tag or another element for the icon */}
+            //     <span className="icon">🌍</span> {/* Example icon (Earth emoji); replace as needed */}
+                
+            //     <span className="airport-name highlight-auto-list">{cityname}</span> (
+            //     <span className="iata-code highlight-auto-list">{cityiataCode}</span>),
+            //     <span className="airport-city">{citycity}</span>,
+            //     <span className="airport-country">{citycountry}</span> {/* Adjust according to your data structure */}
+                
+            //     <div
+            //         tabIndex={-1}
+            //         className="ui-menu-item-wrapper"
+            //         onClick={() => selectAirport(airport)}
+            //     />
+            // </li>
+})}
+    </ul>
+)}
+
                 <input
                     type="text"
                     className="txtOriginCode"
