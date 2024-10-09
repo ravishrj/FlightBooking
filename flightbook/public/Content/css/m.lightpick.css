@@ -1189,3 +1189,431 @@ button.lightpick__reset-action {
         background-color: rgba(135, 185, 214, .5)!important
     }
 }
+
+.contact-usbanner {
+    background-image: url(/Content/images/mobile/contact-bannermobile.jpg);
+    background-size: cover;
+    display: inline-block;
+    width: 100%;
+   height: 548px;
+   margin-top:-3px;
+}
+.contact-btm .flight-details ul li.li-contact p strong{
+    font-size:16px;
+}
+
+.locatonmap .fdetail-hdr {
+    color: #000;
+    padding-bottom: 0px;
+}
+.container {
+    width: auto;
+    margin: 0 auto;
+}
+.locatonmap .flight-details{
+    background:none;
+}
+.fdetail-hdr {
+   text-align: center;
+    color: #fff;
+    padding-bottom: 15px;
+    margin-bottom: 10px;
+}
+.fdetail-hdr h4{
+    font-size: 13px;
+}
+.fdetail-hdr h3 {
+   font-size: 20px;
+    font-family: 'poppinssemibold';
+    letter-spacing: 0.2px;
+    font-weight: 700;
+    padding-bottom: 12px;
+}
+.flight-details {
+   background: #393939;
+    border-radius: 5px;
+}
+
+.fdetail-hdr.red{
+  background: #c70000;
+  background: linear-gradient(90deg, #a80000 0%, #e00000 51%);
+  padding: 16px 20px;
+      margin-top: 0;
+}
+.flight-details.black{
+  padding: 20px;
+  background: #212021;
+}
+.fdetail-hdr.red h3{
+  color: #fff;
+  font-size: 19px;
+}
+.contact-form {
+  padding-top: 30px;
+    margin-bottom: 35px;
+}
+.contact-form .flight-details{background:none;}
+
+.contact-form .forms textarea,
+.contact-form .forms input {
+    width: 100%;
+    border: 0;
+    border-radius: 4px;
+    padding: 0 15px;
+    height: 53px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #9e9e9e;box-shadow: inset 0 0 5px 8px #e9e9e9;
+}
+.contact-form .fdetail-hdr {
+    color: #000;
+    padding-bottom: 0;
+}
+.contact-form .forms textarea{
+  height: 80px;
+  padding-top: 10px;
+  font-family: 'poppinsmedium';
+  resize: none;
+}
+.contact-form .forms .form-field {
+    margin-bottom: 10px;
+}
+.contact-form .forms .btsc {
+    text-align: center;
+}
+.contact-form .forms button {
+    color: #fff;
+    background: #c70000;
+    background: linear-gradient(90deg, #a80000 0%, #e00000 51%);
+    border: 0;
+    font-size: 19px;
+   padding: 13px 83px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.error {
+    color: #f00;
+    font-size: 11px;
+}
+#thanksmsg {
+    background: #e00000;
+    padding: 13px 0;
+    border-radius: 4px;
+    margin-top: 18px;
+    color: #fff;
+    padding-left: 36px;
+    font-size: 11px;
+    letter-spacing: 0;
+    position: relative;
+    width: 98%;
+    left: 1%;
+}
+#thanksmsg:before {
+    content: '';
+    background-image: url(../images/check-icon-white.png);
+    position: absolute;
+    background-size: 100%;
+    width: 22px;
+    height: 22px;
+    background-repeat: no-repeat;
+    left: 12px;
+    top: 8px;
+}
+#thanksmsg span {
+    display: none;
+}
+
+.contact-btm {
+   position: relative;
+    top: 57px;
+    margin: 0;
+}
+.contact-btm .flight-details ul {
+    /*display: flex;*/
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.contact-btm .flight-details ul li div:first-child {
+    width: 16%;
+}
+.contact-btm .flight-details ul li p.flag-div {
+    padding-bottom: 5px;
+}
+.contact-btm .flight-details ul li p img:first-child {
+    padding-right: 6px;
+}
+.contact-btm .flight-details ul li p img {
+    display: inline;
+    padding-right: 8px;
+}
+.contact-btm .flight-details ul li p.flag-div strong {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 4px;
+    font-family: 'poppinsmedium';
+    font-size: 13px;
+}
+.contact-btm .flight-details ul li {
+   color: #fff;
+    margin: 0 6px;
+    height: 100px;
+    padding: 17px 13px;
+    display: flex;
+    border-bottom: 1px solid #5a5a5a;
+}
+.helpline {
+    font-family: 'poppinsregular';
+    display: inline-block;
+    letter-spacing: 1.1px;
+    padding-top: 4px;
+}
+.contact-btm .flight-details ul li.li-contact {
+    padding: 26px 13px 17px;
+}
+.contact-btm .flight-details ul li.li-contact:first-child {
+    border-right: none;
+}
+
+.contact-btm .flight-details ul li div:last-child {
+    width: 84%;
+}
+.add-ress {
+    padding-top: 8px;
+    font-family: 'poppinsregular';
+    line-height: 1.3;
+}
+.contact-btm .flight-details ul li p a.tel-phone {
+    font-size: 19px;
+    font-family: 'poppinsbold';
+}
+
+.contact-btm .flight-details ul li p {
+    color: #fff;font-size:15px;
+}
+.contact-btm .flight-details ul li p a{
+    color: #fff;
+    text-decoration: none;
+}
+.contact-btm .flight-details ul li p strong {
+    color: #fff;vertical-align: top;
+    padding-top: 4px;
+    display: inline-block;
+}
+
+.locatonmap {
+    padding-bottom: 50px;
+}
+.locatonmap iframe {
+    width: 100%;
+    height: 375px;
+}
+.sitemap-content {
+    padding: 10px 0 20px 0;
+}
+.container {
+    margin: 0 auto;
+}
+.faqpages{
+    padding: 20px 5px;
+}
+.faqpages .header-heading.text-center {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+.header-heading.text-center h2 {
+    line-height: 22px;
+    font-size: 14px;
+    padding-bottom: 10px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(90deg, rgba(91, 1, 1, 1) 0%, rgba(214, 0, 1, 1) 51%, rgba(128, 1, 1, 1) 100%);
+    display: inline-block;
+    padding: 5px 20px 5px 20px;
+    border-radius: 60px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+.faqpages .panel-title {
+    background: rgb(91, 1, 1);
+    background: linear-gradient(90deg, rgba(91, 1, 1, 1) 0%, rgba(214, 0, 1, 1) 51%, rgba(128, 1, 1, 1) 100%);
+    padding: 14px;
+    border-radius: 0 20px 0 20px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+.fabBx .active .panel-title,
+.faqpages .panel.active .panel-title {
+    border-bottom-left-radius: 0;
+}
+.faqpages .panel-title {
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.faqpages h4 a {
+    font-size: 13px;
+     display: flex;
+     line-height: 17px;
+}
+.faqpages{
+  padding-bottom: 20px;
+}
+.faqpages .panel-title:before{
+     content: "\f059";
+    font: normal normal normal 14px/1 FontAwesome;
+    color: #fff;
+    margin-right: 6px;
+    font-size: 17px;
+}
+.faqpages .panel.panel-default {
+    margin-bottom: 20px;    
+}
+.faqpages .panel-body {
+    font-size: 12px;
+    color: #fff;
+    line-height: 20px;
+    border: 1px solid #860101;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    padding: 12px 10px 20px 15px;
+    display: none;
+}
+.faqpages .fabBx .active .panel-body{
+    display: inline-block;
+    width: 100%;
+}
+.faqpages .fabBx .active .panel-body a{
+    color: #ec1213;
+}
+.faqpages .panel-collapse  a{
+  color: rgb(213 0 1);
+}
+.faqpages .panel-collapse a:before{
+  display: none;
+}
+.getcode {
+    margin-top: 0;
+}
+.faqpages .panel-body a {
+    display: inline-block;
+}
+
+.sitemap-content {
+    padding: 10px 0 20px 0;
+}
+.container {
+    width: auto;
+    margin: 0 auto;
+}
+.sitemap-content .header-heading.text-center {
+    margin-bottom: 33px;
+    margin-top: 10px;
+}
+
+.sitemap-content h3 {
+    background: rgb(91, 1, 1);
+    background: linear-gradient(90deg, rgba(91, 1, 1, 1) 0%, rgba(214, 0, 1, 1) 51%, rgba(128, 1, 1, 1) 100%);
+    display: inline-block;
+    clear: both;
+    font-size: 15px;
+    border-radius: 20px;
+    padding: 11px 25px;
+    color: #fff;
+    margin-bottom: 15px;
+}
+.sitemap-content ul {
+    display: inline-block;
+    width: 100%;
+    border-bottom: 1px solid #d20001;
+    padding-bottom: 17px;
+    margin-bottom: 30px;
+}
+.sitemap-content ul li {
+    float: left;
+    width: 50%;
+}
+.sitemap-content ul li a {
+    font-size: 12px;
+    color: #fff;
+    display: inline-block;
+    background-image: url(/Content/images/depart-icon-red.png);
+    background-repeat: no-repeat;
+    padding: 3px 0 7px 21px;
+    background-position: top 4px left;
+    text-decoration: none;
+    background-size: 15px;
+    margin-bottom: 5px;
+}
+.getcode {
+    margin-top: 0;
+}
+
+/*
+	STYLE SHEET FOR JQUERY LISTNAV PLUGIN V 3.0.0, 11/22/2017
+	For more information, visit http://esteinborn.github.com/jquery-listnav
+*/
+.listNav,
+.ln-letters {
+  overflow: hidden;
+}
+
+.listNavHide {
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+}
+
+.letterCountShow {
+  display: block;
+}
+
+.ln-letters a {
+  border: 1px solid silver;
+  border-right: none;
+  display: block;
+  float: left;
+  font-size: .9em;
+  padding: 2px 6px;
+  text-decoration: none;
+}
+
+.ln-letters .ln-last {
+  border-right: 1px solid silver;
+}
+
+.ln-letters a:hover,
+.ln-letters .ln-selected {
+  background-color: #eaeaea;
+}
+
+.ln-letters .ln-disabled {
+  color: #ccc;
+}
+
+.ln-letter-count {
+  color: #336699;
+  font-size: .8em;
+  left: 0;
+  line-height: 1.35;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 20px;
+}
+
+/*# sourceMappingURL=listnav.css.map */
+

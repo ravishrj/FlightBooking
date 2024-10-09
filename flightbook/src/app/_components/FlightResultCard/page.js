@@ -43,14 +43,14 @@ const FlightResultCard = (city)=>{
 
     // city.city.map(a=> {
     //   console.log(a, "City Result");
-    //   return <li id="ui-id-588" tabindex="-1" class="ui-menu-item-wrapper">{a.city} (BUFSINGLE), <span class="highlight-auto-list">New Yor</span>k, USA</li>
+    //   return <li id="ui-id-588" tabindex="-1" className="ui-menu-item-wrapper">{a.city} (BUFSINGLE), <span className="highlight-auto-list">New Yor</span>k, USA</li>
     // })
 
   // if(city.city.airports.length <= 1 ){
   //  console.log(city, "With Single Airports")
   //  console.log(city.city);
   //  { city.city.airports.map( airport => {
-  //   return <li id="ui-id-588" tabindex="-1" class="ui-menu-item-wrapper">{city.city} (BUFSINGLE), <span class="highlight-auto-list">New Yor</span>k, USA</li>
+  //   return <li id="ui-id-588" tabindex="-1" className="ui-menu-item-wrapper">{city.city} (BUFSINGLE), <span className="highlight-auto-list">New Yor</span>k, USA</li>
    
   //  } ) }
   // } else{

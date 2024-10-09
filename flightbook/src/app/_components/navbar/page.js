@@ -3,6 +3,7 @@ import { useState } from "react";
 const Navbar = () => {
 
   const [mobMenuActive, setMobMenuActive] = useState(false);
+  const [importantLinkActive,setimportantLinkActive]=useState(false);
 
     return   <header className="header">
         <div className="container">
@@ -258,13 +259,17 @@ const Navbar = () => {
                     </li>
                   </ul>
                 </li>
-                <li className="dropdown">
-                  <a href="javascript:void(0)" className="submenus">
+                <li className="dropdown" onClick={()=>{
+                  setimportantLinkActive(prev=>!prev);
+                }}>
+                  <a href="javascript:void(0)" className={`${importantLinkActive? "submenus" : "submenus selected"}`}>
                     important links
                   </a>
                   <ul
                     className="submenu dropdown-menu imp-links tabcontent"
                     id="destination"
+                    style={{ display: importantLinkActive ? "none" : "block" }}
+
                   >
                     <li>
                       <a href="/about-us"> ABOUT US</a>
@@ -321,22 +326,17 @@ const Navbar = () => {
                 </li>
               </ul>
             </nav>
-            <style
+            {/* <style
               dangerouslySetInnerHTML={{
                 __html:
                   "\nli.experiences-main ul.exprce li.active ul,\nli.holidaymenu ul.exprce li.active ul {display: block;}\n.mobilemenu nav> ul> li.active> ul {display: block;}\n.mobilemenu ul ul.exprce.active {display: block;}\n\n"
               }}
-            />
-            <link
+            /> */}
+            {/* <link
               href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700&display=swap"
               rel="stylesheet"
-            />
-            <style
-              dangerouslySetInnerHTML={{
-                __html:
-                  "\n        /*.bg-black{\n            position:absolute; width:100%; height:100%; background:#00006b;\n        }*/\n        "
-              }}
-            />
+            /> */}
+           
             <div className="currency-exchange">
               <a
                 href="JavaScript:void(0)"

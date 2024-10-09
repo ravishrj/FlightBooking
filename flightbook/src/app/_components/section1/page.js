@@ -3,15 +3,15 @@ import { useState } from "react";
 import FlightForm from "../flightform/page";
 
 
-const Section1=()=>{
+const Section1=({selectedAirline})=>{
   
     const [activeTab, setActiveTab] = useState('VacationTab');
   
-   
+   console.log(selectedAirline, "Selected Airline");
 
     return <div className="bnrSrchwgt">
     <div className="bswContent">
-      <h1>TAILOR-MADE HOLIDAYS OF A LIFETIME</h1>
+      <h1>{selectedAirline?selectedAirline.name:"TAILOR-MADE HOLIDAYS OF A LIFETIME"}</h1>
       <p> 100% flexible tours planned by experts to 70+ destinations</p>
     </div>
 

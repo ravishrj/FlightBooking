@@ -1,5 +1,101 @@
+import ContactForm from "../contactForm/page";
+import Section4 from "../_components/section4/page";
+import Copyright from "../_components/copyright/page";
+import Footer from "../_components/footer/page";
+import LocatonMap from "../locatonmap/locatonmap";
 const ContactUs = ()=>{
-    return <h2>Contact us</h2>
+    return <> <section className="contact-usbanner">
+    {/* Contact details */}
+    <section className="contact-btm">
+      <div className="container">
+        <div className="fdetail-hdr">
+          <h3>How to contact us?</h3>
+          <h4>Email us or call our travel experts.</h4>
+        </div>
+        <div className="flight-details">
+          <ul>
+            <li>
+              <div>
+                <img src="/Content/images/phone-c.png" />
+              </div>
+              <div className="flag-div">
+                <p className="flag-div">
+                  <img src="/Content/images/flag1.png" />
+                  <img src="/Content/images/flag2.png" />
+                  <strong>USA/Canada</strong>
+                </p>
+                <p>
+                  <a className="tel-phone" href="tel:1-833-914-2482">
+                    1-833-914-2482
+                  </a>
+                </p>
+              </div>
+            </li>
+            <li>
+              <div>
+                <img
+                  src="/Content/images/home.png"
+                  style={{ filter: "brightness(0) invert(1)" }}
+                />
+              </div>
+              <div>
+                <p>
+                  <img src="/Content/images/flag1.png" />
+                  <strong>United States</strong>
+                </p>
+                <p className="add-ress">
+                  448 PRAIRIE KNOLL DR NAPERVILLE, IL 60565
+                </p>
+              </div>
+            </li>
+          </ul>
+          <ul>
+            <li className="li-contact">
+              <div>
+                <img src="/Content/images/reservation.png" />
+              </div>
+              <div>
+                <p>
+                  <strong>Reservations</strong>
+                </p>
+                <p>
+                  <a href="mailto:sales@redumbrellaholidays.com">
+                    sales@redumbrellaholidays.com
+                  </a>
+                </p>
+              </div>
+            </li>
+            <li className="li-contact">
+              <div>
+                <img src="/Content/images/support.png" />
+              </div>
+              <div>
+                <p>
+                  <strong>Customer Support</strong>
+                </p>
+                <p>
+                  <a href="mailto:support@redumbrellaholidays.com">
+                    support@redumbrellaholidays.com
+                  </a>
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    {/* End Contact details */}
+  </section>
+  
+ <ContactForm />
+<LocatonMap />
+ <Section4 />
+     <Footer />
+      <Copyright />
+  
+ 
+  </>
+  
 }
 
 
