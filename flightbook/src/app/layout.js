@@ -28,6 +28,7 @@ export default function RootLayout({ children }) {
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
       <link rel="stylesheet" href="/usmobile.css" />
       <link rel="stylesheet" href="/usmobile_home.css" />
+      <link rel="stylesheet" href="/US_customcss.css" />
       <link href="/Content/css/m.lightpick.css?v=RUS2021" rel="stylesheet" />
       <link href="/bundles/US_mobilehotelcss?v=D5kGZF0-EfG2ZGUlC_qi6vWM1FZ81W3Xv_diatA6Se81" rel="stylesheet" />
       <link rel="stylesheet" href="/Content/css/m.lightpick.css" />
@@ -37,7 +38,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
+        
         {children}
        
      

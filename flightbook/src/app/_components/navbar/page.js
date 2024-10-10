@@ -4,6 +4,21 @@ const Navbar = () => {
 
   const [mobMenuActive, setMobMenuActive] = useState(false);
   const [importantLinkActive,setimportantLinkActive]=useState(false);
+  const [destinationLinkActive,setdestinationLinkActive]=useState(false);
+
+  const Flights= [
+    { "name": "Orlando", "url": "/book-flights/orlando-orl" },
+    { "name": "Las Vegas", "url": "/book-flights/las-vegas-las" },
+    { "name": "Fort Lauderdale", "url": "/book-flights/fort-lauderdale-fll" },
+    { "name": "New York", "url": "/book-flights/new-york-nyc" },
+    { "name": "Tampa", "url": "/book-flights/tampa-tpa" },
+    { "name": "Atlanta", "url": "/book-flights/atlanta-atl" },
+    { "name": "Los Angeles", "url": "/book-flights/los-angeles-lax" },
+    { "name": "Denver", "url": "/book-flights/denver-den" },
+    { "name": "Chicago", "url": "/book-flights/chicago-chi" },
+    { "name": "San Juan", "url": "/book-flights/san-juan-sju" }
+  ];
+  
 
     return   <header className="header">
         <div className="container">
@@ -71,15 +86,26 @@ const Navbar = () => {
                     cruises
                   </a>
                 </li>
-                <li className="dropdown">
-                  <a href="javascript:void(0)" className="submenus destination">
+                <li className="dropdown" onClick={()=>{
+                  setdestinationLinkActive(prev=>!prev);
+                }}>
+                  <a href="javascript:void(0)"className={`${destinationLinkActive ? "submenus" : "submenus selected"}`}>
                     destinations
                   </a>
                   <ul
                     className="submenu dropdown-menu imp-links tabcontent"
                     id="destination"
+                    style={{ display: destinationLinkActive ? "block"  : "none" }}
                   >
-                    <li>
+
+                    {
+                      Flights.map(Flight=>{
+                        return  <li>
+                        <a href={Flight.url}>{Flight.name}</a>
+                      </li>
+                      })
+                    }
+                    {/* <li>
                       <a href="/book-flights/orlando-orl"> Orlando</a>
                     </li>
                     <li>
@@ -108,7 +134,7 @@ const Navbar = () => {
                     </li>
                     <li>
                       <a href="/book-flights/san-juan-sju"> San Juan</a>
-                    </li>
+                    </li> */}
                   </ul>
                 </li>
                 <li className="dropdown">
@@ -268,7 +294,7 @@ const Navbar = () => {
                   <ul
                     className="submenu dropdown-menu imp-links tabcontent"
                     id="destination"
-                    style={{ display: importantLinkActive ? "none" : "block" }}
+                    style={{ display: importantLinkActive ?  "block"  : "none" }}
 
                   >
                     <li>
