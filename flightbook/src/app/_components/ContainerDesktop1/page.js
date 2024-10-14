@@ -1,23 +1,176 @@
+"use client"
+import { useState,useEffect } from "react";
+import Select from 'react-select';
+
+
+
+
 const Container1=()=>{
+  const [token, setToken] = useState("");
+  const [originAirportList, setOriginAirportList] = useState([]);
+  const [originInputValue, setOriginInputValue] = useState(null);
+  const [desAirportList, setDesAirportList] = useState([]);
+  const [desInputValue, setDesInputValue] = useState("");
+  const [travellerDetail, setTravellerDetail] = useState({ adultCount: 1, childrenCount: 0, infanctCount: 0, cabinType: "ECONOMY" });
+  const [adultCount, setAdultCount] = useState(1);
+  const [childrenCount, setChildrenCount] = useState(0);
+  const [infanctCount, setInfantCount] = useState(0);
+  const [infantOnSeatCount, setInfantOnSeatCount] = useState(0);
+  const [cabinType, setCabinType] = useState("ECONOMY");
+
+
+
+  const fetchToken = async () => {
+    let body = new URLSearchParams();
+    body.append("grant_type", "client_credentials");
+    body.append("client_id", "6KjF3w8cmzm5jvgkePQnLAB9ufdMiUnH");
+    body.append("client_secret", "hx7l3jSMq1AK9lFx");
+    try {
+        const data = await fetch("https://api.amadeus.com/v1/security/oauth2/token",
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: body.toString()
+            });
+        const json = await data.json();
+        setToken(json.access_token)
+        localStorage.setItem("typCknhbg", json.access_token);
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+
+
+// useEffect(() => {
+//   // fetchToken();
+//   // Remove the token from localStorage
+// localStorage.removeItem(token);
+
+// }, []);
+
+// const handleInputChange = (inputValue) => {
+//   setOriginInputValue(inputValue);
+//   filterSourceAirportValue(inputValue);
+// };
+
+// const handleOriginChange = (selectedOption) => {
+//   setOrigin(selectedOption);
+//   setOriginInputValue(selectedOption?.label || '');
+// };
+
+
+
+// const handleInputChange = async (event, limit = 20, offset = 0) => {
+//   const query = event.target.value;
+//   setInput(query);
+
+//   if (query.length < 2) {
+//       setSuggestions([]);
+//       return;
+//   }
+
+//   try {
+//       // Step 2: Fetch location suggestions
+//       const response = await axios.get('https://test.api.amadeus.com/v1/reference-data/locations', {
+//           params: {
+//               subType: 'CITY,AIRPORT',  // Searching for both city and airport
+//               keyword: query,
+//               'page[limit]': limit || 10, // Set the limit for the number of results
+//               'page[offset]': offset || 0, // Set the offset for pagination
+//               sort: 'analytics.travelers.score', // Sorting by traveler score
+//               view: 'FULL' // Requesting full view of data
+//           },
+//           headers: {
+//               'Authorization': `Bearer ${token}`
+//           }
+//       });
+
+//       // Step 3: Process response to group airports by city
+//       const suggestions = response.data.data;
+//       const cityAirportMap = {};
+
+//       // Group airports by city
+//       suggestions.forEach(item => {
+//           const cityName = item.city || item.name; // Adjust based on your data structure
+//           const airportInfo = {
+//               iataCode: item.iataCode,
+//               name: item.name,
+//               city: item.city,
+//               country: item.country,
+//               // other properties as needed
+//           };
+
+//           if (!cityAirportMap[cityName]) {
+//               cityAirportMap[cityName] = {
+//                   city: cityName,
+//                   airports: [airportInfo] // Initialize with the first airport
+//               };
+//           } else {
+//               cityAirportMap[cityName].airports.push(airportInfo); // Add airport to existing city
+//           }
+//       });
+
+//       // Convert the cityAirportMap back to an array
+//       const processedSuggestions = Object.values(cityAirportMap);
+//       console.log(processedSuggestions);
+//       setSuggestions(processedSuggestions);
+//   } catch (error) {
+//       console.error('Error fetching data:', error);
+//       setSuggestions([]);
+//   }
+// };
+
+  // const fetchNearestAirports = async () => {
+  //   try {
+  //       // Get user's current location using Geolocation API
+  //       navigator.geolocation.getCurrentPosition(async (position) => {
+  //           const { latitude, longitude } = position.coords;
+
+  //           // Call the Amadeus API to get nearest airports based on current latitude and longitude
+  //           let response = await fetch("https://api.amadeus.com/v1/reference-data/locations/airports?latitude=${latitude}&longitude=${longitude}&radius=100&page%5Blimit%5D=10&sort=analytics.travelers.score", {
+  //               headers: {
+  //                   "Content-Type": "application/json",
+  //                   "Authorization": `{Bearer ${token}`
+  //               }
+  //           });
+
+  //           let result = await response.json();
+            
+  //           // Map the response to label and value format
+  //           if (Array.isArray(result.data)) {
+  //               // Map the response to label and value format
+  //               let options = result.data.map(a => ({
+  //                   label: `${a.iataCode}` , ${a.name}, ${a.address.cityName}, ${a.address.countryCode},
+  //                   value: {a.iataCode}
+  //               }));
+
+  //               // Set the nearest airport list
+  //               setOriginAirportList(options);
+
+  //               if (options.length > 0) {
+  //                   setOriginInputValue(options[0].label); // Set the first airport as the default value
+  //                   setOrigin(options[0].label);
+  //               }
+  //           }
+  //       }
+           
+               
+
+// useEffect(() => {
+//   fetchNearestAirports();
+// }, [token]);
+
+
+
+
+
 return <div className="container">
 <section className="searchWidget">
   <div className="TabContainer">
     <div className="tabHolder">
       <ul>
-        <li
-          id="vacationtablink"
-          onclick="OpenTab('VacationTab')"
-          className="active"
-        >
-          <div className="helicopter_wrapper charter">
-            <div className="helicopter">
-              <img src="/Content/images/v1.png" alt="" />
-            </div>
-          </div>
-          <a href="javascript:void(0)" title="Vacations">
-            <span>Vacations</span>
-          </a>
-        </li>
+      
         <li id="flighttablink" onclick="OpenTab('FlightTab')">
           <div className="helicopter_wrapper charter">
             <div className="helicopter">
@@ -28,567 +181,536 @@ return <div className="container">
             <span>Flights</span>
           </a>
         </li>
-        <li id="hoteltablink" onclick="OpenTab('HotelTab')">
-          <div className="helicopter_wrapper charter">
-            <div className="helicopter hotel">
-              <img src="/Content/images/v3.png" alt="" />
-            </div>
-          </div>
-          <a href="javascript:void(0)" title="Hotels">
-            <span>Hotels</span>
-          </a>
-        </li>
+   
       </ul>
-      <div id="Vacations" className="TabSearchCopmonent active">
-        <link
-          href="/Content/css/hotel-home.css?v=RUS2021"
-          rel="stylesheet"
-          type="text/css"
-          charSet="utf-8"
-        />
-        <style
-          dangerouslySetInnerHTML={{
-            __html:
-              "\n    .swapHolidayDest{\n    position: absolute;\n    right: -31px;\n    top: 20px;\n    z-index: 1;\n    cursor: pointer;\n}\n    body .date.searchSec{\nwidth: 39%;\n}\n.blkbackground {\n    border-top: 3px solid #fff;\n}\nbody .From.searchSec.origin{\n    width:59%;\n}\nbody .From.searchSec.origin.dset{\n    padding-left:31px;\n}\nbody .date.searchSec.datepic{\n    padding-left: 25px;\n}\nbody .searchSec.no-day{\n    padding-left: 34px;\n}\n.searchSec.roomselect{\n    width:87%;\n}\n\n.no-day ::-webkit-scrollbar {\n    width: 5px;\n}\n.no-day ::-webkit-scrollbar-thumb {\n    background: #610101;\n    border-radius: 10px;\n}\n.no-day ::-webkit-scrollbar-track {\n    box-shadow: inset 0 0 5px grey;\n    border-radius: 10px;\n}\n\n.hotelvacationguestdrop{\n    top: 88px;\n}\n /*section.lightpick{\n        top:426.17px!important;\n    }*/\n"
-          }}
-        />
-        <form id="formVacationSearch" className="hotel-home-form">
-          <input
-            name="FlightUniqueId"
-            type="hidden"
-            id="hdnVacationGuid"
-            defaultValue="a8893f2f-84f3-4dcc-a07e-6a9547cf2adb"
-          />
-          {/* Search box */}
-          <div className="f-tabs">
-            <div className="From searchSec origin">
-              <div className="icon-class">
-                <img src="/Content/images/plane.png" />
-              </div>
-              <span>From</span>
-              <input
-                id="txtHolidayOriginCode"
-                type="text"
-                className="ui-autocomplete-input"
-                autoComplete="off"
-                onkeypress="return isCharWithSpaceHyphen(event)"
-                defaultValue=""
-                required=""
-                placeholder="Departure"
-              />
-              <i
-                className="fa fa-times-circle demo-label"
-                style={{ display: "none" }}
-              />
-              <input
-                name="OriginCode"
-                type="hidden"
-                id="hdnHolidayOriginCode"
-              />
-              <span
-                id="spanHolidayOriginCityName"
-                className="spanCity"
-                style={{ display: "none" }}
-              >
-                City/Airport
-              </span>
-              <div
-                id="spnHolidayOriginErrMsg"
-                className="errorMsg"
-                style={{ display: "none" }}
-              >
-                Please select departure
-              </div>
-            </div>
-            <div className="From searchSec origin dset">
-              <div className="icon-class">
-                <img src="/Content/images/point.png" />
-              </div>
-              <span>Going To</span>
-              <input
-                id="txtHolidayDestCode"
-                type="text"
-                className="ui-autocomplete-input"
-                autoComplete="off"
-                onkeypress="return isCharWithSpaceHyphen(event)"
-                defaultValue=""
-                required=""
-                placeholder="Destination"
-              />
-              <i
-                className="fa fa-times-circle demo-label"
-                style={{ display: "none" }}
-              />
-              <input
-                name="DestinationCode"
-                type="hidden"
-                id="hdnHolidayDestinationCode"
-              />
-              <span
-                id="spanHolidayDestCityName"
-                className="spanCity"
-                style={{ display: "none" }}
-              >
-                City/Airport
-              </span>
-              <div
-                id="spnHolidayDestErrMsg"
-                className="errorMsg"
-                style={{ display: "none" }}
-              >
-                Please select destination
-              </div>
-            </div>
-            {/* date */}
-            <div className="date searchSec datepic">
-              <div className="icon-class">
-                <img src="/Content/images/date1.png" />
-              </div>
-              {/* date To */}
-              <div className="Date Datee">
-                <span>Check-in</span>
-                <input
-                  type="text"
-                  id="tbVacationCheckIn"
-                  name="DepDate"
-                  className="date"
-                  placeholder="Date"
-                  readOnly="readonly"
-                />
-                <p style={{ display: "none" }}>
-                  <span className="date" id="tbVacationCheckIn_MMM">
-                    Date
-                  </span>
-                  <span
-                    className="date"
-                    id="tbVacationCheckIn_DD"
-                    style={{ display: "none" }}
-                  />
-                </p>
-                <span
-                  id="tbVacationCheckIn_DAY"
-                  style={{ display: "none" }}
-                />
-                <span
-                  id="tbVacationCheckIn_YYYY"
-                  style={{ display: "none" }}
-                />
-                <div
-                  id="spnVacationCheckInDateErrMsg"
-                  className="errorMsg"
-                  style={{ display: "none" }}
-                >
-                  Select check-in date
-                </div>
-              </div>
-              {/* End date To */}
-              {/* date From */}
-              <div className="Date" style={{ display: "none" }}>
-                <span>Check-out</span>
-                <input
-                  type="text"
-                  id="tbVacationCheckOut"
-                  name="RetDate"
-                  className="date"
-                  placeholder="Date"
-                  readOnly="readonly"
-                />
-                <p style={{ display: "none" }}>
-                  <span className="date" id="tbVacationCheckOut_MMM">
-                    Date
-                  </span>
-                  <span
-                    className="date"
-                    id="tbVacationCheckOut_DD"
-                    style={{ display: "none" }}
-                  />
-                </p>
-                <span id="tbVacationCheckOut_DAY" />
-                <span id="tbVacationCheckOut_YYYY" />
-                <div
-                  id="spnVacationCheckOutDateErrMsg"
-                  className="errorMsg"
-                  style={{ display: "none" }}
-                >
-                  Select check-out date
-                </div>
-              </div>
-            </div>
-            <div className="From searchSec no-day">
-              <div className="icon-class">
-                <img src="/Content/images/night.png" />
-              </div>
-              <span>Duration</span>
-              <p className="night-stay">1 Night</p>
-              <div className="night-popup">
-                <ul>
-                  <li className="nightday1 active">
-                    <span>1 Night</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday2">
-                    <span>2 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday3">
-                    <span>3 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday4">
-                    <span>4 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday5">
-                    <span>5 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday6">
-                    <span>6 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday7">
-                    <span>7 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday8">
-                    <span>8 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday9">
-                    <span>9 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday10">
-                    <span>10 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday11">
-                    <span>11 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday12">
-                    <span>12 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday13">
-                    <span>13 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday14">
-                    <span>14 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday15">
-                    <span>15 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday16">
-                    <span>16 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday17">
-                    <span>17 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday18">
-                    <span>18 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday19">
-                    <span>19 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday20">
-                    <span>20 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday21">
-                    <span>21 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday22">
-                    <span>22 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday23">
-                    <span>23 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday24">
-                    <span>24 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday25">
-                    <span>25 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday26">
-                    <span>26 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday27">
-                    <span>27 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday28">
-                    <span>28 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday29">
-                    <span>29 Nights</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="nightday30">
-                    <span>30 Nights</span>
-                    <span className="sel" />
-                  </li>
-                </ul>
-                <input
-                  id="hdnNightDuration"
-                  defaultValue={1}
-                  type="hidden"
-                  name="Duration"
-                />
-              </div>
-            </div>
-            <div className="searchSec roomselect">
-              <div className="icon-class">
-                <img src="/Content/images/room.png" />
-              </div>
-              <span>Rooms &amp; Guests</span>
-              <input
-                type="text"
-                id="totalVacationpersonH"
-                onclick="return OpenVacationRoomGuestBox()"
-                name="HotelRoomPaxInfo"
-                className=""
-                placeholder="1 Room, 2 Adults, 0 Child"
-                readOnly=""
-                defaultValue="1 ROOM , 2 ADULTS, 0 CHILD"
-                title="1 ROOM , 2 ADULTS, 0 CHILD"
-              />
-            </div>
-            <div className="searchSec boardbasis" style={{ display: "none" }}>
-              <span>Board Basis</span>
-              <p className="night-board">Any</p>
-              <div className="nightboard-popup">
-                <ul>
-                  <li className="bbTypeAny active">
-                    <span>Any</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="bbTypeAll_Inclusive">
-                    <span>All Inclusive</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="bbTypeFull_Board">
-                    <span>Full Board</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="bbTypeHalf_Board">
-                    <span>Half Board</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="bbTypeBed_Breakfast">
-                    <span>Bed &amp; Breakfast</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="bbTypeSelf_Catering">
-                    <span>Self Catering</span>
-                    <span className="sel" />
-                  </li>
-                  <li className="bbTypeRoom_Only">
-                    <span>Room Only</span>
-                    <span className="sel" />
-                  </li>
-                </ul>
-                <input
-                  id="hdnBoardBasis"
-                  defaultValue="Any"
-                  type="hidden"
-                  name="BoardBasis"
-                />
-              </div>
-            </div>
-            <div className="button-search">
-              <button
-                type="button"
-                className="submit g-orange"
-                id="btnSearchVacationHotels"
-                value="Search Now"
-                onclick="return SearchHotelFaresNew()"
-              >
-                Get Quote
-              </button>
-            </div>
-            {/*Dropdown*/}
-            <input
-              type="hidden"
-              name="NumberOfRooms"
-              id="hdnVacationRoomCount"
-              defaultValue={1}
-            />
-            <div className="hotelvacationguestdrop">
-              <div className="roomvacation-slct" id="divVacationRoom_1">
-                <h3 className=" g-vacation-orange">Room 1</h3>
-                {/* adult */}
-                <div className="box">
-                  <label>
-                    Adult <small>18y+</small>
-                  </label>
-                  <div className="bunch">
-                    <span
-                      onclick="AddVacationSubtract(1, '-','ADT')"
-                      className="minus increment"
-                    >
-                      -
-                    </span>
-                    <input
-                      type="text"
-                      id="txtVacationAdultCount_1"
-                      className="cls_Vacation_RoomAdultCount"
-                      name="RoomAdultCount"
-                      readOnly="readonly"
-                      size={10}
-                      defaultValue={2}
-                    />
-                    <span
-                      onclick="AddVacationSubtract(1, '+', 'ADT')"
-                      className="plus increment"
-                    >
-                      +
-                    </span>
-                  </div>
-                </div>
-                {/*End adult */}
-                {/* Children */}
-                <div className="box">
-                  <label>
-                    Children <small>(12 years or below)</small>
-                  </label>
-                  <div className="bunch">
-                    <span
-                      onclick="AddVacationSubtract(1, '-', 'CHD')"
-                      className="minus increment"
-                    >
-                      -
-                    </span>
-                    <input
-                      type="text"
-                      id="txtVacationChildCount_1"
-                      className="cls_Vacation_RoomChildCount"
-                      name="RoomChildCount"
-                      readOnly="readonly"
-                      size={10}
-                      defaultValue={0}
-                    />
-                    <span
-                      onclick="AddVacationSubtract(1, '+', 'CHD')"
-                      className="plus increment"
-                    >
-                      +
-                    </span>
-                  </div>
-                </div>
-                {/*End Children */}
-                {/* Child 1 Age */}
-                <div
-                  id="divVacationChildAgeBox1_1"
-                  className="box age2"
-                  style={{ display: "none" }}
-                >
-                  <label>
-                    1<sup>st</sup> Child Age
-                  </label>
-                  <div className="bunch">
-                    <span
-                      onclick="AddVacationSubtract(1, '-', 'AGE1')"
-                      className="minus increment"
-                    >
-                      -
-                    </span>
-                    <input
-                      type="text"
-                      id="txtVacationChildAge1_1"
-                      className="cls_Vacation_RoomChildAge1"
-                      name="RoomChildAge1"
-                      readOnly="readonly"
-                      size={10}
-                      defaultValue={1}
-                    />
-                    <span
-                      onclick="AddVacationSubtract(1, '+', 'AGE1')"
-                      className="plus increment"
-                    >
-                      +
-                    </span>
-                  </div>
-                </div>
-                <div
-                  id="divVacationChildAgeBox2_1"
-                  className="box"
-                  style={{ display: "none" }}
-                >
-                  <label>
-                    2<sup>nd</sup> Child Age
-                  </label>
-                  <div className="bunch">
-                    <span
-                      onclick="AddVacationSubtract(1, '-', 'AGE2')"
-                      className="minus increment"
-                    >
-                      -
-                    </span>
-                    <input
-                      type="text"
-                      id="txtVacationChildAge2_1"
-                      className="cls_Vacation_RoomChildAge2"
-                      name="RoomChildAge2"
-                      readOnly="readonly"
-                      size={10}
-                      defaultValue={1}
-                    />
-                    <span
-                      onclick="AddVacationSubtract(1, '+', 'AGE2')"
-                      className="plus increment"
-                    >
-                      +
-                    </span>
-                  </div>
-                </div>
-                {/*End Children */}
-              </div>
-              {/* add more room button */}
-              <div className="btsmoreroom">
-                <a href="javascript:;" onclick="AddVacationRooms()">
-                  +ADD ROOM
-                </a>
-                <button
-                  type="button"
-                  onclick="return HideVacationRoomGuestBox()"
-                  className="g-orange"
-                >
-                  DONE
-                </button>
-              </div>
-              {/* End add more room button */}
-            </div>
-            {/*Close Dropdown */}
-            {/* End date From */}
-          </div>
-          {/* End Search box */}
-        </form>
+      <div id="Flights" className="TabSearchCopmonent active" style={{}}>
+  <style
+    dangerouslySetInnerHTML={{
+      __html:
+        "\n    /*ul.ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content {\n        top: 429.719px !important;\n    }*/\n \n"
+    }}
+  />
+  <form id="formFlightSearchEngine">
+    <section className="flight-trip">
+      <div className="roundTripHolder">
+        <ul className="active">
+          <li
+            className="active"
+            id="T_RT"
+            onclick="ShowHideSearchEngineTab('RT')"
+          >
+            ROUND-TRIP
+          </li>
+          <li id="T_OW" onclick="ShowHideSearchEngineTab('OW')" className="">
+            ONE-WAY
+          </li>
+        </ul>
       </div>
+      <div className="searchbox in active" id="Tp_roundtrip">
+        <input
+          name="Direct"
+          type="hidden"
+          id="hdnDirectIndirect"
+          defaultValue="off"
+        />
+        <input
+          name="Airline"
+          type="hidden"
+          id="hdnAirlineCode"
+          defaultValue="All"
+        />
+        <input
+          name="FlightUniqueId"
+          type="hidden"
+          id="hdnFlightUniqueCode"
+          defaultValue="d342b00d-a7a1-4214-b7c4-2b96301ce83a"
+        />
+        <input
+          name="MCSector_2"
+          type="hidden"
+          id="hdnMC_Sec_2"
+          defaultValue=""
+        />
+        <input
+          name="TripType"
+          type="hidden"
+          id="hdnTripTypeCode"
+          defaultValue={1}
+        />
+        <div className="From searchSec origin">
+          <div className="icon-class">
+            <img src="/Content/images/plane.png" />
+          </div>
+          <span>From</span>
+          <input
+            id="txtOriginCode"
+            type="text"
+            className="ui-autocomplete-input"
+            autoComplete="off"
+            onkeypress="return isCharWithSpaceHyphen(event)"
+            defaultValue=""
+            required=""
+            placeholder="Departure"
+          />
+          {/* <Select
+    id="txtOriginCode"
+    className="ui-autocomplete-input textoverflow input_destination"
+    options={originAirportList}
+    placeholder="Departure"
+    onInputChange={handleInputChange}
+    inputValue={originInputValue}
+    onChange={handleOriginChange}
+    required
+/> */}
+
+          <i
+            className="fa fa-times-circle demo-label"
+            style={{ display: "none" }}
+          />
+          <input name="OriginCode" type="hidden" id="hdnOriginCode" />
+          <span
+            id="spanOriginCityName"
+            className="spanCity"
+            style={{ display: "none" }}
+          />
+          <div
+            id="spnOriginErrMsg"
+            className="errorMsg"
+            style={{ display: "none" }}
+          >
+            Please select origin
+          </div>
+          <img
+            src="/Content/images/destChange-icon.png"
+            className="swapDest"
+            style={{ display: "none" }}
+          />
+        </div>
+        <div className="To searchSec origin dset">
+          <div className="icon-class">
+            <img src="/Content/images/point.png" />
+          </div>
+          <span>To</span>
+          <input
+            id="txtDestCode"
+            type="text"
+            className="ui-autocomplete-input"
+            autoComplete="off"
+            onkeypress="return isCharWithSpaceHyphen(event)"
+            defaultValue=""
+            required=""
+            placeholder="Destination"
+          />
+          <i
+            className="fa fa-times-circle demo-label"
+            style={{ display: "none" }}
+          />
+          <input name="DestinationCode" type="hidden" id="hdnDestinationCode" />
+          <span
+            id="spanDestCityName"
+            className="spanCity"
+            style={{ display: "none" }}
+          />
+          <div
+            id="spnDestErrMsg"
+            className="errorMsg"
+            style={{ display: "none" }}
+          >
+            Please select destination
+          </div>
+        </div>
+        <div id="divDepartSecton" className="Date searchSec datepic">
+          <div className="icon-class">
+            <img src="/Content/images/date1.png" />
+          </div>
+          <span>
+            Depart <i className="fa fa-angle-down" aria-hidden="true" />
+          </span>
+          <input
+            type="text"
+            id="txtDepartDate"
+            name="DepDate"
+            className="date"
+            placeholder="Date"
+            readOnly="readonly"
+          />
+          <p style={{ display: "none" }}>
+            <span className="date" id="txtDepartDate_MMM">
+              Date
+            </span>
+            <span
+              className="date"
+              id="txtDepartDate_DD"
+              style={{ display: "none" }}
+            />
+          </p>
+          <span id="txtDepartDate_DAY" style={{ display: "none" }} />{" "}
+          <span id="txtDepartDate_YYYY" style={{ display: "none" }} />
+          <div
+            id="spnDepDateErrMsg"
+            style={{ display: "none" }}
+            className="errorMsg"
+          >
+            Select depart date
+          </div>
+        </div>
+        <div
+          id="divReturnSection"
+          className="Date searchSec datepic"
+          style={{}}
+        >
+          <div className="icon-class">
+            <img src="/Content/images/date1.png" />
+          </div>
+          <span>
+            Return <i className="fa fa-angle-down" aria-hidden="true" />
+          </span>
+          <input
+            type="text"
+            id="txtReturnDate"
+            name="RetDate"
+            className="date"
+            placeholder="Date"
+            readOnly="readonly"
+          />
+          <p style={{ display: "none" }}>
+            <span className="date" id="txtReturnDate_MMM">
+              Date
+            </span>
+            <span
+              className="date"
+              id="txtReturnDate_DD"
+              style={{ display: "none" }}
+            />
+          </p>
+          <span id="txtReturnDate_DAY" style={{ display: "none" }} />{" "}
+          <span id="txtReturnDate_YYYY" style={{ display: "none" }} />
+          <div
+            id="spnRetDateErrMsg"
+            className="errorMsg"
+            style={{ display: "none" }}
+          >
+            Select return date
+          </div>
+        </div>
+        <div className="Traveler searchSec txtPassengers">
+          <div className="icon-class">
+            <img src="/Content/images/psger.png" />
+          </div>
+          <span>
+            Travelers <i className="fa fa-angle-down" aria-hidden="true" />
+          </span>
+          <h6>
+            <input
+              id="txtPassengers"
+              type="text"
+              placeholder="1 Traveler, Coach"
+              readOnly=""
+            />{" "}
+            <b id="txtClassType" style={{ display: "none" }}>
+              Coach
+            </b>
+          </h6>
+          <b id="txtPassengersDetails" style={{ display: "none" }}>
+            1 Adult
+          </b>
+        </div>
+        <div className="button-search">
+          <button
+            type="button"
+            style={{ display: "none" }}
+            className="submit g-orange"
+            id="BtnSearchFare_RTOW_Deal"
+          >
+            Search Now
+          </button>
+          <button
+            type="button"
+            className="submit g-orange"
+            id="BtnSearchFare_RTOW"
+          >
+            Search Flights
+          </button>
+        </div>
+      </div>
+      <span className="advance ">
+        <a className="lnk_RUHUS_advanceSearch" href="javascript:void(0);">
+          Advanced Search (+)
+        </a>
+      </span>
+      <div className="advance_ruhus_SearchHolder" style={{ display: "none" }}>
+        <ul>
+          <li>
+            <input
+              id="txt_RUHUS_PreferredAirlines"
+              type="text"
+              autoComplete="off"
+              onkeypress="return OnlyCharNumberKey(event)"
+              required=""
+              placeholder="Preferred Airline"
+              name="PreferredAirlineName"
+              className="ui-autocomplete-input"
+            />
+            <input
+              name="PreferredAirline"
+              type="hidden"
+              id="hdn_RUHUS_PreferredAirline"
+            />
+          </li>
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                id="chk_RUHUS_DirectFlight"
+                onclick="Check_RUHUS_DirectFlight()"
+                defaultValue="Direct"
+              />{" "}
+              <span> Non-Stop</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+      <span className="minor">
+        <a
+          href="javascript:void(0);"
+          style={{ color: "#000" }}
+          className="lnkUMNR_RUHUS"
+        >
+          Unaccompanied Minor
+        </a>
+      </span>
       <div
-        id="Flights"
-        className="TabSearchCopmonent"
+        className="searchbox"
+        id="Tp_multicity"
         style={{ display: "none" }}
       ></div>
-      <div
-        id="Hotels"
-        className="TabSearchCopmonent"
-        style={{ display: "none" }}
-      ></div>
+    </section>
+    <div className="" id="divUnaccompaniedMinorPopup">
+      <a className="linkUnaccompaniedMinorClose">x</a>
+      <div>
+        Flight tickets for an unaccompanied minor are not available online. To
+        book a flight for a UMNR, directly reach out to our experts at{" "}
+        <strong style={{ fontWeight: "bold" }}>1-833-914-2482</strong>. For more
+        details, <a href="/unaccompanied-minor">READ HERE</a>.
+      </div>
+    </div>
+    {/*Passenger-*/}
+    <div
+      id="divPassengerDDL"
+      className="pasenger-popup"
+      style={{ display: "none" }}
+    >
+      <div className="">
+        <div className="divPassengerPanel">
+          <h2>Select Travelers</h2>
+          <div className="divPassenger">
+            <div className="divPassengerType">
+              <p>Adult</p>
+              <span>(18+ yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+              <div className="Add_Less_Passenger">
+                <div className="MinusPassenger">
+                  <input
+                    type="button"
+                    defaultValue="-"
+                    className="MinusPassengerBox"
+                    field="quantity"
+                    onclick="UpdatePassengerCount(2,'ADT',1)"
+                  />
+                </div>
+                <div className="PassengerCount">
+                  <input
+                    type="text"
+                    defaultValue={1}
+                    className="CountPassengerBox"
+                    name="AdultPaxCount"
+                    id="txtAdultPassenger"
+                    readOnly=""
+                  />
+                </div>
+                <div className="PlusPassenger">
+                  <input
+                    type="button"
+                    defaultValue="+"
+                    className="PlusPassengerBox"
+                    field="quantity"
+                    onclick="UpdatePassengerCount(1,'ADT',1)"
+                  />
+                </div>
+                <div className="ClearPassengerCount" />
+              </div>
+            </div>
+          </div>
+          <div className="divPassenger">
+            <div className="divPassengerType">
+              <p>Children</p>
+              <span>(2 - 11 yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+              <div className="Add_Less_Passenger">
+                <div className="MinusPassenger">
+                  <input
+                    type="button"
+                    defaultValue="-"
+                    className="MinusPassengerBox"
+                    field="quantity"
+                    onclick="UpdatePassengerCount(2,'CHD',1)"
+                  />
+                </div>
+                <div className="PassengerCount">
+                  <input
+                    type="text"
+                    defaultValue={0}
+                    className="CountPassengerBox"
+                    name="ChildPaxCount"
+                    paxtype="CHD"
+                    id="txtChildPassenger"
+                    readOnly=""
+                  />
+                </div>
+                <div className="PlusPassenger">
+                  <input
+                    type="button"
+                    defaultValue="+"
+                    className="PlusPassengerBox"
+                    field="quantity"
+                    onclick="UpdatePassengerCount(1,'CHD',1)"
+                  />
+                </div>
+                <div className="ClearPassengerCount" />
+              </div>
+            </div>
+          </div>
+          <div className="divPassenger">
+            <div className="divPassengerType">
+              <p>Infant (on lap)</p>
+              <span>(Below 2 yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+              <div className="Add_Less_Passenger">
+                <div className="MinusPassenger">
+                  <input
+                    type="button"
+                    defaultValue="-"
+                    className="MinusPassengerBox"
+                    field="quantity"
+                    onclick="UpdatePassengerCount(2,'INFL',1)"
+                  />
+                </div>
+                <div className="PassengerCount">
+                  <input
+                    type="text"
+                    defaultValue={0}
+                    className="CountPassengerBox"
+                    name="InfantLapPaxCount"
+                    paxtype="INF"
+                    id="txtInfantPassenger"
+                    readOnly=""
+                  />
+                </div>
+                <div className="PlusPassenger">
+                  <input
+                    type="button"
+                    defaultValue="+"
+                    className="PlusPassengerBox"
+                    field="quantity"
+                    onclick="UpdatePassengerCount(1,'INFL',1)"
+                  />
+                </div>
+                <div className="ClearPassengerCount" />
+              </div>
+            </div>
+          </div>
+          <div className="divPassenger">
+            <div className="divPassengerType">
+              <p>Infant (on seat)</p>
+              <span>(Below 2 yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+              <div className="Add_Less_Passenger">
+                <div className="MinusPassenger">
+                  <input
+                    type="button"
+                    defaultValue="-"
+                    className="MinusPassengerBox"
+                    field="quantity"
+                    onclick="UpdatePassengerCount(2,'INFS',1)"
+                  />
+                </div>
+                <div className="PassengerCount">
+                  <input
+                    type="text"
+                    defaultValue={0}
+                    className="CountPassengerBox"
+                    name="InfantSeatPaxCount"
+                    paxtype="INFS"
+                    id="txtInfantSeatPassenger"
+                    readOnly=""
+                  />
+                </div>
+                <div className="PlusPassenger">
+                  <input
+                    type="button"
+                    defaultValue="+"
+                    className="PlusPassengerBox"
+                    field="quantity"
+                    onclick="UpdatePassengerCount(1,'INFS',1)"
+                  />
+                </div>
+                <div className="ClearPassengerCount" />
+              </div>
+            </div>
+          </div>
+        </div>
+        {/*Class*/}
+        <div className="class-mpopup">
+          <div className="pnlInner">
+            <div className="divClassTypePanel">
+              <h2>Select Class</h2>
+              <select
+                name="CabinClass"
+                id="LstCabinClass"
+                style={{ display: "none" }}
+              >
+                <option value={1} selected="">
+                  Coach
+                </option>
+                <option value={2}>Premium Economy</option>
+                <option value={3}>Business Class</option>
+                <option value={4}>First Class</option>
+              </select>
+              <div className="pnlInner">
+                <div id="rdoCabin1" className="active selectpassenger">
+                  <span>Coach</span> <span className="act1" />
+                </div>
+                <div id="rdoCabin2" className="selectpassenger">
+                  <span>Premium Economy</span> <span className="" />
+                </div>
+                <div id="rdoCabin3" className="selectpassenger">
+                  <span>Business Class</span> <span className="" />
+                </div>
+                <div id="rdoCabin4" className="selectpassenger">
+                  <span>First Class</span> <span className="" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/*End Class*/}
+        <div className="btsy">
+          <a className="g-orange" id="btnPassengerDone">
+            Done
+          </a>
+        </div>
+      </div>
+    </div>
+    {/*End passenger*/}
+  </form>
+  {/*/Search Widget*/}
+  {/*/Search Widget*/}
+</div>
+
     </div>
   </div>
 </section>

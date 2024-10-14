@@ -111,76 +111,76 @@ const FlightForm=()=>{
     const [suggestions, setSuggestions] = useState([]);
     const [OriginCode, setOriginCode] = useState('');
 
-    const handleInputChange = async (event, limit = 20, offset = 0) => {
-      const query = event.target.value;
-      setInput(query);
-  
-      if (query.length < 2) {
-          setSuggestions([]);
-          return;
-      }
-  
-      try {
-          // Step 1: Get the access token
-          const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', new URLSearchParams({
-              'grant_type': 'client_credentials',
-              'client_id': REACT_APP_AMADEUS_CLIENT_ID,
-              'client_secret': REACT_APP_AMADEUS_CLIENT_SECRET
-          }), {
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-          });
-          
-          const accessToken = tokenResponse.data.access_token;
-  
-          // Step 2: Fetch location suggestions
-          const response = await axios.get('https://test.api.amadeus.com/v1/reference-data/locations', {
-              params: {
-                  subType: 'CITY,AIRPORT',  // Searching for both city and airport
-                  keyword: query,
-                  'page[limit]': limit || 10, // Set the limit for the number of results
-                  'page[offset]': offset || 0, // Set the offset for pagination
-                  sort: 'analytics.travelers.score', // Sorting by traveler score
-                  view: 'FULL' // Requesting full view of data
-              },
-              headers: {
-                  'Authorization': `Bearer ${accessToken}`
-              }
-          });
-  
-          // Step 3: Process response to group airports by city
-          const suggestions = response.data.data;
-          const cityAirportMap = {};
-  
-          // Group airports by city
-          suggestions.forEach(item => {
-              const cityName = item.city || item.name; // Adjust based on your data structure
-              const airportInfo = {
-                  iataCode: item.iataCode,
-                  name: item.name,
-                  city: item.city,
-                  country: item.country,
-                  // other properties as needed
-              };
-  
-              if (!cityAirportMap[cityName]) {
-                  cityAirportMap[cityName] = {
-                      city: cityName,
-                      airports: [airportInfo] // Initialize with the first airport
-                  };
-              } else {
-                  cityAirportMap[cityName].airports.push(airportInfo); // Add airport to existing city
-              }
-          });
-  
-          // Convert the cityAirportMap back to an array
-          const processedSuggestions = Object.values(cityAirportMap);
-          console.log(processedSuggestions);
-          setSuggestions(processedSuggestions);
-      } catch (error) {
-          console.error('Error fetching data:', error);
-          setSuggestions([]);
-      }
-  };
+      const handleInputChange = async (event, limit = 20, offset = 0) => {
+        const query = event.target.value;
+        setInput(query);
+    
+        if (query.length < 2) {
+            setSuggestions([]);
+            return;
+        }
+    
+        try {
+            // Step 1: Get the access token
+            const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', new URLSearchParams({
+                'grant_type': 'client_credentials',
+                'client_id': REACT_APP_AMADEUS_CLIENT_ID,
+                'client_secret': REACT_APP_AMADEUS_CLIENT_SECRET
+            }), {
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+            
+            const accessToken = tokenResponse.data.access_token;
+    
+            // Step 2: Fetch location suggestions
+            const response = await axios.get('https://test.api.amadeus.com/v1/reference-data/locations', {
+                params: {
+                    subType: 'CITY,AIRPORT',  // Searching for both city and airport
+                    keyword: query,
+                    'page[limit]': limit || 10, // Set the limit for the number of results
+                    'page[offset]': offset || 0, // Set the offset for pagination
+                    sort: 'analytics.travelers.score', // Sorting by traveler score
+                    view: 'FULL' // Requesting full view of data
+                },
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+    
+            // Step 3: Process response to group airports by city
+            const suggestions = response.data.data;
+            const cityAirportMap = {};
+    
+            // Group airports by city
+            suggestions.forEach(item => {
+                const cityName = item.city || item.name; // Adjust based on your data structure
+                const airportInfo = {
+                    iataCode: item.iataCode,
+                    name: item.name,
+                    city: item.city,
+                    country: item.country,
+                    // other properties as needed
+                };
+    
+                if (!cityAirportMap[cityName]) {
+                    cityAirportMap[cityName] = {
+                        city: cityName,
+                        airports: [airportInfo] // Initialize with the first airport
+                    };
+                } else {
+                    cityAirportMap[cityName].airports.push(airportInfo); // Add airport to existing city
+                }
+            });
+    
+            // Convert the cityAirportMap back to an array
+            const processedSuggestions = Object.values(cityAirportMap);
+            console.log(processedSuggestions);
+            setSuggestions(processedSuggestions);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setSuggestions([]);
+        }
+      };
   
 
     const filterDesAirportValue = async () => {

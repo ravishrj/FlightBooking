@@ -1,9 +1,13 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import Desktop from "./_components/DesktopView/page";
 import Navbar from "./_components/navbar/page";
 import Footer from "./_components/footer/page";
 import Section4 from "./_components/section4/page";
 import Copyright from "./_components/copyright/page";
+import useDeviceType from "./_UseDeviceType/page";
+import FooterDesktop from "./_components/FooterDesktop/page";
+import useWindowWidth from "./_UseDeviceType/page";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -22,6 +26,8 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+ 
+ 
   return (
     <html lang="en">
       <head>
@@ -29,6 +35,7 @@ export default function RootLayout({ children }) {
       <link rel="stylesheet" href="/usmobile.css" />
       <link rel="stylesheet" href="/usmobile_home.css" />
       <link rel="stylesheet" href="/US_customcss.css" />
+      <link rel="stylesheet" href="/UScustomhome.css" />
       <link href="/Content/css/m.lightpick.css?v=RUS2021" rel="stylesheet" />
       <link href="/bundles/US_mobilehotelcss?v=D5kGZF0-EfG2ZGUlC_qi6vWM1FZ81W3Xv_diatA6Se81" rel="stylesheet" />
       <link rel="stylesheet" href="/Content/css/m.lightpick.css" />
@@ -40,8 +47,8 @@ export default function RootLayout({ children }) {
       >
         
         {children}
-       
-     
+      
+        
       
       </body>
     </html>
