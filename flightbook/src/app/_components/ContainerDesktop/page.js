@@ -1,7 +1,10 @@
 "use client"
 
-import { useEffect,useState } from "react";
+import { useEffect,useState,useRef } from "react";
 import Select from 'react-select';
+import Flatpickr from 'react-flatpickr';
+import 'flatpickr/dist/flatpickr.css';
+import TravelersAndCabinInput from "../TravellersAndCabin/page";
 const ContainerForm=()=>{
     const [token, setToken] = useState("");
     const [originAirportList, setOriginAirportList] = useState([]);
@@ -14,23 +17,31 @@ const ContainerForm=()=>{
     const [infanctCount, setInfantCount] = useState(0);
     const [infantOnSeatCount, setInfantOnSeatCount] = useState(0);
     const [cabinType, setCabinType] = useState("ECONOMY");
-  
-      
+    const [isDropdownVisible, setDropdownVisible] = useState(false);
+    const [isDropdownVisibleDes, setDropdownVisibleDes] = useState(false);
+    const [showPax, setShowPax] = useState(false);
+    const [travellerToggle,setTravellerToggle] =useState(false)
+
+    const paxRef = useRef(null);
+    const handleCabinTypeChange = (event) => {
+      setCabinType(event.target.value); // Update state with the selected value
+  };
 
     const fetchToken = async () => {
         let body = new URLSearchParams();
         body.append("grant_type", "client_credentials");
-        body.append("client_id", "6KjF3w8cmzm5jvgkePQnLAB9ufdMiUnH");
-        body.append("client_secret", "hx7l3jSMq1AK9lFx");
+        body.append("client_id", "DjgWIoDOM9J6D7pDO8uq6p91zcP14pAG");
+        body.append("client_secret", "8ZDzeKpqbvfpudJN");
         try {
-            const data = await fetch("https://api.amadeus.com/v1/security/oauth2/token",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: body.toString()
-                });
+           
+            const data = await fetch("https://api.amadeus.com/v1/security/oauth2/token", {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: body.toString()
+           });
             const json = await data.json();
-            setToken(json.access_token)
+            console.log(json,"Fetching Token");
+            setToken(json.access_token);
             localStorage.setItem("typCknhbg", json.access_token);
         } catch (err) {
             console.log(err);
@@ -41,28 +52,51 @@ const ContainerForm=()=>{
     
     useEffect(() => {
       fetchToken();
+      console.log("token",token);
       // Remove the token from localStorage
     // localStorage.removeItem(token);
     
     }, []);
 
-const handleInputChange = (inputValue) => {
-  setOriginInputValue(inputValue);
-  filterSourceAirportValue(inputValue);
-};
+// const handleInputChange = (inputValue) => {
 
-const handleOriginChange = (selectedOption) => {
-  setOrigin(selectedOption);
-  setOriginInputValue(selectedOption?.label || '');
+//   console.log(inputValue,"inputValue");
+//   setOriginInputValue(inputValue);
+//   filterSourceAirportValue(inputValue);
+// };
+
+// const handleOriginChange = (selectedOption) => {
+//   setOrigin(selectedOption);
+//   setOriginInputValue(selectedOption?.label || '');
+// };
+//const [originInputValue, setOriginInputValue] = useState('');
+
+    const handleOriginChange = (event) => {
+      console.log(event.target.value,"inputValuein handleorigin");
+        setOriginInputValue(event.target.value);
+        // Optionally filter airport list here based on input value
+        filterSourceAirportValue(event.target.value);
+        setDropdownVisible(event.target.value.length > 0);
+    };
+    const handleSelectAirport = (city) => {
+      setOriginInputValue(`${city.label}, ${city.iataCode}`);
+      setDropdownVisible(false); // Update input with selected airport
+  };
+
+  const handleSelectDesAirport = (city) => {
+    setDesInputValue(`${city.label}, ${city.iataCode}`);
+    setDropdownVisibleDes(false); // Update input with selected airport
 };
 
 const filterSourceAirportValue = async () => {
+    console.log(originInputValue,"originInputValue");
     try {
         const response = await fetch(`https://api.amadeus.com/v1/reference-data/locations?subType=CITY,AIRPORT&keyword=${originInputValue}&page%5Blimit%5D=10&page%5Boffset%5D=0&sort=analytics.travelers.score&view=FULL`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             }
+           
         });
 
         if (!response.ok) {
@@ -70,17 +104,114 @@ const filterSourceAirportValue = async () => {
         }
 
         const result = await response.json();
+        console.log(result,"result");
         const options = result.data.map(a => ({
             label: `${a.iataCode} - ${a.name}, ${a.address.cityName}, ${a.address.countryCode}`,
             value: a.iataCode
         }));
 
         setOriginAirportList(options);
+        console.log(originAirportList,"originAirportList");
     } catch (err) {
-        console.log(err);
+        console.log(err,"err");
     }
 };
 
+const handleDesChange = (event) => {
+  console.log(event.target.value,"inputValuein Desorigin");
+  setDesInputValue(event.target.value);
+    // Optionally filter airport list here based on input value
+    filterDesAirportValue(event.target.value);
+    setDropdownVisibleDes(event.target.value.length > 0);
+};
+
+const fetchNearestAirports = async () => {
+  try {
+      // Get user's current location using Geolocation API
+      navigator.geolocation.getCurrentPosition(async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          // Call the Amadeus API to get nearest airports based on current latitude and longitude
+          const response = await fetch(`https://api.amadeus.com/v1/reference-data/locations/airports?latitude=${latitude}&longitude=${longitude}&radius=100&page%5Blimit%5D=10&sort=analytics.travelers.score`, {
+              headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}` // Corrected syntax
+              }
+          });
+
+          const result = await response.json();
+          
+          // Check if the response is valid and has data
+          if (response.ok && Array.isArray(result.data)) {
+              // Map the response to label and value format
+              const options = result.data.map(a => ({
+                  label: `${a.iataCode}, ${a.name}, ${a.address.cityName}, ${a.address.countryCode}`,
+                  value: a.iataCode // Corrected to just a.iataCode
+              }));
+
+              // Set the nearest airport list
+              setOriginAirportList(options);
+
+              if (options.length > 0) {
+                  setOriginInputValue(options[0].label); // Set the first airport as the default value
+                  setOrigin(options[0].value); // Corrected to use value
+              }
+          } else {
+              console.error("Error fetching airports:", result);
+          }
+      }, (error) => {
+          console.error("Geolocation error:", error); // Handle geolocation errors
+      });
+  } catch (err) {
+      console.error("Fetch error:", err);
+  }
+};
+
+const filterDesAirportValue = async () => {
+  try {
+      let response = await fetch(`https://api.amadeus.com/v1/reference-data/locations?subType=CITY,AIRPORT&keyword=${desInputValue}&page%5Blimit%5D=10&page%5Boffset%5D=0&sort=analytics.travelers.score&view=FULL`, {
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+          }
+      });
+      let result = await response.json()
+      let options = result.data.map(a => { return { label: `${a.iataCode} - ${a.name}, ${a.address.cityName}, ${a.address.countryCode}`, value: a.iataCode } })
+      setDesAirportList(options);
+  } catch (err) {
+      console.log(err);
+  }
+}
+
+
+useEffect(() => {
+  fetchNearestAirports();
+}, [token]);
+
+
+  const [depDate, setDepDate] = useState(new Date());
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleDepartureChange = (date) => {
+        if (date.length > 0) {
+            setDepDate(date[0]);
+            setErrorMessage(''); // Clear error message
+        } else {
+            setErrorMessage('Select depart date');
+        }
+    };
+
+    const [returnDate, setReturnDate] = useState(new Date());
+    //const [errorMessage, setErrorMessage] = useState('');
+
+    const handleReturnChange = (date) => {
+        if (date.length > 0) {
+            setReturnDate(date[0]);
+            setErrorMessage(''); // Clear error message
+        } else {
+            setErrorMessage('Select return date');
+        }
+    };
 
 
     return <div className="container">
@@ -169,32 +300,82 @@ const filterSourceAirportValue = async () => {
                       <img src="/Content/images/plane.png" />
                     </div>
                     <span>From</span>
-                    <input
-                      id="txtOriginCode"
-                      type="text"
-                      className="ui-autocomplete-input"
-                      autoComplete="off"
-                      onkeypress="return isCharWithSpaceHyphen(event)"
-                      defaultValue=""
-                      required=""
-                      placeholder="Departure"
-                    />
-                                  
-                                  {/* <Select
+                    {/* <input
     id="txtOriginCode"
-    className="ui-autocomplete-input textoverflow input_destination"
+    type="text"
+    className="ui-autocomplete-input"
+    autoComplete="off"
     options={originAirportList}
-    placeholder="Departure"
-    onInputChange={handleInputChange}
-    inputValue={originInputValue}
-    onChange={handleOriginChange}
+    value={originInputValue}
     required
-/> */}
+    placeholder="Departure"
+    onChange={handleOriginChange}
+/>
+
 
                     <i
                       className="fa fa-times-circle demo-label"
                       style={{ display: "none" }}
                     />
+                             
+                             {originAirportList.length > 0 && (
+       <ul
+        id="ui-id-1"
+        tabIndex={0}
+        className="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front"
+        style={{ top: 88, left: "37.5px", width: "338.5px", display: !originAirportList && "none" }} // Ensure display is block
+    >
+      
+        {originAirportList.map((city) => {
+          console.log(city, "city parent");
+         return <><li className="airList parent-auto-list ui-menu-item"> </li>
+         <li id="ui-id-36" tabIndex={-1} className="ui-menu-item-wrapper">
+           <span className="highlight-auto-list"></span> {city.label},{" "}
+           <span className="highlight-auto-list"></span> {city.iataCode}
+         </li>
+         </>
+          
+})}
+    </ul>
+)} */}
+<input
+                id="txtOriginCode"
+                type="text"
+                className="ui-autocomplete-input"
+                autoComplete="off"
+                value={originInputValue}
+                required
+                placeholder="Departure"
+                onChange={handleOriginChange}
+            />
+            <i className="fa fa-times-circle demo-label" style={{ display: "none" }} />
+
+            {isDropdownVisible && originAirportList.length > 0 && (
+                <ul
+                    id="ui-id-1"
+                    tabIndex={0}
+                    className="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front"
+                    style={{
+                        top: 88,
+                        left: "37.5px",
+                        width: "338.5px",
+                        display: originAirportList.length ? "block" : "none",
+                    }}
+                >
+                    {originAirportList.map((city, index) => (
+                        <li
+                            key={index} // Use a unique key
+                            className="airList parent-auto-list ui-menu-item"
+                            onClick={() => handleSelectAirport(city)} // Handle selection
+                        >
+                            <span className="highlight-auto-list"></span>
+                            {city.label}, <span className="highlight-auto-list"></span> {city.iataCode}
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+
                     <input name="OriginCode" type="hidden" id="hdnOriginCode" />
                     <span
                       id="spanOriginCityName"
@@ -219,7 +400,7 @@ const filterSourceAirportValue = async () => {
                       <img src="/Content/images/point.png" />
                     </div>
                     <span>To</span>
-                    <input
+                    {/* <input
                       id="txtDestCode"
                       type="text"
                       className="ui-autocomplete-input"
@@ -232,7 +413,47 @@ const filterSourceAirportValue = async () => {
                     <i
                       className="fa fa-times-circle demo-label"
                       style={{ display: "none" }}
+                    /> */}
+  <input
+                id="txtDestCode"
+                type="text"
+                className="ui-autocomplete-input"
+                autoComplete="off"
+                value={desInputValue}
+                required
+                placeholder="Destination"
+                onChange={handleDesChange}
+            />
+             <i
+                      className="fa fa-times-circle demo-label"
+                      style={{ display: "none" }}
                     />
+
+            {isDropdownVisibleDes && desAirportList.length > 0 && (
+                <ul
+                    id="ui-id-1"
+                    tabIndex={0}
+                    className="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front"
+                    style={{
+                        top: 88, // Adjust based on your layout
+                        left: "37.5px", // Adjust based on your layout
+                        width: "338.5px",
+                        display: desAirportList.length ? "block" : "none",
+                    }}
+                >
+                    {desAirportList.map((city, index) => (
+                        <li
+                            key={index} // Use a unique key
+                            className="airList parent-auto-list ui-menu-item"
+                            onClick={() => handleSelectDesAirport(city)} // Handle selection
+                        >
+                            <span className="highlight-auto-list"></span>
+                            {city.label}, <span className="highlight-auto-list"></span> {city.iataCode}
+                        </li>
+                    ))}
+                </ul>
+            )}
+
                     <input
                       name="DestinationCode"
                       type="hidden"
@@ -251,7 +472,7 @@ const filterSourceAirportValue = async () => {
                       Please select destination
                     </div>
                   </div>
-                  <div id="divDepartSecton" className="Date searchSec datepic">
+                  {/* <div id="divDepartSecton" className="Date searchSec datepic">
                     <div className="icon-class">
                       <img src="/Content/images/date1.png" />
                     </div>
@@ -285,8 +506,51 @@ const filterSourceAirportValue = async () => {
                     >
                       Select depart date
                     </div>
-                  </div>
-                  <div
+                  </div> */}
+
+<div id="divDepartSecton" className="Date searchSec datepic">
+            <div className="icon-class">
+                <img src="/Content/images/date1.png" alt="Date Icon" />
+            </div>
+            <span>
+                Depart <i className="fa fa-angle-down" aria-hidden="true" />
+            </span>
+            <Flatpickr
+                value={depDate}
+                onChange={handleDepartureChange}
+                options={{
+                    dateFormat: 'Y-m-d',
+                    minDate: "today",
+                    disableMobile: true,
+                }}
+                render={({ defaultValue, value, ...props }, ref) => (
+                    <input
+                        {...props}
+                        ref={ref}
+                        type="text"
+                        id="txtDepartDate"
+                        name="DepDate"
+                        className="date"
+                        placeholder="Date"
+                        readOnly
+                    />
+                )}
+            />
+            <p style={{ display: "none" }}>
+                <span className="date" id="txtDepartDate_MMM">Date</span>
+                <span className="date" id="txtDepartDate_DD" style={{ display: "none" }} />
+            </p>
+            <span id="txtDepartDate_DAY" style={{ display: "none" }} />
+            <span id="txtDepartDate_YYYY" style={{ display: "none" }} />
+            {errorMessage && (
+                <div id="spnDepDateErrMsg" className="errorMsg">
+                    {errorMessage}
+                </div>
+            )}
+        </div>
+
+
+                  {/* <div
                     id="divReturnSection"
                     className="Date searchSec datepic"
                     style={{}}
@@ -324,8 +588,53 @@ const filterSourceAirportValue = async () => {
                     >
                       Select return date
                     </div>
-                  </div>
-                  <div className="Traveler searchSec txtPassengers">
+                  </div> */}
+                                
+                                <div id="divReturnSection" className="Date searchSec datepic">
+            <div className="icon-class">
+                <img src="/Content/images/date1.png" alt="Date Icon" />
+            </div>
+            <span>
+                Return <i className="fa fa-angle-down" aria-hidden="true" />
+            </span>
+            <Flatpickr
+                value={returnDate}
+                onChange={handleReturnChange}
+                options={{
+                    dateFormat: 'Y-m-d',
+                    minDate: "today",
+                    disableMobile: true,
+                }}
+                render={({ defaultValue, value, ...props }, ref) => (
+                    <input
+                        {...props}
+                        ref={ref}
+                        type="text"
+                        id="txtReturnDate"
+                        name="RetDate"
+                        className="date"
+                        placeholder="Date"
+                        readOnly
+                    />
+                )}
+            />
+            <p style={{ display: "none" }}>
+                <span className="date" id="txtReturnDate_MMM">Date</span>
+                <span className="date" id="txtReturnDate_DD" style={{ display: "none" }} />
+            </p>
+            <span id="txtReturnDate_DAY" style={{ display: "none" }} />
+            <span id="txtReturnDate_YYYY" style={{ display: "none" }} />
+            {errorMessage && (
+                <div id="spnRetDateErrMsg" className="errorMsg">
+                    {errorMessage}
+                </div>
+            )}
+        </div>
+                        
+                  <div className="Traveler searchSec txtPassengers"
+                  onClick={()=>{
+                    setTravellerToggle(prev=>!prev);
+                  }}>
                     <div className="icon-class">
                       <img src="/Content/images/psger.png" />
                     </div>
@@ -348,6 +657,218 @@ const filterSourceAirportValue = async () => {
                       1 Adult
                     </b>
                   </div>
+                  {/* <TravelersAndCabinInput /> */}
+
+                  <div id="divPassengerDDL" className="pasenger-popup" style={{display:travellerToggle?"block":"none"}}>
+  <div className="">
+    <div className="divPassengerPanel">
+      <h2>Select Travelers</h2>
+      <div className="divPassenger">
+        <div className="divPassengerType">
+          <p>Adult</p>
+          <span>(18+ yrs)</span>
+        </div>
+        <div className="divPassengerCount">
+          <div className="Add_Less_Passenger">
+            <div className="MinusPassenger">
+              <input
+                type="button"
+                defaultValue="-"
+                className="MinusPassengerBox"
+                field="quantity"
+                onclick="UpdatePassengerCount(2,'ADT',1)"
+              />
+            </div>
+            <div className="PassengerCount">
+              <input
+                type="text"
+                defaultValue={1}
+                className="CountPassengerBox"
+                name="AdultPaxCount"
+                id="txtAdultPassenger"
+                readOnly=""
+              />
+            </div>
+            <div className="PlusPassenger">
+              <input
+                type="button"
+                defaultValue="+"
+                className="PlusPassengerBox"
+                field="quantity"
+                onclick="UpdatePassengerCount(1,'ADT',1)"
+              />
+            </div>
+            <div className="ClearPassengerCount" />
+          </div>
+        </div>
+      </div>
+      <div className="divPassenger">
+        <div className="divPassengerType">
+          <p>Children</p>
+          <span>(2 - 11 yrs)</span>
+        </div>
+        <div className="divPassengerCount">
+          <div className="Add_Less_Passenger">
+            <div className="MinusPassenger">
+              <input
+                type="button"
+                defaultValue="-"
+                className="MinusPassengerBox"
+                field="quantity"
+                onclick="UpdatePassengerCount(2,'CHD',1)"
+              />
+            </div>
+            <div className="PassengerCount">
+              <input
+                type="text"
+                defaultValue={0}
+                className="CountPassengerBox"
+                name="ChildPaxCount"
+                paxtype="CHD"
+                id="txtChildPassenger"
+                readOnly=""
+              />
+            </div>
+            <div className="PlusPassenger">
+              <input
+                type="button"
+                defaultValue="+"
+                className="PlusPassengerBox"
+                field="quantity"
+                onclick="UpdatePassengerCount(1,'CHD',1)"
+              />
+            </div>
+            <div className="ClearPassengerCount" />
+          </div>
+        </div>
+      </div>
+      <div className="divPassenger">
+        <div className="divPassengerType">
+          <p>Infant (on lap)</p>
+          <span>(Below 2 yrs)</span>
+        </div>
+        <div className="divPassengerCount">
+          <div className="Add_Less_Passenger">
+            <div className="MinusPassenger">
+              <input
+                type="button"
+                defaultValue="-"
+                className="MinusPassengerBox"
+                field="quantity"
+                onclick="UpdatePassengerCount(2,'INFL',1)"
+              />
+            </div>
+            <div className="PassengerCount">
+              <input
+                type="text"
+                defaultValue={0}
+                className="CountPassengerBox"
+                name="InfantLapPaxCount"
+                paxtype="INF"
+                id="txtInfantPassenger"
+                readOnly=""
+              />
+            </div>
+            <div className="PlusPassenger">
+              <input
+                type="button"
+                defaultValue="+"
+                className="PlusPassengerBox"
+                field="quantity"
+                onclick="UpdatePassengerCount(1,'INFL',1)"
+              />
+            </div>
+            <div className="ClearPassengerCount" />
+          </div>
+        </div>
+      </div>
+      <div className="divPassenger">
+        <div className="divPassengerType">
+          <p>Infant (on seat)</p>
+          <span>(Below 2 yrs)</span>
+        </div>
+        <div className="divPassengerCount">
+          <div className="Add_Less_Passenger">
+            <div className="MinusPassenger">
+              <input
+                type="button"
+                defaultValue="-"
+                className="MinusPassengerBox"
+                field="quantity"
+                onclick="UpdatePassengerCount(2,'INFS',1)"
+              />
+            </div>
+            <div className="PassengerCount">
+              <input
+                type="text"
+                defaultValue={0}
+                className="CountPassengerBox"
+                name="InfantSeatPaxCount"
+                paxtype="INFS"
+                id="txtInfantSeatPassenger"
+                readOnly=""
+              />
+            </div>
+            <div className="PlusPassenger">
+              <input
+                type="button"
+                defaultValue="+"
+                className="PlusPassengerBox"
+                field="quantity"
+                onclick="UpdatePassengerCount(1,'INFS',1)"
+              />
+            </div>
+            <div className="ClearPassengerCount" />
+          </div>
+        </div>
+      </div>
+    </div>
+    {/*Class*/}
+    <div className="class-mpopup">
+      <div className="pnlInner">
+        <div className="divClassTypePanel">
+          <h2>Select Class</h2>
+          <select
+            name="CabinClass"
+            id="LstCabinClass"
+            style={{ display: "none" }}
+          >
+            <option value={1} selected="">
+              Coach
+            </option>
+            <option value={2}>Premium Economy</option>
+            <option value={3}>Business Class</option>
+            <option value={4}>First Class</option>
+          </select>
+          <div className="pnlInner">
+            <div id="rdoCabin1" className="selectpassenger">
+              <span>Coach</span> <span className="act1" />
+            </div>
+            <div id="rdoCabin2" className="selectpassenger active">
+              <span>Premium Economy</span> <span className="" />
+            </div>
+            <div id="rdoCabin3" className="selectpassenger">
+              <span>Business Class</span> <span className="" />
+            </div>
+            <div id="rdoCabin4" className="selectpassenger">
+              <span>First Class</span> <span className="" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {/*End Class*/}
+    <div className="btsy">
+      <a className="g-orange" id="btnPassengerDone">
+        Done
+      </a>
+    </div>
+  </div>
+</div>
+
+
+                        
+
                   <div className="button-search">
                     <button
                       type="button"
