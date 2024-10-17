@@ -1,31 +1,135 @@
 "use client"
+import axios from 'axios';
 
 import { useEffect,useState,useRef } from "react";
+import { useRouter } from 'next/navigation';
 import Select from 'react-select';
 import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/flatpickr.css';
-import TravelersAndCabinInput from "../TravellersAndCabin/page";
+
+//import './PassengerStyles.module.css'
 const ContainerForm=()=>{
+   
+    
+
     const [token, setToken] = useState("");
     const [originAirportList, setOriginAirportList] = useState([]);
     const [originInputValue, setOriginInputValue] = useState(null);
+    const [origin,setOrigin]=useState("");
+    const [des,setDes]=useState("");
     const [desAirportList, setDesAirportList] = useState([]);
     const [desInputValue, setDesInputValue] = useState("");
     const [travellerDetail, setTravellerDetail] = useState({ adultCount: 1, childrenCount: 0, infanctCount: 0, cabinType: "ECONOMY" });
-    const [adultCount, setAdultCount] = useState(1);
-    const [childrenCount, setChildrenCount] = useState(0);
-    const [infanctCount, setInfantCount] = useState(0);
-    const [infantOnSeatCount, setInfantOnSeatCount] = useState(0);
-    const [cabinType, setCabinType] = useState("ECONOMY");
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const [isDropdownVisibleDes, setDropdownVisibleDes] = useState(false);
     const [showPax, setShowPax] = useState(false);
-    const [travellerToggle,setTravellerToggle] =useState(false)
+    const[flights,setFlights]=useState([]);
 
+
+
+    const [travellerToggle, setTravellerToggle] = useState(false);
+    const [adultCount, setAdultCount] = useState(1);
+    const [childrenCount, setChildrenCount] = useState(0);
+    const [infantCount, setInfantCount] = useState(0);
+    const [infantOnSeatCount, setInfantOnSeatCount] = useState(0);
+    const [cabinType, setCabinType] = useState("ECONOMY");
     const paxRef = useRef(null);
-    const handleCabinTypeChange = (event) => {
-      setCabinType(event.target.value); // Update state with the selected value
+     //const [totalTraveller,setTotalTraveller]=useState(1);
+    // Function to handle the application of filters and closing the dropdown
+    //const  totalTraveller=adultCount + childrenCount + infantCount + infantOnSeatCount;
+      
+    // const handleApplyFilter = () => {
+    //     // Handle your filter application logic here
+    //     // Close the dropdown after applying
+       
+    //     // setTotalTraveller(adultCount + childrenCount + infantCount + infantOnSeatCount);
+    //    //const  totalTraveller=adultCount + childrenCount + infantCount + infantOnSeatCount;
+      
+        
+    //     setTravellerDetail({
+    //       totalTraveller,
+    //       adultCount,
+    //       childrenCount,
+    //       infantCount,
+    //       infantOnSeatCount,
+    //       cabinType,
+    //   });
+
+    //   // Optionally, you can also set focus back to the input if needed
+    //   if (paxRef.current) {
+    //       paxRef.current.focus();
+    //   }
+
+    //   // Close the dropdown after applying
+    //   setTravellerToggle(false);
+     
+    // };
+    useEffect(() => {
+      // Load from local storage
+      const storedTravellerDetail = localStorage.getItem('travellerDetail');
+      if (storedTravellerDetail) {
+          setTravellerDetail(JSON.parse(storedTravellerDetail));
+      }
+   
+  }, []);
+
+    const handleApplyFilter = () => {
+      const totalTraveller = adultCount + childrenCount + infantCount + infantOnSeatCount;
+  
+      const newTravellerDetail = {
+          adultCount,
+          childrenCount,
+          infantCount,
+          infantOnSeatCount,
+          cabinType,
+          totalTraveller,
+      };
+  
+      // Save to local storage
+      localStorage.setItem('travellerDetail', JSON.stringify(newTravellerDetail));
+  
+      setTravellerDetail(newTravellerDetail);
+  
+      if (paxRef.current) {
+          paxRef.current.focus();
+      }
+  
+      setTravellerToggle(false);
   };
+  
+
+
+    // Function to handle changes in cabin type
+    const handleCabinTypeChange = (event) => {
+        setCabinType(event.target.value);
+    };
+
+    // Function to update adult count
+    const updateAdultCount = (delta) => {
+        setAdultCount(prev => Math.max(1, Math.min(9, prev + delta)));
+    };
+
+    // Function to update children count
+    const updateChildrenCount = (delta) => {
+        setChildrenCount(prev => Math.max(0, Math.min(8, prev + delta)));
+    };
+
+    // Function to update infant count on lap
+    const updateInfantCount = (delta) => {
+        setInfantCount(prev => Math.max(0, Math.min(4, prev + delta)));
+    };
+
+    // Function to update infant count on seat
+    const updateInfantOnSeatCount = (delta) => {
+        setInfantOnSeatCount(prev => Math.max(0, Math.min(4, prev + delta)));
+    };
+
+
+
+    //const paxRef = useRef(null);
+  //   const handleCabinTypeChange = (event) => {
+  //     setCabinType(event.target.value); // Update state with the selected value
+  // };
 
     const fetchToken = async () => {
         let body = new URLSearchParams();
@@ -42,7 +146,8 @@ const ContainerForm=()=>{
             const json = await data.json();
             console.log(json,"Fetching Token");
             setToken(json.access_token);
-            localStorage.setItem("typCknhbg", json.access_token);
+            localStorage.setItem("token", json.access_token);
+            return json.accessToken
         } catch (err) {
             console.log(err);
         }
@@ -78,13 +183,15 @@ const ContainerForm=()=>{
         filterSourceAirportValue(event.target.value);
         setDropdownVisible(event.target.value.length > 0);
     };
-    const handleSelectAirport = (city) => {
+  const handleSelectAirport = (city) => {
       setOriginInputValue(`${city.label}, ${city.iataCode}`);
+      setOrigin(`${city.iataCode}`);
       setDropdownVisible(false); // Update input with selected airport
   };
 
   const handleSelectDesAirport = (city) => {
     setDesInputValue(`${city.label}, ${city.iataCode}`);
+    setDes(`${city.iataCode}`);
     setDropdownVisibleDes(false); // Update input with selected airport
 };
 
@@ -169,6 +276,8 @@ const fetchNearestAirports = async () => {
 
 const filterDesAirportValue = async () => {
   try {
+
+
       let response = await fetch(`https://api.amadeus.com/v1/reference-data/locations?subType=CITY,AIRPORT&keyword=${desInputValue}&page%5Blimit%5D=10&page%5Boffset%5D=0&sort=analytics.travelers.score&view=FULL`, {
           headers: {
               "Content-Type": "application/json",
@@ -184,12 +293,72 @@ const filterDesAirportValue = async () => {
 }
 
 
+
+
+const router = useRouter();
+
+
+
+const handleOnSubmit = async(e) => {
+  
+ 
+  // if (!router.isReady) {
+  //   return null; // Or a loading indicator
+  // }
+  try {
+    console.log("hanClicked");
+    
+   /// router.push('/searchFlight');
+    
+  //   const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', new URLSearchParams({
+  //     'grant_type': 'client_credentials',
+  //     'client_id': "DjgWIoDOM9J6D7pDO8uq6p91zcP14pAG",
+  //     'client_secret': "8ZDzeKpqbvfpudJN"
+  // }), {
+  //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+  // });
+  
+  const accessToken = fetchToken();
+
+
+    // Search for flights
+    const response = await axios.get('https://test.api.amadeus.com/v2/shopping/flight-offers', {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: {
+            originLocationCode: origin,
+            destinationLocationCode: des,
+            departureDate: depDate,
+            returnDate: returnDate,
+            adults: adultCount,
+        },
+    });
+    console.log(response.data.data,"flightsData");
+    setFlights(response.data.data.data);
+    
+    // console.log(flights);
+} catch (error) {
+
+    console.error('Error fetching flight offers:', error);
+   // setError('Failed to fetch flight offers. Please try again.');
+}
+
+
+
+
+
+
+
+}
+
 useEffect(() => {
   fetchNearestAirports();
 }, [token]);
 
 
-  const [depDate, setDepDate] = useState(new Date());
+    const [depDate, setDepDate] = useState(new Date());
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleDepartureChange = (date) => {
@@ -212,6 +381,9 @@ useEffect(() => {
             setErrorMessage('Select return date');
         }
     };
+
+
+
 
 
     return <div className="container">
@@ -244,7 +416,7 @@ useEffect(() => {
                   "\n    /*ul.ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content {\n        top: 429.719px !important;\n    }*/\n \n"
               }}
             />
-            <form id="formFlightSearchEngine">
+            <form id="formFlightSearchEngine" onSubmit={handleOnSubmit}>
               <section className="flight-trip">
                 <div className="roundTripHolder">
                   <ul className="active">
@@ -344,6 +516,7 @@ useEffect(() => {
                 className="ui-autocomplete-input"
                 autoComplete="off"
                 value={originInputValue}
+
                 required
                 placeholder="Departure"
                 onChange={handleOriginChange}
@@ -550,6 +723,7 @@ useEffect(() => {
         </div>
 
 
+
                   {/* <div
                     id="divReturnSection"
                     className="Date searchSec datepic"
@@ -590,7 +764,7 @@ useEffect(() => {
                     </div>
                   </div> */}
                                 
-                                <div id="divReturnSection" className="Date searchSec datepic">
+       <div id="divReturnSection" className="Date searchSec datepic"  >
             <div className="icon-class">
                 <img src="/Content/images/date1.png" alt="Date Icon" />
             </div>
@@ -631,241 +805,227 @@ useEffect(() => {
             )}
         </div>
                         
-                  <div className="Traveler searchSec txtPassengers"
-                  onClick={()=>{
-                    setTravellerToggle(prev=>!prev);
-                  }}>
-                    <div className="icon-class">
-                      <img src="/Content/images/psger.png" />
-                    </div>
-                    <span>
-                      Travelers{" "}
-                      <i className="fa fa-angle-down" aria-hidden="true" />
-                    </span>
-                    <h6>
-                      <input
-                        id="txtPassengers"
-                        type="text"
-                        placeholder="1 Traveler, Coach"
-                        readOnly=""
-                      />{" "}
-                      <b id="txtClassType" style={{ display: "none" }}>
-                        Coach
-                      </b>
-                    </h6>
-                    <b id="txtPassengersDetails" style={{ display: "none" }}>
-                      1 Adult
-                    </b>
-                  </div>
-                  {/* <TravelersAndCabinInput /> */}
-
-                  <div id="divPassengerDDL" className="pasenger-popup" style={{display:travellerToggle?"block":"none"}}>
-  <div className="">
-    <div className="divPassengerPanel">
-      <h2>Select Travelers</h2>
-      <div className="divPassenger">
-        <div className="divPassengerType">
-          <p>Adult</p>
-          <span>(18+ yrs)</span>
-        </div>
-        <div className="divPassengerCount">
-          <div className="Add_Less_Passenger">
-            <div className="MinusPassenger">
-              <input
-                type="button"
-                defaultValue="-"
-                className="MinusPassengerBox"
-                field="quantity"
-                onclick="UpdatePassengerCount(2,'ADT',1)"
-              />
-            </div>
-            <div className="PassengerCount">
-              <input
-                type="text"
-                defaultValue={1}
-                className="CountPassengerBox"
-                name="AdultPaxCount"
-                id="txtAdultPassenger"
-                readOnly=""
-              />
-            </div>
-            <div className="PlusPassenger">
-              <input
-                type="button"
-                defaultValue="+"
-                className="PlusPassengerBox"
-                field="quantity"
-                onclick="UpdatePassengerCount(1,'ADT',1)"
-              />
-            </div>
-            <div className="ClearPassengerCount" />
-          </div>
-        </div>
-      </div>
-      <div className="divPassenger">
-        <div className="divPassengerType">
-          <p>Children</p>
-          <span>(2 - 11 yrs)</span>
-        </div>
-        <div className="divPassengerCount">
-          <div className="Add_Less_Passenger">
-            <div className="MinusPassenger">
-              <input
-                type="button"
-                defaultValue="-"
-                className="MinusPassengerBox"
-                field="quantity"
-                onclick="UpdatePassengerCount(2,'CHD',1)"
-              />
-            </div>
-            <div className="PassengerCount">
-              <input
-                type="text"
-                defaultValue={0}
-                className="CountPassengerBox"
-                name="ChildPaxCount"
-                paxtype="CHD"
-                id="txtChildPassenger"
-                readOnly=""
-              />
-            </div>
-            <div className="PlusPassenger">
-              <input
-                type="button"
-                defaultValue="+"
-                className="PlusPassengerBox"
-                field="quantity"
-                onclick="UpdatePassengerCount(1,'CHD',1)"
-              />
-            </div>
-            <div className="ClearPassengerCount" />
-          </div>
-        </div>
-      </div>
-      <div className="divPassenger">
-        <div className="divPassengerType">
-          <p>Infant (on lap)</p>
-          <span>(Below 2 yrs)</span>
-        </div>
-        <div className="divPassengerCount">
-          <div className="Add_Less_Passenger">
-            <div className="MinusPassenger">
-              <input
-                type="button"
-                defaultValue="-"
-                className="MinusPassengerBox"
-                field="quantity"
-                onclick="UpdatePassengerCount(2,'INFL',1)"
-              />
-            </div>
-            <div className="PassengerCount">
-              <input
-                type="text"
-                defaultValue={0}
-                className="CountPassengerBox"
-                name="InfantLapPaxCount"
-                paxtype="INF"
-                id="txtInfantPassenger"
-                readOnly=""
-              />
-            </div>
-            <div className="PlusPassenger">
-              <input
-                type="button"
-                defaultValue="+"
-                className="PlusPassengerBox"
-                field="quantity"
-                onclick="UpdatePassengerCount(1,'INFL',1)"
-              />
-            </div>
-            <div className="ClearPassengerCount" />
-          </div>
-        </div>
-      </div>
-      <div className="divPassenger">
-        <div className="divPassengerType">
-          <p>Infant (on seat)</p>
-          <span>(Below 2 yrs)</span>
-        </div>
-        <div className="divPassengerCount">
-          <div className="Add_Less_Passenger">
-            <div className="MinusPassenger">
-              <input
-                type="button"
-                defaultValue="-"
-                className="MinusPassengerBox"
-                field="quantity"
-                onclick="UpdatePassengerCount(2,'INFS',1)"
-              />
-            </div>
-            <div className="PassengerCount">
-              <input
-                type="text"
-                defaultValue={0}
-                className="CountPassengerBox"
-                name="InfantSeatPaxCount"
-                paxtype="INFS"
-                id="txtInfantSeatPassenger"
-                readOnly=""
-              />
-            </div>
-            <div className="PlusPassenger">
-              <input
-                type="button"
-                defaultValue="+"
-                className="PlusPassengerBox"
-                field="quantity"
-                onclick="UpdatePassengerCount(1,'INFS',1)"
-              />
-            </div>
-            <div className="ClearPassengerCount" />
-          </div>
-        </div>
-      </div>
+      
+<div className="Traveler searchSec txtPassengers" onClick={() => setTravellerToggle(prev => !prev)}>
+    <div className="icon-class">
+        <img src="/Content/images/psger.png" alt="Traveler Icon" />
     </div>
-    {/*Class*/}
-    <div className="class-mpopup">
-      <div className="pnlInner">
-        <div className="divClassTypePanel">
-          <h2>Select Class</h2>
-          <select
-            name="CabinClass"
-            id="LstCabinClass"
-            style={{ display: "none" }}
-          >
-            <option value={1} selected="">
-              Coach
-            </option>
-            <option value={2}>Premium Economy</option>
-            <option value={3}>Business Class</option>
-            <option value={4}>First Class</option>
-          </select>
-          <div className="pnlInner">
-            <div id="rdoCabin1" className="selectpassenger">
-              <span>Coach</span> <span className="act1" />
-            </div>
-            <div id="rdoCabin2" className="selectpassenger active">
-              <span>Premium Economy</span> <span className="" />
-            </div>
-            <div id="rdoCabin3" className="selectpassenger">
-              <span>Business Class</span> <span className="" />
-            </div>
-            <div id="rdoCabin4" className="selectpassenger">
-              <span>First Class</span> <span className="" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {/*End Class*/}
-    <div className="btsy">
-      <a className="g-orange" id="btnPassengerDone">
-        Done
-      </a>
-    </div>
-  </div>
+    <span>
+        Travelers{" "}
+        <i className="fa fa-angle-down" aria-hidden="true" />
+    </span>
+    <h6>
+        <input
+            id="txtPassengers"
+            type="text"
+            placeholder={`${travellerDetail.totalTraveller!=1?1:1} Traveler${travellerDetail.totalTraveller !== 1 ? 's' : ''}, ${travellerDetail.cabinType}`}
+            value={`${travellerDetail.totalTraveller} Traveler${travellerDetail.totalTraveller !== 1 ? 's' : ''}, ${travellerDetail.cabinType}`}
+            readOnly
+            onClick={() => { setShowPax((p) => !p) }}
+            ref={paxRef}
+        />
+        <b id="txtClassType" style={{ display: "none" }}>
+            {travellerDetail.cabinType}
+        </b>
+    </h6>
+    <b id="txtPassengersDetails" style={{ display: "none" }}>
+        {travellerDetail.adultCount} Adult{travellerDetail.adultCount !== 1 ? 's' : ''}
+    </b>
 </div>
 
+       
+
+
+{/* <div className="Traveler searchSec txtPassengers" onClick={() => setTravellerToggle(prev => !prev)}>
+    <div className="icon-class">
+        <img src="/Content/images/psger.png" alt="Traveler Icon" />
+    </div>
+    <span>
+        Travelers{" "}
+        <i className="fa fa-angle-down" aria-hidden="true" />
+    </span>
+    <h6>
+        <input
+            id="txtPassengers"
+            type="text"
+            placeholder={`${travellerDetail.adultCount} Traveler${travellerDetail.adultCount !== 1 ? 's' : ''}, ${travellerDetail.cabinType}`}
+            value={`${travellerDetail.adultCount} Traveler${travellerDetail.adultCount !== 1 ? 's' : ''}, ${travellerDetail.cabinType}`}
+            readOnly
+        />
+        <b id="txtClassType" style={{ display: "none" }}>
+            {travellerDetail.cabinType}
+        </b>
+    </h6>
+    <b id="txtPassengersDetails" style={{ display: "none" }}>
+        {travellerDetail.adultCount} Adult{travellerDetail.adultCount !== 1 ? 's' : ''}
+    </b>
+</div>
+
+<div id="divPassengerDDL" className="pasenger-popup" style={{ display: travellerToggle ? "" : "none" }}>
+    <div className="divPassengerPanel">
+        <h2>Select Travelers</h2>
+
+        
+        <div className="divPassenger">
+            <div className="divPassengerType">
+                <p>Adult</p>
+                <span>(18+ yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+                <div className="Add_Less_Passenger">
+                    <div className="MinusPassenger">
+                        <input
+                            type="button"
+                            value="-"
+                            className="MinusPassengerBox"
+                            onClick={() => setAdultCount(prev => Math.max(0, prev - 1))}
+                        />
+                    </div>
+                    <div className="PassengerCount">
+                        <input
+                            type="text"
+                            value={adultCount}
+                            className="CountPassengerBox"
+                            readOnly
+                        />
+                    </div>
+                    <div className="PlusPassenger">
+                        <input
+                            type="button"
+                            value="+"
+                            className="PlusPassengerBox"
+                            onClick={() => setAdultCount(prev => Math.min(9, prev + 1))}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div className="divPassenger">
+            <div className="divPassengerType">
+                <p>Children</p>
+                <span>(2 - 11 yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+                <div className="Add_Less_Passenger">
+                    <div className="MinusPassenger">
+                        <input
+                            type="button"
+                            value="-"
+                            className="MinusPassengerBox"
+                            onClick={() => setChildrenCount(prev => Math.max(0, prev - 1))}
+                        />
+                    </div>
+                    <div className="PassengerCount">
+                        <input
+                            type="text"
+                            value={childrenCount}
+                            className="CountPassengerBox"
+                            readOnly
+                        />
+                    </div>
+                    <div className="PlusPassenger">
+                        <input
+                            type="button"
+                            value="+"
+                            className="PlusPassengerBox"
+                            onClick={() => setChildrenCount(prev => Math.min(8, prev + 1))}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+        <div className="divPassenger">
+            <div className="divPassengerType">
+                <p>Infant (on lap)</p>
+                <span>(Below 2 yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+                <div className="Add_Less_Passenger">
+                    <div className="MinusPassenger">
+                        <input
+                            type="button"
+                            value="-"
+                            className="MinusPassengerBox"
+                            onClick={() => setInfantCount(prev => Math.max(0, prev - 1))}
+                        />
+                    </div>
+                    <div className="PassengerCount">
+                        <input
+                            type="text"
+                            value={infantCount}
+                            className="CountPassengerBox"
+                            readOnly
+                        />
+                    </div>
+                    <div className="PlusPassenger">
+                        <input
+                            type="button"
+                            value="+"
+                            className="PlusPassengerBox"
+                            onClick={() => setInfantCount(prev => Math.min(4, prev + 1))}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div className="divPassenger">
+            <div className="divPassengerType">
+                <p>Infant (on seat)</p>
+                <span>(Below 2 yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+                <div className="Add_Less_Passenger">
+                    <div className="MinusPassenger">
+                        <input
+                            type="button"
+                            value="-"
+                            className="MinusPassengerBox"
+                            onClick={() => setInfantOnSeatCount(prev => Math.max(0, prev - 1))}
+                        />
+                    </div>
+                    <div className="PassengerCount">
+                        <input
+                            type="text"
+                            value={infantOnSeatCount}
+                            className="CountPassengerBox"
+                            readOnly
+                        />
+                    </div>
+                    <div className="PlusPassenger">
+                        <input
+                            type="button"
+                            value="+"
+                            className="PlusPassengerBox"
+                            onClick={() => setInfantOnSeatCount(prev => Math.min(4, prev + 1))}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+     
+        <div className="class-mpopup">
+            <h2>Select Class</h2>
+            <select name="CabinClass" id="LstCabinClass" value={cabinType} onChange={handleCabinTypeChange}>
+                <option value="ECONOMY">Economy</option>
+                <option value="Premium_Economy">Premium Economy</option>
+                <option value="BUSINESS">Business</option>
+                <option value="FIRST">First</option>
+            </select>
+        </div>
+
+     
+        <div className="btsy">
+            <button onClick={handleApplyFilter} className="g-orange" id="btnPassengerDone">
+                Done
+            </button>
+        </div>
+    </div>
+</div> */}
 
                         
 
@@ -875,6 +1035,7 @@ useEffect(() => {
                       style={{ display: "none" }}
                       className="submit g-orange"
                       id="BtnSearchFare_RTOW_Deal"
+                      onClick={ handleOnSubmit}
                     >
                       Search Now
                     </button>
@@ -882,6 +1043,7 @@ useEffect(() => {
                       type="button"
                       className="submit g-orange"
                       id="BtnSearchFare_RTOW"
+                      onClick={ handleOnSubmit}
                     >
                       Search Flights
                     </button>
@@ -956,10 +1118,11 @@ useEffect(() => {
                 </div>
               </div>
               {/*Passenger-*/}
-              <div
+              {/* <div
                 id="divPassengerDDL"
                 className="pasenger-popup"
-                style={{ display: "none" }}
+                style={{ display:travellerToggle?"": "none" }
+            }
               >
                 <div className="">
                   <div className="divPassengerPanel">
@@ -1124,7 +1287,8 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  {/*Class*/}
+                 
+                 
                   <div className="class-mpopup">
                     <div className="pnlInner">
                       <div className="divClassTypePanel">
@@ -1158,15 +1322,183 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  {/*End Class*/}
+                  
                   <div className="btsy">
                     <a className="g-orange" id="btnPassengerDone">
                       Done
                     </a>
                   </div>
                 </div>
-              </div>
-              {/*End passenger*/}
+              </div> */}
+
+
+<div id="divPassengerDDL" className="pasenger-popup" style={{ display: travellerToggle ? "" : "none" }}>
+    <div className="divPassengerPanel">
+        <h2>Select Travelers</h2>
+
+        
+        <div className="divPassenger">
+            <div className="divPassengerType">
+                <p>Adult</p>
+                <span>(18+ yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+                <div className="Add_Less_Passenger">
+                    <div className="MinusPassenger">
+                        <input
+                            type="button"
+                            value="-"
+                            className="MinusPassengerBox"
+                            onClick={() => setAdultCount(prev => Math.max(0, prev - 1))}
+                        />
+                    </div>
+                    <div className="PassengerCount">
+                        <input
+                            type="text"
+                            value={adultCount}
+                            className="CountPassengerBox"
+                            readOnly
+                        />
+                    </div>
+                    <div className="PlusPassenger">
+                        <input
+                            type="button"
+                            value="+"
+                            className="PlusPassengerBox"
+                            onClick={() => setAdultCount(prev => Math.min(9, prev + 1))}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div className="divPassenger">
+            <div className="divPassengerType">
+                <p>Children</p>
+                <span>(2 - 11 yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+                <div className="Add_Less_Passenger">
+                    <div className="MinusPassenger">
+                        <input
+                            type="button"
+                            value="-"
+                            className="MinusPassengerBox"
+                            onClick={() => setChildrenCount(prev => Math.max(0, prev - 1))}
+                        />
+                    </div>
+                    <div className="PassengerCount">
+                        <input
+                            type="text"
+                            value={childrenCount}
+                            className="CountPassengerBox"
+                            readOnly
+                        />
+                    </div>
+                    <div className="PlusPassenger">
+                        <input
+                            type="button"
+                            value="+"
+                            className="PlusPassengerBox"
+                            onClick={() => setChildrenCount(prev => Math.min(8, prev + 1))}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+        <div className="divPassenger">
+            <div className="divPassengerType">
+                <p>Infant (on lap)</p>
+                <span>(Below 2 yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+                <div className="Add_Less_Passenger">
+                    <div className="MinusPassenger">
+                        <input
+                            type="button"
+                            value="-"
+                            className="MinusPassengerBox"
+                            onClick={() => setInfantCount(prev => Math.max(0, prev - 1))}
+                        />
+                    </div>
+                    <div className="PassengerCount">
+                        <input
+                            type="text"
+                            value={infantCount}
+                            className="CountPassengerBox"
+                            readOnly
+                        />
+                    </div>
+                    <div className="PlusPassenger">
+                        <input
+                            type="button"
+                            value="+"
+                            className="PlusPassengerBox"
+                            onClick={() => setInfantCount(prev => Math.min(4, prev + 1))}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div className="divPassenger">
+            <div className="divPassengerType">
+                <p>Infant (on seat)</p>
+                <span>(Below 2 yrs)</span>
+            </div>
+            <div className="divPassengerCount">
+                <div className="Add_Less_Passenger">
+                    <div className="MinusPassenger">
+                        <input
+                            type="button"
+                            value="-"
+                            className="MinusPassengerBox"
+                            onClick={() => setInfantOnSeatCount(prev => Math.max(0, prev - 1))}
+                        />
+                    </div>
+                    <div className="PassengerCount">
+                        <input
+                            type="text"
+                            value={infantOnSeatCount}
+                            className="CountPassengerBox"
+                            readOnly
+                        />
+                    </div>
+                    <div className="PlusPassenger">
+                        <input
+                            type="button"
+                            value="+"
+                            className="PlusPassengerBox"
+                            onClick={() => setInfantOnSeatCount(prev => Math.min(4, prev + 1))}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+     
+        <div className="class-mpopup">
+            <h2>Select Class</h2>
+            <select name="CabinClass" id="LstCabinClass" value={cabinType} onChange={handleCabinTypeChange}>
+                <option value="ECONOMY">Economy</option>
+                <option value="Premium_Economy">Premium Economy</option>
+                <option value="BUSINESS">Business</option>
+                <option value="FIRST">First</option>
+            </select>
+        </div>
+
+     
+        <div className="btsy">
+            <button onClick={handleApplyFilter} className="g-orange" id="btnPassengerDone">
+                Done
+            </button>
+        </div>
+    </div>
+</div> 
+
+            
             </form>
             {/*/Search Widget*/}
             {/*/Search Widget*/}

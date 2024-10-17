@@ -5,6 +5,8 @@ import VacationTab from "../VacationTabDealSectionDesktop/page";
 import FlightdealSection from "../FlightTabDealSectionDesktop/page";
 import FooterDesktop from "../FooterDesktop/page";
 import ContainerForm from "../ContainerDesktop/page";
+import SearchFlight from "../searchFlight/page";
+
 
 
 
@@ -16,6 +18,7 @@ const Desktop=()=>{
     <Container2/>
     {/* <VacationTab/> */}
     <FlightdealSection/>
+    <SearchFlight />
 
     </div>
 
