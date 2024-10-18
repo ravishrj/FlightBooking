@@ -9,9 +9,9 @@ import 'flatpickr/dist/flatpickr.css';
 
 //import './PassengerStyles.module.css'
 const ContainerForm=()=>{
-   
+    const router = useRouter();
     
-
+  const [oneWay, setOneWay] = useState(false);
     const [token, setToken] = useState("");
     const [originAirportList, setOriginAirportList] = useState([]);
     const [originInputValue, setOriginInputValue] = useState(null);
@@ -147,7 +147,7 @@ const ContainerForm=()=>{
             console.log(json,"Fetching Token");
             setToken(json.access_token);
             localStorage.setItem("token", json.access_token);
-            return json.accessToken
+            console.log(json.access_token, "Token Upon Calling Fetch Token");
         } catch (err) {
             console.log(err);
         }
@@ -184,16 +184,19 @@ const ContainerForm=()=>{
         setDropdownVisible(event.target.value.length > 0);
     };
   const handleSelectAirport = (city) => {
+    // console.log(city,"city in handleSelectAirport");
       setOriginInputValue(`${city.label}, ${city.iataCode}`);
-      setOrigin(`${city.iataCode}`);
+      setOrigin(city.value);
+      
+      
       setDropdownVisible(false); // Update input with selected airport
   };
 
   const handleSelectDesAirport = (city) => {
     setDesInputValue(`${city.label}, ${city.iataCode}`);
-    setDes(`${city.iataCode}`);
+    setDes(city.value);
     setDropdownVisibleDes(false); // Update input with selected airport
-};
+ };
 
 const filterSourceAirportValue = async () => {
     console.log(originInputValue,"originInputValue");
@@ -295,50 +298,20 @@ const filterDesAirportValue = async () => {
 
 
 
-const router = useRouter();
-
-
 
 const handleOnSubmit = async(e) => {
-  
- 
-  // if (!router.isReady) {
-  //   return null; // Or a loading indicator
-  // }
   try {
-    console.log("hanClicked");
-    
-   /// router.push('/searchFlight');
-    
-  //   const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', new URLSearchParams({
-  //     'grant_type': 'client_credentials',
-  //     'client_id': "DjgWIoDOM9J6D7pDO8uq6p91zcP14pAG",
-  //     'client_secret': "8ZDzeKpqbvfpudJN"
-  // }), {
-  //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-  // });
-  
-  const accessToken = fetchToken();
+  const accessToken = localStorage.getItem("token");
+   const searchObj = {
+              originLocationCode: origin,
+              destinationLocationCode: des,
+              departureDate: depDate,
+              returnDate: returnDate,
+              adults: adultCount,
+          };
 
-
-    // Search for flights
-    const response = await axios.get('https://test.api.amadeus.com/v2/shopping/flight-offers', {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        params: {
-            originLocationCode: origin,
-            destinationLocationCode: des,
-            departureDate: depDate,
-            returnDate: returnDate,
-            adults: adultCount,
-        },
-    });
-    console.log(response.data.data,"flightsData");
-    setFlights(response.data.data.data);
-    
-    // console.log(flights);
+    console.log(searchObj, "Search Object");
+    router.push(`/searchFlight?origin=${searchObj.originLocationCode}&destination=${searchObj.destinationLocationCode}&date=${searchObj.departureDate.toISOString().substring(0, 10)}&returnDate=${searchObj.returnDate.toISOString().substring(0, 10)}&adults=${searchObj.adults}&token=${accessToken}`)
 } catch (error) {
 
     console.error('Error fetching flight offers:', error);
@@ -416,21 +389,23 @@ useEffect(() => {
                   "\n    /*ul.ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content {\n        top: 429.719px !important;\n    }*/\n \n"
               }}
             />
-            <form id="formFlightSearchEngine" onSubmit={handleOnSubmit}>
+            <form id="formFlightSearchEngine" >
               <section className="flight-trip">
                 <div className="roundTripHolder">
                   <ul className="active">
                     <li
-                      className="active"
+                      className={!oneWay && "active"}
                       id="T_RT"
                       onclick="ShowHideSearchEngineTab('RT')"
+                      onClick={()=> setOneWay(false)}
                     >
                       ROUND-TRIP
                     </li>
                     <li
                       id="T_OW"
                       onclick="ShowHideSearchEngineTab('OW')"
-                      className=""
+                      className={oneWay && "active"}
+                      onClick={()=> setOneWay(true)}
                     >
                       ONE-WAY
                     </li>
@@ -764,7 +739,8 @@ useEffect(() => {
                     </div>
                   </div> */}
                                 
-       <div id="divReturnSection" className="Date searchSec datepic"  >
+       <div id="divReturnSection" className="Date searchSec datepic" style={{ display: oneWay ? "none" : "" }}
+ >
             <div className="icon-class">
                 <img src="/Content/images/date1.png" alt="Date Icon" />
             </div>
