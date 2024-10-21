@@ -13,6 +13,9 @@ const SearchFlight=()=>{
   const [flightDetails,setFlightDetails] = useState([]);
   const [FlightList, setFlightList] =useState([]);
   const searchParam = useSearchParams();
+  const oneWay=searchParam.get("oneWay");
+  const [selectedFlight, setSelectedFlight] = useState(null);
+  const [flightDetail, setFlightDetailVisible] = useState(false);
   const router = useRouter();
   useEffect(() => {
     const fetchFlightOffers = async () => {
@@ -73,6 +76,50 @@ const SearchFlight=()=>{
 
             }
         };
+                  
+
+        let query2 = {
+          "currencyCode": "USD",
+          "originDestinations": [
+              {
+                  "id": "1",
+                  "originLocationCode": searchParam.get("origin"),
+                  "destinationLocationCode": searchParam.get("destination"),
+                  "departureDateTimeRange": {
+                      
+                      "date": searchParam.get("date") // Adjust this to your specific parameter for the departure date
+                  }
+              },
+              {
+                  "id": "2",
+                  "originLocationCode": searchParam.get("destination"),
+                  "destinationLocationCode": searchParam.get("origin"),
+                  "departureDateTimeRange": {
+                      "date": searchParam.get("returnDate") // Adjust this to your specific parameter for the return date
+                  }
+              }
+          ],
+          "travelers": [{ id: 1, travelerType: "ADULT" }],
+          "sources": [
+              "GDS"
+          ],
+          "searchCriteria": {
+              "maxFlightOffers": 50,
+              "flightFilters": {
+                  "cabinRestrictions": [
+                      {
+                          "cabin": "ECONOMY",
+                          "originDestinationIds": [
+                              "1", // Ensure this is correct for the outbound leg
+                              "2"  // Ensure this is correct for the return leg
+                          ]
+                      }
+                  ],
+              },
+          }
+      };
+      
+
         try {
             const response = await fetch("https://api.amadeus.com/v2/shopping/flight-offers", {
                 method: "POST",
@@ -80,7 +127,7 @@ const SearchFlight=()=>{
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${searchParam.get("token")}`
                 },
-                body: JSON.stringify(query)
+                body: oneWay ? JSON.stringify(query) : JSON.stringify(query2)
             });
             const json = await response.json();
             console.log(json, "JSON");
@@ -99,9 +146,32 @@ const SearchFlight=()=>{
                
                 return a;
             });
+            const newFlightList1 = json.data.map(a => {
+              a.stops = a.itineraries[1].segments.length - 1;
+              a.itineraries.forEach(b => {
+                  b.segments.forEach(segment => {
+                      segment.airline = airlines[segment.carrierCode];
+                      segment.arrival.airport = airportsDB[segment.arrival.iataCode];
+                      segment.departure.airport = airportsDB[segment.departure.iataCode];
+                      // Append the cabin class to the segment
+                      const cabin = a.travelerPricings[0].fareDetailsBySegment.find(fare => fare.segmentId === segment.id)?.cabin;
+                      if (cabin) segment.cabin = cabin;
+                  });
+              });
+             
+              return a;
+          });
             console.log(newFlightList,"FlightList");
-            setFlightList(newFlightList);
+            
 
+            if(oneWay)
+            setFlightList(newFlightList);
+          else
+          {
+            const twoWay = [...newFlightList, ...newFlightList1];
+            setFlightList(twoWay);
+          }
+         
             setFlightDetails(FlightList);
             if (FlightList.length <= 0) {
                 // router.push("/home/no-results");
@@ -1986,7 +2056,27 @@ const SearchFlight=()=>{
           {/* End Short by price */}
           {/* listing box */}
          ``
-          <SearchFlightCard flightDetails={FlightList} />
+         {FlightList && FlightList.map(a => {
+        
+          return <SearchFlightCard  setSelectedFlight={setSelectedFlight} setFlightDetailVisible={setFlightDetailVisible} flight={a} oneWay={oneWay} />
+
+          })}
+
+             {/* show more */}
+            <div className="listingbutton pagination-container">
+      <div id="dvAirListing" className="col-xs-12 "></div>
+      <div className="" id="dvPageNumber">
+        <div className="pagination-container">
+          <ul className="pagination">
+            <li className="PagedList-skipToNext">
+              <a href="/FlightListing/ShowNextPage?Page_No=2" rel="next">
+                show more
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+            </div>
           <div id="lblMsg" style={{ display: "none" }} />
           {/* =========== Flight List End============== */}
           <input type="hidden" id="MinPrice" defaultValue={1028} />
