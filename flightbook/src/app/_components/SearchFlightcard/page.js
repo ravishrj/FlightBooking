@@ -4,11 +4,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 
-const SearchFlightCard=({ flight, setFlightDetailVisible, setSelectedFlight, oneWay })=>{
+const SearchFlightCard=({ flight, setFlightDetailVisible, setSelectedFlight, oneWay,token})=>{
     console.log(flight,"FlightList in SearchFlightCard");
     const [detailsToggle,setDetailsToggle]=useState(false);
 
     const router = useRouter();
+    const handleOnSubmit=()=>{
+      router.push(`/confirmation/token=${token}`);
+
+    }
     function calculateLayoverTime(flightOffer) {
         const itineraries = flightOffer.itineraries;
         const layovers = [];
@@ -34,7 +38,7 @@ const SearchFlightCard=({ flight, setFlightDetailVisible, setSelectedFlight, one
         return layovers;
       }
     
-        const getFormattedDate = (date) => {
+      const getFormattedDate = (date) => {
           let newDate = new Date(date)
           if (!isNaN(newDate)) {
               const formattedDate = newDate.toLocaleDateString('en-GB', {
@@ -293,7 +297,7 @@ const SearchFlightCard=({ flight, setFlightDetailVisible, setSelectedFlight, one
         {/* Right */}
         <div className="listing-right">
           <div>
-          <h2>
+            <h2>
              ${flight.travelerPricings[0].price.total} <span>Price Per Person (Incl fee)</span>
              </h2>
 
@@ -302,6 +306,7 @@ const SearchFlightCard=({ flight, setFlightDetailVisible, setSelectedFlight, one
               className="selectBtn"
               id="btn_1"
               onclick="BookNow('listing_box_1','btn_1')"
+              onClick={handleOnSubmit}
             >
               BOOK NOW
             </a>
@@ -403,89 +408,76 @@ const SearchFlightCard=({ flight, setFlightDetailVisible, setSelectedFlight, one
            })}
           </div>
         </div> 
-        <div className="depart-flight return-flight">
+       {!oneWay && <div className="depart-flight return-flight">
           <div className="box-left">
             <img src="/Content/images/return-icon-red.png" />
             <h3>Return</h3>
           </div>
           <div className="box-right">
-            <h3>
-              Delhi (DEL) - New York (JFK) <span>|</span> Mon, Nov 18 |
-              20h 15m
-            </h3>
-            <ul>
-              <li>
-                <img
-                  src="/Content/images/AirlinesLogo/AI.png"
-                  width={90}
-                  alt="Air India"
-                  title="Air India"
-                />
-              </li>
-              <li>
-                <p>Air India</p>
-                <span>AI 9484</span>
-                <span className="CamelT">
-                  Operated by air india express{" "}
-                </span>
-              </li>
-              <li>
-                <p>Indira Gandhi Intl. (DEL)</p>
-                <span>Mon | 09:10 PM | Nov 18</span>
-              </li>
-              <li>
-                <p>Chhatrapati Shivaji Maharaj Intl. (BOM)</p>
-                <span>Mon | 11:35 PM | Nov 18</span>
-              </li>
-              <li>
-                <p>
-                  <strong>Coach</strong>
-                </p>
-                <span>2h 25m</span>
-                <p className="bag-info">
-                  <i className="fa fa-suitcase" aria-hidden="true" />
-                  <i>2 PC</i>
-                </p>
-              </li>
-            </ul>
-            <div className="changefligth">
-              <p>Mumbai (BOM) | 2h 10m Layover</p>
-              <b></b>
-            </div>
-            <ul>
-              <li>
-                <img
-                  src="/Content/images/AirlinesLogo/AI.png"
-                  width={90}
-                  alt="Air India"
-                  title="Air India"
-                />
-              </li>
-              <li>
-                <p>Air India</p>
-                <span>AI 119</span>
-              </li>
-              <li>
-                <p>Chhatrapati Shivaji Maharaj Intl. (BOM)</p>
-                <span>Tue | 01:45 AM | Nov 19</span>
-              </li>
-              <li>
-                <p>John F Kennedy Intl. (JFK)</p>
-                <span>Tue | 06:55 AM | Nov 19</span>
-              </li>
-              <li>
-                <p>
-                  <strong>Coach</strong>
-                </p>
-                <span>15h 40m</span>
-                <p className="bag-info">
-                  <i className="fa fa-suitcase" aria-hidden="true" />
-                  <i>2 PC</i>
-                </p>
-              </li>
-            </ul>
+         <h3>
+          
+             {flight.itineraries[1].segments[0].departure.airport.city}{" "}
+              {flight.itineraries[1].segments[0].departure.iataCode} -
+               {flight.itineraries[1].segments[(flight.itineraries[1].segments.length)-1].arrival.airport.city}{" "}
+              {flight.itineraries[1].segments[(flight.itineraries[1].segments.length)-1].arrival.iataCode}
+                
+              <span>|</span>  {getFormattedDate(flight.itineraries[1].segments[0].departure.at)} | {extractDuration(flight.itineraries[1].duration)}
+
+           </h3>
+            {flight.itineraries[1].segments.map((segment, index) => {
+             console.log(segment, "segment"); // Check the segment structure
+
+          return (
+    <>
+     <ul key={index}>
+      <li>
+        <img
+          src="/Content/images/AirlinesLogo/AI.png"
+          width={90}
+          alt="Air India"
+          title="Air India"
+        />
+      </li>
+      {/* <li>
+        <p>{segment.airline?.name || "Unknown Airline"}</p>
+        
+        <span>{segment.airline?.code || "N/A"} {segment.aircraft || "Unknown"}</span>
+        <span className="CamelT">Operated by air india express</span>
+      </li> */}
+  
+      <li>
+        <p>
+          {segment.departure?.airport?.name || "Unknown Airport"}. {segment.departure?.iataCode || "N/A"}
+        </p>
+        <span>Mon | {getTimeFromDate(segment.departure?.at)} | {getFormattedDate(segment.departure?.at)}</span>
+      </li>
+      <li>
+        <p>
+          {segment.arrival?.airport?.name || "Unknown Airport"}. {segment.arrival?.iataCode || "N/A"}
+        </p>
+        <span>Mon | {getTimeFromDate(segment.arrival?.at)} | {getFormattedDate(segment.arrival?.at)}</span>
+      </li>
+      <li>
+        <p><strong>Coach</strong></p>
+        <span>{extractDuration(segment.duration) || "Duration unknown"}</span>
+        <p className="bag-info">
+          <i className="fa fa-suitcase" aria-hidden="true" />
+          <i>2 PC</i>
+        </p>
+      </li>
+     </ul>
+       {flight.itineraries[1].segments.length > 1 &&  segment!=flight.itineraries[1].segments[flight.itineraries[0].segments.length-1] && <div className="changefligth">
+              <p>  {segment.arrival.airport ? segment.arrival.airport.name : ""},
+                 {segment.arrival.airport ? segment.arrival.airport.city : ""} | 
+                {calculateLayoverTime(flight)[0].itineraries.layover_time} Layover
+            </p>
+                  <b></b>
+                  </div>}
+    </>
+           );
+           })}
           </div>
-        </div>
+        </div>}
       </div>
       {/* End Flight Details */}
     </div>}

@@ -39,9 +39,10 @@ export default function RootLayout({ children }) {
       <link rel="stylesheet" href="/UScustomhome.css" />
       <link rel="stylesheet" href="/listing.css" />
       <link rel="stylesheet" href="/owlCarausel.css" />
-     
-
+      <link rel="stylesheet" href="/Content/css/confirmation.css" />
+      <link rel="stylesheet" href="/Content/css/flight-popup.css" />
       <link href="/Content/css/m.lightpick.css?v=RUS2021" rel="stylesheet" />
+      <link href="/Content/css/e28.css" rel="stylesheet" />
       <link href="/bundles/US_mobilehotelcss?v=D5kGZF0-EfG2ZGUlC_qi6vWM1FZ81W3Xv_diatA6Se81" rel="stylesheet" />
       <link rel="stylesheet" href="/Content/css/m.lightpick.css" />
       <script src="/_usemobile.js" >

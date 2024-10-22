@@ -146,21 +146,41 @@ const SearchFlight=()=>{
                
                 return a;
             });
-            const newFlightList1 = json.data.map(a => {
-              a.stops = a.itineraries[1].segments.length - 1;
-              a.itineraries.forEach(b => {
-                  b.segments.forEach(segment => {
-                      segment.airline = airlines[segment.carrierCode];
-                      segment.arrival.airport = airportsDB[segment.arrival.iataCode];
-                      segment.departure.airport = airportsDB[segment.departure.iataCode];
-                      // Append the cabin class to the segment
-                      const cabin = a.travelerPricings[0].fareDetailsBySegment.find(fare => fare.segmentId === segment.id)?.cabin;
-                      if (cabin) segment.cabin = cabin;
-                  });
-              });
+          //   const newFlightList1 = json.data.map(a => {
+          //     a.stops = a.itineraries[1].segments.length - 1;
+          //     a.itineraries.forEach(b => {
+          //         b.segments.forEach(segment => {
+          //             segment.airline = airlines[segment.carrierCode];
+          //             segment.arrival.airport = airportsDB[segment.arrival.iataCode];
+          //             segment.departure.airport = airportsDB[segment.departure.iataCode];
+          //             // Append the cabin class to the segment
+          //             const cabin = a.travelerPricings[0].fareDetailsBySegment.find(fare => fare.segmentId === segment.id)?.cabin;
+          //             if (cabin) segment.cabin = cabin;
+          //         });
+          //     });
              
-              return a;
-          });
+          //     return a;
+          // });
+
+          let newFlightList1;
+
+if (!oneWay) {
+  newFlightList1 = json.data.map(a => {
+    a.stops = a.itineraries[1].segments.length - 1;
+    a.itineraries.forEach(b => {
+      b.segments.forEach(segment => {
+        segment.airline = airlines[segment.carrierCode];
+        segment.arrival.airport = airportsDB[segment.arrival.iataCode];
+        segment.departure.airport = airportsDB[segment.departure.iataCode];
+        // Append the cabin class to the segment
+        const cabin = a.travelerPricings[0].fareDetailsBySegment.find(fare => fare.segmentId === segment.id)?.cabin;
+        if (cabin) segment.cabin = cabin;
+      });
+    });
+
+    return a;
+  });
+}
             console.log(newFlightList,"FlightList");
             
 
@@ -168,7 +188,7 @@ const SearchFlight=()=>{
             setFlightList(newFlightList);
           else
           {
-            const twoWay = [...newFlightList, ...newFlightList1];
+           const twoWay = [...newFlightList, ...newFlightList1];
             setFlightList(twoWay);
           }
          
@@ -2058,7 +2078,7 @@ const SearchFlight=()=>{
          ``
          {FlightList && FlightList.map(a => {
         
-          return <SearchFlightCard  setSelectedFlight={setSelectedFlight} setFlightDetailVisible={setFlightDetailVisible} flight={a} oneWay={oneWay} />
+          return <SearchFlightCard  setSelectedFlight={setSelectedFlight} setFlightDetailVisible={setFlightDetailVisible} flight={a} oneWay={oneWay} token={searchParam.get("token")}/>
 
           })}
 
