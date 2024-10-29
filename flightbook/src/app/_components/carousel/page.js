@@ -153,20 +153,20 @@ import React from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { useState } from 'react';
-const MyTextCarousel = () => {
+const MyTextCarousel = ({FlightList,oneWay}) => {
 
   const airlines = [
     { code: 'AI', name: 'Air India', logo: '/Content/images/AirlinesLogo/AI.png', prices: ['$175.18', '$160.48'] },
     { code: 'UK', name: 'Air Vistara', logo: '/Content/images/AirlinesLogo/UK.png', prices: ['$172.28', '---'] },
   ];
 
-  const [filteredAirlines, setFilteredAirlines] = useState(airlines);
+  const [filteredAirlines, setFilteredAirlines] = useState(FlightList);
   
   const handleSorting = (value) => {
     if (value.startsWith('|')) {
       // Filter by airline code
       const airlineCode = value.slice(1, -1);
-      const filtered = initialAirlines.filter(airline => airline.code === airlineCode);
+      const filtered = initialAirlines.filter(flight => flight.itineraries[0].segments[0].airline.code === airlineCode);
       setFilteredAirlines(filtered);
     } else if (value.startsWith('DO|')) {
       // Sort by price (departure)
@@ -202,41 +202,41 @@ const MyTextCarousel = () => {
             showThumbs={false}
             interval={3000}
           >
-            {airlines.map((airline) => (
-              <div className="owl-item active" style={{ width: 151 }} key={airline.code}>
+            {FlightList.map((flight) => (
+              <div className="owl-item active" style={{ width: 151 }} key={flight.itineraries[0].segments[0].airline.code}>
                 <ul className="item">
                   <li>
-                    <a href="JavaScript:void(0)" onClick={() => handleSorting(`|${airline.code}|`)}>
+                    <a href="JavaScript:void(0)" onClick={() => handleSorting(`|${flight.itineraries[0].segments[0].airline.code}|`)}>
                       <span className="l-img">
-                        <img src={airline.logo} alt={airline.name} />
+                        <img src={"/Content/images/AirlinesLogo/AI.png"} alt= {flight.itineraries[0].segments[0].airline.name} />
                       </span>
                     </a>
-                    <a href="#" className="am-flight" onClick={() => handleSorting(`|${airline.code}|`)}>
-                      <p className="fw600">{airline.name}</p>
+                    <a href="#" className="am-flight" onClick={() => handleSorting(`|${flight.itineraries[0].segments[0].airline.name}|`)}>
+                      <p className="fw600">{flight.itineraries[0].segments[0].airline.name}</p>
                     </a>
                   </li>
-                  {airline.prices.map((price, index) => (
+                  {/* {airlines[0].price.map((p, index) => (
   <li key={index}>
     <a
       href="#"
       onClick={() => {
-        if (price !== '---') {
-          handleSorting(`DO|${airline.code}|${price}`);
+        if (p!== '---') {
+          handleSorting(`DO|${flight.itineraries[0].segments[0].airline.code}|${price}`);
         }
       }}
     >
       <span>
-        {price === '---' ? (
-          price
+        {p=== '---' ? (
+          p
         ) : (
           <>
-            ${price.split('.')[0]}<sup className="small">.{price.split('.')[1]}</sup>
+            ${p.split('.')[0]}<sup className="small">.{p.split('.')[1]}</sup>
           </>
         )}
       </span>
     </a>
   </li>
-))}
+))} */}
 
                 </ul>
               </div>

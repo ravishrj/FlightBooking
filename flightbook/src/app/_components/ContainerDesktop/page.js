@@ -8,10 +8,116 @@ import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/flatpickr.css';
 
 //import './PassengerStyles.module.css'
+
+const useWindowWidth = () => {
+  const [windowWidth, setWindowWidth] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Set initial width
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return windowWidth;
+};
+
+
+
 const ContainerForm=()=>{
+
+  const [isMobile, setIsMobile] = useState(false);
+  const width = useWindowWidth();
+
+
+  // useEffect(() => {
+  //   if (width <= 768) {
+  //     setIsMobile(true);
+  //   } else if (width > 768) {
+  //     setIsMobile(false);
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    console.log(isMobile, "is Mobile from desktop navbar");
+    const desktopCss = document.createElement("link");
+    desktopCss.rel = "stylesheet";
+    desktopCss.href = "/US_customcss.css";
+
+    const desktopHomeCss = document.createElement("link");
+    desktopHomeCss.rel = "stylesheet";
+    desktopHomeCss.href = "/UScustomhome.css";
+
+    const listing = document.createElement("link");
+    listing.rel = "stylesheet";
+    listing.href = "/listing.css";
+
+    const owlCarausel = document.createElement("link");
+    owlCarausel.rel = "stylesheet";
+    owlCarausel.href = "/owlCarausel.css";
+
+    const confirmation = document.createElement("link");
+    confirmation.rel = "stylesheet";
+    confirmation.href = "/Content/css/confirmation.css";
+
+    const flight_popup = document.createElement("link");
+    flight_popup.rel = "stylesheet";
+    flight_popup.href = "/Content/css/flight-pop.css";
+
+    const e28 = document.createElement("link");
+    e28.rel = "stylesheet";
+    e28.href = "Content/css/e28";
+
+    if (!isMobile) {
+      console.log("Destop View loaded");
+      document.head.appendChild(desktopCss);
+      document.head.appendChild(desktopHomeCss);
+      document.head.appendChild(listing);
+      document.head.appendChild(owlCarausel);
+      document.head.appendChild(confirmation);
+      document.head.appendChild(flight_popup);
+      document.head.appendChild(e28);
+
+      return () => {
+        if (document.head.contains(desktopCss)) {
+          document.head.removeChild(desktopCss);
+        }
+        if (document.head.contains(desktopHomeCss)) {
+          document.head.removeChild(desktopHomeCss);
+        }
+        if (document.head.contains(listing)) {
+          document.head.removeChild(listing);
+        }
+        if (document.head.contains( owlCarausel)) {
+          document.head.removeChild( owlCarausel);
+        }
+        if (document.head.contains(confirmation)) {
+          document.head.removeChild(confirmation);
+        }
+        if (document.head.contains(flight_popup)) {
+          document.head.removeChild(flight_popup);
+        }
+        if (document.head.contains(e28)) {
+          document.head.removeChild(e28);
+        }
+      }
+    }
+  }, [isMobile]);
+
+
     const router = useRouter();
     
-  const [oneWay, setOneWay] = useState(false);
+    const [oneWay, setOneWay] = useState(false);
     const [token, setToken] = useState("");
     const [originAirportList, setOriginAirportList] = useState([]);
     const [originInputValue, setOriginInputValue] = useState(null);
@@ -312,7 +418,7 @@ const handleOnSubmit = async(e) => {
 
     console.log(searchObj, "Search Object");
     //router.push(`/searchFlight?origin=${searchObj.originLocationCode}&destination=${searchObj.destinationLocationCode}&date=${searchObj.departureDate.toISOString().substring(0, 10)}&returnDate=${searchObj.returnDate.toISOString().substring(0, 10)}&adults=${searchObj.adults}&token=${accessToken}&oneway=${oneWay}`)
-    router.push(`/searchFlight?origin=${searchObj.originLocationCode}&destination=${searchObj.destinationLocationCode}&date=${searchObj.departureDate.toISOString().substring(0, 10)}${!oneWay ? `&returnDate=${searchObj.returnDate.toISOString().substring(0, 10)}` : ''}&adults=${searchObj.adults}&token=${accessToken}&oneway=${oneWay}`);
+    router.push(`/searchFlight?origin=${searchObj.originLocationCode}&destination=${searchObj.destinationLocationCode}&date=${searchObj.departureDate.toISOString().substring(0, 10)}${!oneWay ? `&returnDate=${searchObj.returnDate.toISOString().substring(0, 10)}` : ''}&adults=${searchObj.adults}&token=${accessToken}&oneWay=${oneWay.toString()}&originInputValue=${originInputValue}&originDesValue=${originInputValue}&desInputValue=${desInputValue}`);
 
 
 } catch (error) {
