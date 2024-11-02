@@ -14,6 +14,7 @@ import airlines from "../../../../lib/airlines.json";
 
 const ModifyForm = ({
   oneWay,
+  setOneWay,
   setFlightList,
   setFlightDetails,
   FlightList,
@@ -33,6 +34,7 @@ const ModifyForm = ({
     infanctCount: 0,
     cabinType: "ECONOMY",
   });
+  console.log("oneWay");
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isDropdownVisibleDes, setDropdownVisibleDes] = useState(false);
   const [showPax, setShowPax] = useState(false);
@@ -76,205 +78,6 @@ const ModifyForm = ({
 
   const handleOnSubmit = (e) => {
     setModifyForm(true);
-    // try {
-    //   const accessToken = localStorage.getItem("token") || searchParam.get("token");
-    //   const searchObj = {
-    //     originLocationCode: origin,
-    //     destinationLocationCode: des,
-    //     departureDate: depDate,
-    //     returnDate: returnDate,
-    //     adults: adultCount,
-    //   };
-
-    //     // setEarliest(false);
-    //     // setQuickest(false);
-    //     let travellersArr = [];
-    //     if (searchParam.get("adult")) {
-    //       for (let x = 0; x < parseInt(searchParam.get("adult")); x++) {
-    //         travellersArr.push({ id: travellersArr.length + 1, travelerType: "ADULT" })
-    //       }
-    //     }
-
-    //     if (searchParam.get("child")) {
-    //       for (let x = 0; x < parseInt(searchParam.get("child")); x++) {
-    //         travellersArr.push({ id: travellersArr.length + 1, travelerType: "CHILD" })
-    //       }
-    //     }
-
-    //     if (searchParam.get("infant")) {
-    //       for (let x = 0; x < parseInt(searchParam.get("infant")); x++) {
-    //         travellersArr.push({ id: travellersArr.length + 1, travelerType: "SEATED_INFANT" })
-    //       }
-    //     }
-
-    //     let cabinRestrictionObj = {};
-    //     if (searchParam.get("airline") !== "all") {
-    //       cabinRestrictionObj = {
-    //         "includedCarrierCodes": [searchParam.get("airline")]
-    //       }
-    //     }
-
-    //     let query = {
-    //       "currencyCode": "USD",
-    //       "originDestinations": [
-    //         {
-    //           "id": "1",
-    //           "originLocationCode": origin,
-    //           "destinationLocationCode": des,
-    //           "departureDateTimeRange": {
-    //             "date": depDate.toISOString().substring(0, 10)
-    //           }
-    //         }
-    //       ],
-    //       "travelers": [{ id: 1, travelerType: "ADULT" }],
-    //       "sources": [
-    //         "GDS"
-    //       ],
-    //       "searchCriteria": {
-    //         "maxFlightOffers": 50,
-    //         "flightFilters": {
-    //           "cabinRestrictions": [
-    //             {
-    //               "cabin": "ECONOMY",
-    //               "originDestinationIds": [
-    //                 "1"
-    //               ]
-    //             }
-    //           ],
-    //         },
-
-    //       }
-    //     };
-
-    //     let query2 = {
-    //       "currencyCode": "USD",
-    //       "originDestinations": [
-    //         {
-    //           "id": "1",
-    //           "originLocationCode":origin,
-    //           "destinationLocationCode": des,
-    //           "departureDateTimeRange": {
-
-    //             "date": depDate.toISOString().substring(0, 10) // Adjust this to your specific parameter for the departure date
-    //           }
-    //         },
-    //         {
-    //           "id": "2",
-    //           "originLocationCode": des,
-    //           "destinationLocationCode": origin,
-    //           "departureDateTimeRange": {
-    //             "date":returnDate.toISOString().substring(0, 10) // Adjust this to your specific parameter for the return date
-    //           }
-    //         }
-    //       ],
-    //       "travelers": [{ id: 1, travelerType: "ADULT" }],
-    //       "sources": [
-    //         "GDS"
-    //       ],
-    //       "searchCriteria": {
-    //         "maxFlightOffers": 50,
-    //         "flightFilters": {
-    //           "cabinRestrictions": [
-    //             {
-    //               "cabin": "ECONOMY",
-    //               "originDestinationIds": [
-    //                 "1", // Ensure this is correct for the outbound leg
-    //                 "2"  // Ensure this is correct for the return leg
-    //               ]
-    //             }
-    //           ],
-    //         },
-    //       }
-    //     };
-
-    //     // try {
-    //     //   const response = await fetch("https://api.amadeus.com/v2/shopping/flight-offers", {
-    //     //     method: "POST",
-    //     //     headers: {
-    //     //       "Content-Type": "application/json",
-    //     //       "Authorization": `Bearer ${accessToken}`
-    //     //     },
-    //     //     body: oneWay ? JSON.stringify(query) : JSON.stringify(query2)
-    //     //   });
-    //     //   const json = await response.json();
-    //     //   console.log(json, "JSON IN SEARCHFLIGHT");
-    //     //   const newFlightList = json.data.map(a => {
-    //     //     a.stops = a.itineraries[0].segments.length - 1;
-    //     //     a.itineraries.forEach(b => {
-    //     //       b.segments.forEach(segment => {
-    //     //         segment.airline = airlines[segment.carrierCode];
-    //     //         segment.arrival.airport = airportsDB[segment.arrival.iataCode];
-    //     //         segment.departure.airport = airportsDB[segment.departure.iataCode];
-    //     //         // Append the cabin class to the segment
-    //     //         const cabin = a.travelerPricings[0].fareDetailsBySegment.find(fare => fare.segmentId === segment.id)?.cabin;
-    //     //         if (cabin) segment.cabin = cabin;
-    //     //       });
-    //     //     });
-
-    //     //     return a;
-    //     //   });
-
-    //     //   let newFlightList1;
-    //     //   if (!oneWay) {
-    //     //     newFlightList1 = json.data.map(a => {
-    //     //       a.stops = a.itineraries[1].segments.length - 1;
-    //     //       a.itineraries.forEach(b => {
-    //     //         b.segments.forEach(segment => {
-    //     //           segment.airline = airlines[segment.carrierCode];
-    //     //           segment.arrival.airport = airportsDB[segment.arrival.iataCode];
-    //     //           segment.departure.airport = airportsDB[segment.departure.iataCode];
-    //     //           // Append the cabin class to the segment
-    //     //           const cabin = a.travelerPricings[0].fareDetailsBySegment.find(fare => fare.segmentId === segment.id)?.cabin;
-    //     //           if (cabin) segment.cabin = cabin;
-    //     //         });
-    //     //       });
-
-    //     //       return a;
-    //     //     });
-    //     //   }
-    //     //   //console.log(newFlightList, "FlightList");
-
-    //     //   if (oneWay)
-    //     //     setFlightList(newFlightList);
-    //     //   else {
-    //     //     // const twoWay = [...newFlightList, ...newFlightList1];
-    //     //     // setFlightList(twoWay);
-    //     //     const twoWay = [...(newFlightList || []), ...(newFlightList1 || [])];
-    //     //     setFlightList(twoWay);
-    //     //     console.log(twoWay, "FlightList in searchflight")
-
-    //     //   }
-
-    //     //   setFlightDetails(FlightList);
-    //     //   if (FlightList.length <= 0) {
-    //     //     // router.push("/home/no-results");
-    //     //   } else {
-    //     //     setFlightList(FlightList);
-    //     //     setLoading(false);
-    //     //     let offerInterval = setInterval(() => {
-    //     //       if (!offerPopupVisible) {
-    //     //         setOfferPopupVisible(true);
-    //     //       }
-    //     //     }, 25000);
-    //     //   }
-
-    //     // } catch (err) {
-    //     //   // router.push("/home/no-results");
-    //     //   console.log("Found an error");
-    //     //   console.log("error", err)
-    //     // }
-
-    //    console.log(FlightList,"Flighlist in search flight");
-    //   console.log(searchObj, "Search Object");
-    //   //router.push(`/searchFlight?origin=${searchObj.originLocationCode}&destination=${searchObj.destinationLocationCode}&date=${searchObj.departureDate.toISOString().substring(0, 10)}&returnDate=${searchObj.returnDate.toISOString().substring(0, 10)}&adults=${searchObj.adults}&token=${accessToken}&oneway=${oneWay}`)
-    //   //router.push(`/searchFlight?origin=${searchObj.originLocationCode}&destination=${searchObj.destinationLocationCode}&date=${searchObj.departureDate.toISOString().substring(0, 10)}${!oneWay ? `&returnDate=${searchObj.returnDate.toISOString().substring(0, 10)}` : ''}&adults=${searchObj.adults}&token=${accessToken}&oneWay=${oneWay.toString()}`);
-    //     router.push(`/searchFlight?origin=${searchObj.originLocationCode}&destination=${searchObj.destinationLocationCode}&date=${searchObj.departureDate.toISOString().substring(0, 10)}${!oneWay ? `&returnDate=${searchObj.returnDate.toISOString().substring(0, 10)}` : ''}&adults=${searchObj.adults}&token=${accessToken}&oneWay=${oneWay.toString()}`)
-
-    // } catch (error) {
-
-    //   console.error('Error fetching flight offers:', error);
-    //   // setError('Failed to fetch flight offers. Please try again.');
-    // }
 
     const accessToken =
       localStorage.getItem("token") || searchParam.get("token");
@@ -297,7 +100,7 @@ const ModifyForm = ({
         : ""
     }&adults=${
       searchObj.adults
-    }&token=${accessToken}&oneWay=${oneWay.toString()}&originInputValue=${originInputValue}&originDesValue=${originInputValue}&desInputValue=${desInputValue}`;
+    }&token=${accessToken}&oneWay=${oneWay.toString()}&originInputValue=${originInputValue}&originDesValue=${originInputValue}&desInputValue=${desInputValue}&setOneWay=${setOneWay}`;
   };
 
   // const [flightDetails, setFlightDetails] = useState([]);
@@ -411,9 +214,9 @@ const ModifyForm = ({
     setTravellerDetail(searchParam.get("adults"));
   };
 
-  // useEffect(() => {
-  //   fetchNearestAirports();
-  // }, []);
+  useEffect(() => {
+    fetchNearestAirports();
+  }, []);
 
   const filterDesAirportValue = async () => {
     try {
@@ -445,17 +248,19 @@ const ModifyForm = ({
         <div className="roundTripHolder">
           <ul className="active">
             <li
-              className={!oneWay && "active"}
+              className={!oneWay ? "active" : ""}
               id="T_RT"
-              onclick="ShowHideSearchEngineTab('RT')"
-              onClick={() => setOneWay(false)}
+              onClick={() => {
+                setOneWay(false); // This should work now
+                // ShowHideSearchEngineTab("RT"); // Call your function here
+              }}
             >
               ROUND-TRIP
             </li>
             <li
               id="T_OW"
               onclick="ShowHideSearchEngineTab('OW')"
-              className={oneWay && "active"}
+              className={oneWay ? "active" : ""}
               onClick={() => setOneWay(true)}
             >
               ONE-WAY

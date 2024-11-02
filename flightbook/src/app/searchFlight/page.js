@@ -389,7 +389,9 @@ const SearchFlight = () => {
   const [flightDetails, setFlightDetails] = useState([]);
   const [FlightList, setFlightList] = useState([]);
   const searchParam = useSearchParams();
-  const oneWay = searchParam.get("oneWay") === "true";
+  const isoneWay = searchParam.get("oneWay") === "true";
+  //const setOneWay = searchParam.get("setOneWay");
+  const [oneWay, setOneWay] = useState(isoneWay);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [flightDetail, setFlightDetailVisible] = useState(false);
   const [modifyForm, setModifyForm] = useState(false);
@@ -2082,7 +2084,8 @@ const SearchFlight = () => {
             </div>
           </form> */}
             <ModifyForm
-              oneWay={oneWay.toString()}
+              oneWay={oneWay}
+              setOneWay={setOneWay}
               setFlightDetails={setFlightDetails}
               setFlightList={setFlightList}
               FlightList={FlightList}
