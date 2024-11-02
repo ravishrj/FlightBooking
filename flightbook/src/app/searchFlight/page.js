@@ -37,6 +37,28 @@ const useWindowWidth = () => {
 };
 
 const SearchFlight = () => {
+  const [uniqueAirlines, setUniqueAirlines] = useState([]);
+
+  const [maxHeight, setMaxHeight] = useState("0px");
+  const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
+  const [openedFilter, setOpenedFilter] = useState("Stops");
+  const [filtersObj, setFiltersObj] = useState({ stops: 0 });
+  const [offerPopupVisible, setOfferPopupVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
+  const [depName, setDepName] = useState(null);
+  const [activeFlight, setActiveFlight] = useState(null);
+  const [filteredFlights, setFilteredFlights] = useState([]);
+  const [stopFilter, setStopFilter] = useState(""); // Consider using specific values for clarity
+  const [airlinesDetails, setAirlineDetails] = useState([]);
+  const [showMoreAirlines, setShowMoreAirlines] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState([]);
+  const [selectedTimeFilter, setSelectedTimeFilter] = useState("");
+  const [selectedAirports, setSelectedAirports] = useState([]);
+  const [selectedStop, setSelectedStop] = useState(null);
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
+
   const [originAirportList, setOriginAirportList] = useState([]);
   const [originInputValue, setOriginInputValue] = useState(null);
   const [origin, setOrigin] = useState("");
@@ -156,6 +178,26 @@ const SearchFlight = () => {
 
   const [returnDate, setReturnDate] = useState(new Date());
   //const [errorMessage, setErrorMessage] = useState('');
+  const handleStopFilter = (type) => {
+    // Ensure availableStops is defined and type is a string
+    if (!Array.isArray(availableStops) || typeof type !== "string") {
+      console.error("Invalid availableStops or type");
+      return;
+    }
+
+    const selectedOption = availableStops.find(
+      (option) => option.label === type
+    );
+
+    // Set selected stop if found
+    if (selectedOption) {
+      setSelectedStop(selectedOption);
+    } else {
+      console.warn(`No stop option found for type: ${type}`);
+    }
+
+    setStopFilter(type);
+  };
 
   const handleReturnChange = (date) => {
     if (date.length > 0) {
@@ -398,6 +440,114 @@ const SearchFlight = () => {
   const router = useRouter();
 
   useEffect(() => {
+    console.log("coming here");
+    console.log({ activeFlight });
+
+    let tmpData = FlightList;
+
+    // Filter by active flight if it exists
+    if (activeFlight !== null) {
+      tmpData = flightList.filter(
+        (obj) => obj.validatingAirlineCodes[0] === activeFlight.airlineCode
+      );
+
+      setAppliedFilters((prev) => {
+        const existingFilter = prev.find((filter) => filter.type === "Airline");
+        if (existingFilter) {
+          return prev.map((filter) =>
+            filter.type === "Airline"
+              ? { ...filter, value: activeFlight.airlineName }
+              : filter
+          );
+        }
+        return [...prev, { type: "Airline", value: activeFlight.airlineName }];
+      });
+    }
+
+    // Apply stop filters
+    if (stopFilter === "Non Stop") {
+      tmpData = tmpData.filter((flight) =>
+        flight.itineraries.every((itinerary) => itinerary.segments.length === 1)
+      );
+      setAppliedFilters((prev) =>
+        prev
+          .filter((filter) => filter.type !== "Stop")
+          .concat({ type: "Stop", value: "Non-Stop" })
+      );
+    } else if (stopFilter === "1 Stop") {
+      tmpData = tmpData.filter((flight) =>
+        flight.itineraries.some((itinerary) => itinerary.segments.length === 2)
+      );
+      setAppliedFilters((prev) =>
+        prev
+          .filter((filter) => filter.type !== "Stop")
+          .concat({ type: "Stop", value: "One-Stop" })
+      );
+    } else if (stopFilter === "2 Stops" || stopFilter === "3+ Stops") {
+      tmpData = tmpData.filter((flight) =>
+        flight.itineraries.some((itinerary) => itinerary.segments.length > 2)
+      );
+      setAppliedFilters((prev) =>
+        prev
+          .filter((filter) => filter.type !== "Stop")
+          .concat({ type: "Stop", value: "Two or More Stops" })
+      );
+    }
+
+    setFilteredFlights(tmpData);
+  }, [activeFlight, stopFilter, FlightList]); // Add dependencies to the useEffect
+
+  const processFlightData = (json) => {
+    let flightDetails = [];
+    const uniqueAirlines = new Set();
+
+    json.data.forEach((a) => {
+      a.stops = a.itineraries[0].segments.length - 1; // Calculate stops
+
+      // Process each itinerary and segment
+      a.itineraries.forEach((b) => {
+        b.segments.forEach((segment) => {
+          segment.airline = airlines[segment.carrierCode];
+          segment.arrival.airport = airportsDB[segment.arrival.iataCode];
+          segment.departure.airport = airportsDB[segment.departure.iataCode];
+
+          // Append cabin class to the segment
+          const cabin = a.travelerPricings[0].fareDetailsBySegment.find(
+            (fare) => fare.segmentId === segment.id
+          )?.cabin;
+          if (cabin) segment.cabin = cabin;
+        });
+      });
+
+      // Create a new object to store combined details
+      const flightDetail = {
+        price: a.price.grandTotal,
+        airlineCode: a.validatingAirlineCodes[0],
+        isNonStop: a.stops === 0,
+        isOnePlusStop: a.stops > 0,
+        airlineName: a.itineraries[0].segments[0].airline.name,
+        airlineLogo: a.itineraries[0].segments[0].airline.logo,
+        departureAirportName:
+          a.itineraries[0].segments[0].departure.airport.name,
+        departureAirportIata: a.itineraries[0].segments[0].departure.iataCode,
+        arrivalAirportName: a.itineraries[0].segments[0].arrival.airport.name,
+        arrivalAirportIata: a.itineraries[0].segments[0].arrival.iataCode,
+        duration: a.itineraries[0].duration,
+      };
+
+      // Add unique flight details based on airline code
+      if (!uniqueAirlines.has(flightDetail.airlineCode)) {
+        uniqueAirlines.add(flightDetail.airlineCode);
+        flightDetails.push(flightDetail);
+      }
+    });
+
+    setAirlineDetails(flightDetails); // Make sure this function is defined in your context
+
+    return flightDetails;
+  };
+
+  useEffect(() => {
     const fetchFlightOffers = async () => {
       setEarliest(false);
       setQuickest(false);
@@ -567,6 +717,9 @@ const SearchFlight = () => {
           setFlightList(twoWay);
           console.log(twoWay, "FlightList in searchflight");
         }
+        const flightDetailsCarausel = processFlightData(json);
+
+        setUniqueAirlines(flightDetailsCarausel);
 
         setFlightDetails(FlightList);
         if (FlightList.length <= 0) {
@@ -3370,6 +3523,7 @@ const SearchFlight = () => {
                 {/* <Carousel/> */}
 
                 <MyTextCarousel FlightList={FlightList} oneWay={oneWay} />
+                {/* <MyTextCarousel  airlinesData={uniqueAirlines} setActiveFlight={setActiveFlight} handleStopFilter={handleStopFilter}/> */}
               </div>
             </section>
             {/* <Carousel/> */}
