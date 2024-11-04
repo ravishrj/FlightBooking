@@ -447,7 +447,7 @@ const SearchFlight = () => {
 
     // Filter by active flight if it exists
     if (activeFlight !== null) {
-      tmpData = flightList.filter(
+      tmpData = FlightList.filter(
         (obj) => obj.validatingAirlineCodes[0] === activeFlight.airlineCode
       );
 
@@ -498,7 +498,7 @@ const SearchFlight = () => {
   }, [activeFlight, stopFilter, FlightList]); // Add dependencies to the useEffect
 
   const processFlightData = (json) => {
-    let flightDetails = [];
+    let flightDetailsCa = [];
     const uniqueAirlines = new Set();
 
     json.data.forEach((a) => {
@@ -520,7 +520,7 @@ const SearchFlight = () => {
       });
 
       // Create a new object to store combined details
-      const flightDetail = {
+      const flightDetailca = {
         price: a.price.grandTotal,
         airlineCode: a.validatingAirlineCodes[0],
         isNonStop: a.stops === 0,
@@ -536,15 +536,15 @@ const SearchFlight = () => {
       };
 
       // Add unique flight details based on airline code
-      if (!uniqueAirlines.has(flightDetail.airlineCode)) {
-        uniqueAirlines.add(flightDetail.airlineCode);
-        flightDetails.push(flightDetail);
+      if (!uniqueAirlines.has(flightDetailca.airlineCode)) {
+        uniqueAirlines.add(flightDetailca.airlineCode);
+        flightDetailsCa.push(flightDetailca);
       }
     });
 
-    setAirlineDetails(flightDetails); // Make sure this function is defined in your context
+    setAirlineDetails(flightDetailsCa); // Make sure this function is defined in your context
 
-    return flightDetails;
+    return flightDetailsCa;
   };
 
   useEffect(() => {
@@ -3522,8 +3522,14 @@ const SearchFlight = () => {
               </div> */}
                 {/* <Carousel/> */}
 
-                <MyTextCarousel FlightList={FlightList} oneWay={oneWay} />
-                {/* <MyTextCarousel  airlinesData={uniqueAirlines} setActiveFlight={setActiveFlight} handleStopFilter={handleStopFilter}/> */}
+                {/* <MyTextCarousel FlightList={FlightList} oneWay={oneWay} /> */}
+                <MyTextCarousel
+                  FlightList={FlightList}
+                  oneWay={oneWay}
+                  airlinesData={uniqueAirlines}
+                  setActiveFlight={setActiveFlight}
+                  handleStopFilter={handleStopFilter}
+                />
               </div>
             </section>
             {/* <Carousel/> */}
