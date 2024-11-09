@@ -28,12 +28,7 @@ const ModifyForm = ({
   const [des, setDes] = useState("");
   const [desAirportList, setDesAirportList] = useState([]);
   const [desInputValue, setDesInputValue] = useState("");
-  const [travellerDetail, setTravellerDetail] = useState({
-    adultCount: 1,
-    childrenCount: 0,
-    infanctCount: 0,
-    cabinType: "ECONOMY",
-  });
+
   console.log("oneWay");
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isDropdownVisibleDes, setDropdownVisibleDes] = useState(false);
@@ -41,18 +36,39 @@ const ModifyForm = ({
   const [flights, setFlights] = useState([]);
   const paxRef = useRef(null);
   const [travellerToggle, setTravellerToggle] = useState(false);
+
   const [adultCount, setAdultCount] = useState(1);
   const [childrenCount, setChildrenCount] = useState(0);
-  const [infantCount, setInfantCount] = useState(0);
+  const [infanctCount, setInfantCount] = useState(0);
   const [infantOnSeatCount, setInfantOnSeatCount] = useState(0);
   const [cabinType, setCabinType] = useState("ECONOMY");
-
+  const [totalTraveller, setTotalTraveller] = useState(1);
+  const [travellerDetail, setTravellerDetail] = useState({
+    adultCount: 1,
+    childrenCount: 0,
+    infanctCount: 0,
+    cabinType: "ECONOMY",
+    totalTraveller: adultCount + childrenCount + infanctCount,
+  });
   const [depDate, setDepDate] = useState(new Date());
   const [errorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    const currentDate = new Date();
+    const defaultDate = new Date(
+      currentDate.setDate(currentDate.getDate() + 7)
+    );
+    setReturnDate(defaultDate);
+  }, []);
+
   const handleDepartureChange = (date) => {
     if (date.length > 0) {
-      setDepDate(date[0]);
+      const utcDate = new Date(
+        Date.UTC(date[0].getFullYear(), date[0].getMonth(), date[0].getDate())
+      );
+
+      // Use .toISOString() or other methods to display as needed
+      setDepDate(utcDate);
       setErrorMessage(""); // Clear error message
     } else {
       setErrorMessage("Select depart date");
@@ -64,7 +80,11 @@ const ModifyForm = ({
 
   const handleReturnChange = (date) => {
     if (date.length > 0) {
-      setReturnDate(date[0]);
+      const utcDate = new Date(
+        Date.UTC(date[0].getFullYear(), date[0].getMonth(), date[0].getDate())
+      );
+
+      setReturnDate(utcDate);
       setErrorMessage(""); // Clear error message
     } else {
       setErrorMessage("Select return date");
@@ -98,8 +118,10 @@ const ModifyForm = ({
       !oneWay
         ? `&returnDate=${searchObj.returnDate.toISOString().substring(0, 10)}`
         : ""
-    }&adults=${
-      searchObj.adults
+    }&adult=${travellerDetail.adultCount}&child=${
+      travellerDetail.childrenCount
+    }&infant=${travellerDetail.infanctCount}&cabin=${
+      travellerDetail.cabinType
     }&token=${accessToken}&oneWay=${oneWay.toString()}&originInputValue=${originInputValue}&originDesValue=${originInputValue}&desInputValue=${desInputValue}&setOneWay=${setOneWay}`;
   };
 
@@ -115,14 +137,14 @@ const ModifyForm = ({
   };
   const handleSelectAirport = (city) => {
     // console.log(city,"city in handleSelectAirport");
-    setOriginInputValue(`${city.label}, ${city.iataCode}`);
+    setOriginInputValue(`${city.label}`);
     setOrigin(city.value);
 
     setDropdownVisible(false); // Update input with selected airport
   };
 
   const handleSelectDesAirport = (city) => {
-    setDesInputValue(`${city.label}, ${city.iataCode}`);
+    setDesInputValue(`${city.label}`);
     setDes(city.value);
     setDropdownVisibleDes(false); // Update input with selected airport
   };
@@ -166,40 +188,27 @@ const ModifyForm = ({
     setDropdownVisibleDes(event.target.value.length > 0);
   };
 
-  useEffect(() => {
-    // Load from local storage
-    const storedTravellerDetail = localStorage.getItem("travellerDetail");
-    if (storedTravellerDetail) {
-      setTravellerDetail(JSON.parse(storedTravellerDetail));
-    }
-  }, []);
+  // useEffect(() => {
+  //   // Load from local storage
+  //   const storedTravellerDetail = localStorage.getItem("travellerDetail");
+  //   if (storedTravellerDetail) {
+  //     setTravellerDetail(JSON.parse(storedTravellerDetail));
+  //   }
+  // }, []);
 
-  const handleApplyFilter = () => {
-    const totalTraveller =
-      adultCount + childrenCount + infantCount + infantOnSeatCount;
-
-    const newTravellerDetail = {
-      adultCount,
-      childrenCount,
-      infantCount,
-      infantOnSeatCount,
-      cabinType,
-      totalTraveller,
-    };
-
-    // Save to local storage
-    localStorage.setItem("travellerDetail", JSON.stringify(newTravellerDetail));
-
-    setTravellerDetail(newTravellerDetail);
-
-    if (paxRef.current) {
-      paxRef.current.focus();
-    }
-
+  const handleApplyFilter = (e) => {
+    e.preventDefault();
+    let filter = travellerDetail;
+    filter.adultCount = adultCount;
+    filter.childrenCount = childrenCount;
+    filter.infanctCount = infanctCount + infantOnSeatCount;
+    filter.cabinType = cabinType;
+    filter.totalTraveller = totalTraveller;
+    setTravellerDetail(filter);
     setTravellerToggle(false);
+    setShowPax(false);
   };
 
-  // Function to handle changes in cabin type
   const handleCabinTypeChange = (event) => {
     setCabinType(event.target.value);
   };
@@ -211,7 +220,20 @@ const ModifyForm = ({
     {
       !oneWay && setReturnDate(searchParam.get("returnDate"));
     }
-    setTravellerDetail(searchParam.get("adults"));
+
+    let filter = [];
+    filter.adultCount = searchParam.get("adult");
+    filter.childrenCount = searchParam.get("child");
+    filter.infanctCount = searchParam.get("infant");
+    filter.cabinType = searchParam.get("cabin");
+    filter.totalTraveller =
+      filter.adultCount + filter.childrenCount + filter.infanctCount;
+    setTravellerDetail(filter);
+    //setTravellerDetail(searchParam.get("adults"));
+  };
+
+  const handleOneWay = () => {
+    setOneWay(false);
   };
 
   useEffect(() => {
@@ -251,8 +273,7 @@ const ModifyForm = ({
               className={!oneWay ? "active" : ""}
               id="T_RT"
               onClick={() => {
-                setOneWay(false); // This should work now
-                // ShowHideSearchEngineTab("RT"); // Call your function here
+                handleOneWay();
               }}
             >
               ROUND-TRIP
@@ -542,14 +563,25 @@ const ModifyForm = ({
               <input
                 id="txtPassengers"
                 type="text"
-                placeholder={`${
-                  travellerDetail.totalTraveller != 1 ? 1 : 1
-                } Traveler${travellerDetail.totalTraveller !== 1 ? "s" : ""}, ${
-                  travellerDetail.cabinType
-                }`}
-                value={`${travellerDetail.totalTraveller} Traveler${
-                  travellerDetail.totalTraveller !== 1 ? "s" : ""
-                }, ${travellerDetail.cabinType}`}
+                // placeholder={`${
+                //   travellerDetail.totalTraveller != 1 ? 1 : 1
+
+                // }
+                // Traveler${travellerDetail.totalTraveller !== 1 ? "s" : ""}, ${
+                //   travellerDetail.cabinType
+                // }`}
+                // value={`${travellerDetail.totalTraveller} Traveler${
+                //   travellerDetail.totalTraveller !== 1 ? "s" : ""
+                // }, ${travellerDetail.cabinType}`}
+                value={`${travellerDetail.adultCount} Traveller, ${
+                  travellerDetail.childrenCount
+                    ? travellerDetail.childrenCount + "Children,"
+                    : ""
+                } ${
+                  travellerDetail.infanctCount
+                    ? travellerDetail.infanctCount + "Infants,"
+                    : ""
+                } ${travellerDetail.cabinType && travellerDetail.cabinType} `}
                 readOnly
                 onClick={() => {
                   setShowPax((p) => !p);
@@ -581,7 +613,7 @@ const ModifyForm = ({
               id="BtnSearchFare_RTOW"
               onClick={handleOnSubmit}
             >
-              Search Flights
+              Modify Search
             </button>
           </div>
         </div>
@@ -646,7 +678,6 @@ const ModifyForm = ({
           more details, <a href="/unaccompanied-minor">READ HERE</a>.
         </div>
       </div>
-
       <div
         id="divPassengerDDL"
         className="pasenger-popup"
@@ -753,7 +784,7 @@ const ModifyForm = ({
                 <div className="PassengerCount">
                   <input
                     type="text"
-                    value={infantCount}
+                    value={infanctCount}
                     className="CountPassengerBox"
                     readOnly
                   />

@@ -7,7 +7,7 @@ import "slick-carousel/slick/slick-theme.css";
 import React from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const MyTextCarousel = ({
   FlightList,
@@ -16,21 +16,7 @@ const MyTextCarousel = ({
   setActiveFlight,
   handleStopFilter,
 }) => {
-  const airlines = [
-    {
-      code: "AI",
-      name: "Air India",
-      logo: "/Content/images/AirlinesLogo/AI.png",
-      prices: ["$175.18", "$160.48"],
-    },
-    {
-      code: "UK",
-      name: "Air Vistara",
-      logo: "/Content/images/AirlinesLogo/UK.png",
-      prices: ["$172.28", "---"],
-    },
-  ];
-  const itemsPerSlide = 3; // Number of items to show per slide
+  const itemsPerSlide = 1; // Number of items to show per slide
 
   // Group flights based on items per slide
   const groupedFlights = [];
@@ -39,18 +25,18 @@ const MyTextCarousel = ({
   }
 
   const settings = {
-    infinite: true,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: true,
+    infinite: airlinesData.length > 1,
+    slidesToShow: airlinesData.length == 1 ? 1 : 5,
+    slidesToScroll: 3,
+    arrows: false,
     autoplay: true,
-    autoplaySpeed: 2000,
+    autoplaySpeed: 3000,
     responsive: [
       {
         breakpoint: 980,
         settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
+          slidesToShow: airlinesData.length == 1 ? 1 : 2,
+          slidesToScroll: 3,
           arrows: false,
           dots: true,
         },
@@ -58,7 +44,7 @@ const MyTextCarousel = ({
       {
         breakpoint: 767,
         settings: {
-          slidesToShow: 1,
+          slidesToShow: airlinesData.length == 1 ? 1 : 1,
           slidesToScroll: 1,
           arrows: false,
           dots: true,
@@ -66,34 +52,22 @@ const MyTextCarousel = ({
       },
     ],
   };
-  const [filteredAirlines, setFilteredAirlines] = useState(FlightList);
 
-  const handleSorting = (value) => {
-    if (value.startsWith("|")) {
-      // Filter by airline code
-      const airlineCode = value.slice(1, -1);
-      const filtered = initialAirlines.filter(
-        (flight) =>
-          flight.itineraries[0].segments[0].airline.code === airlineCode
-      );
-      setFilteredAirlines(filtered);
-    } else if (value.startsWith("DO|")) {
-      // Sort by price (departure)
-      const sorted = [...filteredAirlines].sort((a, b) => {
-        const priceA =
-          a.prices[0] !== "---"
-            ? parseFloat(a.prices[0].replace("$", "").replace(".", ""))
-            : Infinity;
-        const priceB =
-          b.prices[0] !== "---"
-            ? parseFloat(b.prices[0].replace("$", "").replace(".", ""))
-            : Infinity;
-        return priceA - priceB; // Ascending order
-      });
-      setFilteredAirlines(sorted);
-    } else {
-      // Reset to original
-      setFilteredAirlines(airlines);
+  const sliderRef = useRef(null);
+  const [filteredAirlines, setFilteredAirlines] = useState(FlightList);
+  const handleFlightDetails = (flight) => {
+    setActiveFlight(flight);
+  };
+  const handleNext = () => {
+    if (sliderRef.current) {
+      sliderRef.current.slickNext(); // Go to next slide
+    }
+  };
+
+  // Function to go to previous slide
+  const handlePrev = () => {
+    if (sliderRef.current) {
+      sliderRef.current.slickPrev(); // Go to previous slide
     }
   };
 
@@ -108,82 +82,21 @@ const MyTextCarousel = ({
             width: "100%",
           }}
         >
-          {/* <Carousel
-            autoPlay
-            infiniteLoop
-            showStatus={false}
-            showIndicators={false}
-            showThumbs={false}
-            interval={3000}
-            showArrows={true} // Enable arrows if necessary
-            items={4}
-            // Adjust based on your library's prop for number of items
-          >
+          <Slider ref={sliderRef} {...settings}>
             {groupedFlights.map((group, groupIndex) => (
-              <div
-                className="owl-item active"
-                style={{ display: "flex" }}
-                key={groupIndex}
-              >
-                {group.map((flight, index) => (
-                  <div
-                    key={index}
-                    className="matrix-item"
-                    style={{ flex: "1", padding: "0 10px" }}
-                  >
-                    <ul>
-                      <li
-                        className="head"
-                        onClick={() => HandleFlightDetails(flight)}
-                      >
-                        <span className="l-img">
-                          <img
-                            src={flight.airlineLogo}
-                            alt={`${flight.airlineName} logo`}
-                          />
-                        </span>
-                        <a href="#" className="am-flight">
-                          <p className="fw600">{flight.airlineName}</p>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <span>
-                            {flight.isNonStop ? `$${flight.price}` : "---"}
-                          </span>
-                        </a>
-                      </li>
-                      <li className="matrix-cell mstop1">
-                        <i className="fa" />{" "}
-                        {flight.isOnePlusStop ? `$${flight.price}` : "-"}
-                      </li>
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </Carousel> */}
-
-          <Slider {...settings}>
-            {groupedFlights.map((group, groupIndex) => (
-              <div
-                key={groupIndex}
-                className="matrix-data"
-                style={{ display: "flex", justifyContent: "space-between" }}
-              >
+              <div key={groupIndex} className="matrix-data">
                 {group.map((flight, index) => (
                   <div
                     key={index}
                     className="matrix-item"
                     style={{
                       padding: "0 10px",
-                      width: "33%",
                     }}
                   >
                     <ul>
                       <li
                         className="head"
-                        onClick={() => HandleFlightDetails(flight)}
+                        onClick={() => handleFlightDetails(flight)}
                       >
                         <span className="l-img">
                           <img
@@ -214,15 +127,25 @@ const MyTextCarousel = ({
           </Slider>
         </div>
       </div>
-      <div className="owl-nav disabled">
-        <button type="button" role="presentation" className="owl-prev disabled">
+      <div className="owl-nav " style={{ border: "none" }}>
+        <button
+          type="button"
+          role="presentation"
+          className="owl-prev "
+          onClick={handlePrev}
+        >
           <span aria-label="Previous">‹</span>
         </button>
-        <button type="button" role="presentation" className="owl-next disabled">
+        <button
+          type="button"
+          role="presentation"
+          className="owl-next"
+          onClick={handleNext}
+        >
           <span aria-label="Next">›</span>
         </button>
       </div>
-      <div className="owl-dots disabled" />
+      {/* <div className="owl-dots disabled" /> */}
     </div>
   );
 };

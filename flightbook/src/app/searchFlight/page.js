@@ -87,6 +87,7 @@ const SearchFlight = () => {
   const [earliest, setEarliest] = useState(false);
   const [quickest, setQuickest] = useState(false);
   const [cheapest, setCheapest] = useState(true);
+  const [filter, setFilter] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);
   const width = useWindowWidth();
@@ -177,25 +178,19 @@ const SearchFlight = () => {
   };
 
   const [returnDate, setReturnDate] = useState(new Date());
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const defaultDate = new Date(
+      currentDate.setDate(currentDate.getDate() + 7)
+    );
+    setReturnDate(defaultDate);
+  }, []);
   //const [errorMessage, setErrorMessage] = useState('');
   const handleStopFilter = (type) => {
     // Ensure availableStops is defined and type is a string
-    if (!Array.isArray(availableStops) || typeof type !== "string") {
-      console.error("Invalid availableStops or type");
-      return;
-    }
-
-    const selectedOption = availableStops.find(
-      (option) => option.label === type
-    );
-
-    // Set selected stop if found
-    if (selectedOption) {
-      setSelectedStop(selectedOption);
-    } else {
-      console.warn(`No stop option found for type: ${type}`);
-    }
-
+    console.log("stop filter triggered");
+    setFilter(true);
     setStopFilter(type);
   };
 
@@ -442,7 +437,7 @@ const SearchFlight = () => {
   useEffect(() => {
     console.log("coming here");
     console.log({ activeFlight });
-
+    setFilter(true);
     let tmpData = FlightList;
 
     // Filter by active flight if it exists
@@ -465,7 +460,7 @@ const SearchFlight = () => {
     }
 
     // Apply stop filters
-    if (stopFilter === "Non Stop") {
+    if (stopFilter === "Non-Stop") {
       tmpData = tmpData.filter((flight) =>
         flight.itineraries.every((itinerary) => itinerary.segments.length === 1)
       );
@@ -495,6 +490,7 @@ const SearchFlight = () => {
     }
 
     setFilteredFlights(tmpData);
+    console.log(filteredFlights, "filterdFlights");
   }, [activeFlight, stopFilter, FlightList]); // Add dependencies to the useEffect
 
   const processFlightData = (json) => {
@@ -552,6 +548,7 @@ const SearchFlight = () => {
       setEarliest(false);
       setQuickest(false);
       setCheapest(true);
+      setFilter(false);
       let travellersArr = [];
       if (searchParam.get("adult")) {
         for (let x = 0; x < parseInt(searchParam.get("adult")); x++) {
@@ -599,14 +596,14 @@ const SearchFlight = () => {
             },
           },
         ],
-        travelers: [{ id: 1, travelerType: "ADULT" }],
+        travelers: travellersArr,
         sources: ["GDS"],
         searchCriteria: {
           maxFlightOffers: 50,
           flightFilters: {
             cabinRestrictions: [
               {
-                cabin: "ECONOMY",
+                cabin: searchParam.get("cabin"),
                 originDestinationIds: ["1"],
               },
             ],
@@ -634,14 +631,14 @@ const SearchFlight = () => {
             },
           },
         ],
-        travelers: [{ id: 1, travelerType: "ADULT" }],
+        travelers: travellersArr,
         sources: ["GDS"],
         searchCriteria: {
           maxFlightOffers: 50,
           flightFilters: {
             cabinRestrictions: [
               {
-                cabin: "ECONOMY",
+                cabin: searchParam.get("cabin"),
                 originDestinationIds: [
                   "1", // Ensure this is correct for the outbound leg
                   "2", // Ensure this is correct for the return leg
@@ -747,166 +744,8 @@ const SearchFlight = () => {
     setQuickest(false);
     setEarliest(true);
     setCheapest(false);
+    setFilter(false);
 
-    // console.log(earliest, "earliest clicked");
-
-    // let queryEarliest = {
-    //   currencyCode: "USD",
-    //   originDestinations: [
-    //     {
-    //       id: "1",
-    //       originLocationCode: searchParam.get("origin"),
-    //       destinationLocationCode: searchParam.get("destination"),
-    //       departureDateTimeRange: {
-    //         date: searchParam.get("date"),
-    //       },
-    //     },
-    //   ],
-    //   travelers: [{ id: 1, travelerType: "ADULT" }],
-    //   sources: ["GDS"],
-    //   searchCriteria: {
-    //     maxFlightOffers: 50,
-    //     flightFilters: {
-    //       cabinRestrictions: [
-    //         {
-    //           cabin: "ECONOMY",
-    //           originDestinationIds: ["1"],
-    //         },
-    //       ],
-    //     },
-    //     sortCriteria: {
-    //       sortOrder: "EARLIEST_DEPARTURE",
-    //     },
-    //   },
-    // };
-
-    // let queryEarliestRound = {
-    //   currencyCode: "USD",
-    //   originDestinations: [
-    //     {
-    //       id: "1",
-    //       originLocationCode: searchParam.get("origin"),
-    //       destinationLocationCode: searchParam.get("destination"),
-    //       departureDateTimeRange: {
-    //         date: searchParam.get("date"), // For the outbound flight
-    //       },
-    //     },
-    //     {
-    //       id: "2",
-    //       originLocationCode: searchParam.get("destination"),
-    //       destinationLocationCode: searchParam.get("origin"),
-    //       departureDateTimeRange: {
-    //         date: searchParam.get("returnDate"), // For the return flight
-    //       },
-    //     },
-    //   ],
-    //   travelers: [{ id: 1, travelerType: "ADULT" }],
-    //   sources: ["GDS"],
-    //   searchCriteria: {
-    //     maxFlightOffers: 50,
-    //     flightFilters: {
-    //       cabinRestrictions: [
-    //         {
-    //           cabin: "ECONOMY",
-    //           originDestinationIds: [
-    //             "1",
-    //             "2", // Include both legs in cabin restrictions
-    //           ],
-    //         },
-    //       ],
-    //     },
-    //     sortCriteria: {
-    //       sortOrder: "EARLIEST_DEPARTURE",
-    //     },
-    //   },
-    // };
-
-    // try {
-    //   const response = await fetch(
-    //     "https://api.amadeus.com/v2/shopping/flight-offers",
-    //     {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         Authorization: `Bearer ${searchParam.get("token")}`,
-    //       },
-    //       body: oneWay
-    //         ? JSON.stringify(queryEarliest)
-    //         : JSON.stringify(queryEarliestRound),
-    //     }
-    //   );
-    //   const json = await response.json();
-    //   console.log(json, "JSON");
-    //   const newFlightListEarliest = json.data.map((a) => {
-    //     a.stops = a.itineraries[0].segments.length - 1;
-    //     a.itineraries.forEach((b) => {
-    //       b.segments.forEach((segment) => {
-    //         segment.airline = airlines[segment.carrierCode];
-    //         segment.arrival.airport = airportsDB[segment.arrival.iataCode];
-    //         segment.departure.airport = airportsDB[segment.departure.iataCode];
-    //         // Append the cabin class to the segment
-    //         const cabin = a.travelerPricings[0].fareDetailsBySegment.find(
-    //           (fare) => fare.segmentId === segment.id
-    //         )?.cabin;
-    //         if (cabin) segment.cabin = cabin;
-    //       });
-    //     });
-
-    //     return a;
-    //   });
-
-    //   let newFlightListEarliest1;
-    //   if (!oneWay) {
-    //     newFlightListEarliest1 = json.data.map((a) => {
-    //       a.stops = a.itineraries[1].segments.length - 1;
-    //       a.itineraries.forEach((b) => {
-    //         b.segments.forEach((segment) => {
-    //           segment.airline = airlines[segment.carrierCode];
-    //           segment.arrival.airport = airportsDB[segment.arrival.iataCode];
-    //           segment.departure.airport =
-    //             airportsDB[segment.departure.iataCode];
-    //           // Append the cabin class to the segment
-    //           const cabin = a.travelerPricings[0].fareDetailsBySegment.find(
-    //             (fare) => fare.segmentId === segment.id
-    //           )?.cabin;
-    //           if (cabin) segment.cabin = cabin;
-    //         });
-    //       });
-
-    //       return a;
-    //     });
-    //   }
-    //   //console.log(newFlightList, "FlightList");
-
-    //   if (oneWay) setFlightList(newFlightListEarliest);
-    //   else {
-    //     // const twoWay = [...newFlightList, ...newFlightList1];
-    //     // setFlightList(twoWay);
-    //     const twoWay = [
-    //       ...(newFlightListEarliest || []),
-    //       ...(newFlightListEarliest1 || []),
-    //     ];
-    //     setFlightList(twoWay);
-    //     console.log(twoWay, "FlightList in searchflight");
-    //   }
-
-    //   setFlightDetails(FlightList);
-    //   if (FlightList.length <= 0) {
-    //     // router.push("/home/no-results");
-    //   } else {
-    //     setFlightList(FlightList);
-    //     //setLoading(false);
-    //     // let offerInterval = setInterval(() => {
-    //     //   if (!offerPopupVisible) {
-    //     //     setOfferPopupVisible(true);
-    //     //   }
-    //     // }, 25000);
-    //   }
-    // } catch (err) {
-    //   // router.push("/home/no-results");
-    //   console.log("Found an error");
-    //   console.log("error", err);
-    // }
     return [...FlightList].sort((a, b) => {
       return (
         new Date(a.itineraries[0].segments[0].departure.at) -
@@ -919,6 +758,7 @@ const SearchFlight = () => {
     setQuickest(true);
     setEarliest(false);
     setCheapest(false);
+    setFilter(false);
     return [...FlightList].sort((a, b) => {
       return (
         a.itineraries[0].segments.length - b.itineraries[0].segments.length
@@ -930,6 +770,7 @@ const SearchFlight = () => {
     setQuickest(false);
     setEarliest(false);
     setCheapest(true);
+    setFilter(false);
   };
 
   const calculateTotalDuration = (itinerary) => {
@@ -1176,1066 +1017,6 @@ const SearchFlight = () => {
         />
         <div className="container-fluid">
           <div className="landing-widget">
-            {/* <form id="formFlightSearchEngine">
-            <section className="flight-trip">
-              <div className="roundTripHolder">
-                <ul className="active">
-                  <li
-                    className="active"
-                    id="T_RT"
-                    onclick="ShowHideSearchEngineTab('RT')"
-                  >
-                    ROUND-TRIP
-                  </li>
-                  <li id="T_OW" onclick="ShowHideSearchEngineTab('OW')">
-                    ONE-WAY
-                  </li>
-                </ul>
-              </div>
-              <div className="searchbox in active" id="Tp_roundtrip">
-                <input
-                  name="Direct"
-                  type="hidden"
-                  id="hdnDirectIndirect"
-                  defaultValue="off"
-                />
-                <input
-                  name="Airline"
-                  type="hidden"
-                  id="hdnAirlineCode"
-                  defaultValue="All"
-                />
-                <input
-                  name="FlightUniqueId"
-                  type="hidden"
-                  id="hdnFlightUniqueCode"
-                  defaultValue="97c3c47f-23d4-4938-888e-c2de14f3cfab"
-                />
-                <input
-                  name="MCSector_2"
-                  type="hidden"
-                  id="hdnMC_Sec_2"
-                  defaultValue=""
-                />
-                <input
-                  name="TripType"
-                  type="hidden"
-                  id="hdnTripTypeCode"
-                  defaultValue={1}
-                />
-                <div className="From searchSec origin">
-                  <div className="icon-class">
-                    <img src="/Content/images/plane.png" />
-                  </div>
-                  <span>From</span>
-                  <input
-                    id="txtOriginCode"
-                    type="text"
-                    className="ui-autocomplete-input"
-                    autoComplete="off"
-                    onkeypress="return isCharWithSpaceHyphen(event)"
-                    defaultValue="New York( NYC - All Airports)"
-                    required=""
-                    placeholder="Departure"
-                  />
-                  <i className="fa fa-times-circle demo-label" />
-                  <input
-                    name="OriginCode"
-                    type="hidden"
-                    id="hdnOriginCode"
-                    defaultValue="NYC"
-                  />
-                  <span
-                    id="spanOriginCityName"
-                    className="spanCity"
-                    style={{ display: "none" }}
-                  >
-                    New York( NYC - All Airports)
-                  </span>
-                  <div
-                    id="spnOriginErrMsg"
-                    className="errorMsg"
-                    style={{ display: "none" }}
-                  >
-                    Please select origin
-                  </div>
-                  <img
-                    src="/Content/images/destChange-icon.png"
-                    className="swapDest"
-                    style={{ display: "none" }}
-                  />
-                </div>
-                <div className="To searchSec origin dset">
-                  <div className="icon-class">
-                    <img src="/Content/images/point.png" />
-                  </div>
-                  <span>To</span>
-                  <input
-                    id="txtDestCode"
-                    type="text"
-                    className="ui-autocomplete-input"
-                    autoComplete="off"
-                    onkeypress="return isCharWithSpaceHyphen(event)"
-                    defaultValue="Delhi( DEL - Indira Gandhi International Airport)"
-                    required=""
-                    placeholder="Destination"
-                  />
-                  <i className="fa fa-times-circle demo-label" />
-                  <input
-                    name="DestinationCode"
-                    type="hidden"
-                    id="hdnDestinationCode"
-                    defaultValue="DEL"
-                  />
-                  <span
-                    id="spanDestCityName"
-                    className="spanCity"
-                    style={{ display: "none" }}
-                  >
-                    Delhi( DEL - Indira Gandhi International Airport)
-                  </span>
-                  <div
-                    id="spnDestErrMsg"
-                    className="errorMsg"
-                    style={{ display: "none" }}
-                  >
-                    Please select destination
-                  </div>
-                </div>
-                <div id="divDepartSecton" className="Date searchSec datepic">
-                  <div className="icon-class">
-                    <img src="/Content/images/date1.png" />
-                  </div>
-                  <span>
-                    Depart <i className="fa fa-angle-down" aria-hidden="true" />
-                  </span>
-                  <input
-                    type="text"
-                    id="txtDepartDate"
-                    name="DepDate"
-                    className="date"
-                    placeholder="Date"
-                    readOnly="readonly"
-                  />
-                  <p style={{ display: "none" }}>
-                    <span className="date" id="txtDepartDate_MMM">
-                      Oct 25
-                    </span>
-                    <span
-                      className="date"
-                      id="txtDepartDate_DD"
-                      style={{ display: "none" }}
-                    >
-                      25
-                    </span>
-                  </p>
-                  <span id="txtDepartDate_DAY" style={{ display: "none" }}>
-                    Fri
-                  </span>{" "}
-                  <span id="txtDepartDate_YYYY" style={{ display: "none" }}>
-                    2024
-                  </span>
-                  <div
-                    id="spnDepDateErrMsg"
-                    style={{ display: "none" }}
-                    className="errorMsg"
-                  >
-                    Select depart date
-                  </div>
-                </div>
-                <div id="divReturnSection" className="Date searchSec datepic">
-                  <div className="icon-class">
-                    <img src="/Content/images/date1.png" />
-                  </div>
-                  <span>
-                    Return <i className="fa fa-angle-down" aria-hidden="true" />
-                  </span>
-                  <input
-                    type="text"
-                    id="txtReturnDate"
-                    name="RetDate"
-                    className="date"
-                    placeholder="Date"
-                    readOnly="readonly"
-                  />
-                  <p style={{ display: "none" }}>
-                    <span className="date" id="txtReturnDate_MMM">
-                      Nov 18
-                    </span>
-                    <span
-                      className="date"
-                      id="txtReturnDate_DD"
-                      style={{ display: "none" }}
-                    >
-                      18
-                    </span>
-                  </p>
-                  <span id="txtReturnDate_DAY" style={{ display: "none" }}>
-                    Mon
-                  </span>{" "}
-                  <span id="txtReturnDate_YYYY" style={{ display: "none" }}>
-                    2024
-                  </span>
-                  <div
-                    id="spnRetDateErrMsg"
-                    className="errorMsg"
-                    style={{ display: "none" }}
-                  >
-                    Select return date
-                  </div>
-                </div>
-                <div className="Traveler searchSec txtPassengers">
-                  <div className="icon-class">
-                    <img src="/Content/images/psger.png" />
-                  </div>
-                  <span>
-                    Travelers{" "}
-                    <i className="fa fa-angle-down" aria-hidden="true" />
-                  </span>
-                  <h6>
-                    <input
-                      id="txtPassengers"
-                      type="text"
-                      placeholder="1 Traveler, Coach"
-                      readOnly=""
-                    />{" "}
-                    <b id="txtClassType" style={{ display: "none" }}>
-                      Coach
-                    </b>
-                  </h6>
-                  <b id="txtPassengersDetails" style={{ display: "none" }}>
-                    1 Adult
-                  </b>
-                </div>
-                <div className="button-search">
-                  <button
-                    type="button"
-                    style={{ display: "none" }}
-                    className="submit g-orange"
-                    id="BtnSearchFare_RTOW_Deal"
-                  >
-                    Search Now
-                  </button>
-                  <button
-                    type="button"
-                    className="submit g-orange"
-                    id="BtnSearchFare_RTOW"
-                  >
-                    Modify Search
-                  </button>
-                </div>
-              </div>
-              <div className="advance_ruhus_SearchHolder">
-                <ul>
-                  <li>
-                    <input
-                      id="txt_RUHUS_PreferredAirlines"
-                      type="text"
-                      autoComplete="off"
-                      onkeypress="return OnlyCharNumberKey(event)"
-                      required=""
-                      placeholder="Preferred Airline"
-                      name="PreferredAirlineName"
-                      className="ui-autocomplete-input"
-                    />
-                    <input
-                      name="PreferredAirline"
-                      type="hidden"
-                      id="hdn_RUHUS_PreferredAirline"
-                    />
-                  </li>
-                  <li>
-                    <label>
-                      <input
-                        type="checkbox"
-                        id="chk_RUHUS_DirectFlight"
-                        onclick="Check_RUHUS_DirectFlight()"
-                        defaultValue="Direct"
-                      />{" "}
-                      <span> Non-Stop</span>
-                    </label>
-                  </li>
-                </ul>
-              </div>
-              <div
-                className="searchbox"
-                id="Tp_multicity"
-                style={{ display: "none" }}
-              ></div>
-            </section>
-           
-            <div
-              id="divPassengerDDL"
-              className="pasenger-popup"
-              style={{ display: "none" }}
-            >
-              <div className="">
-                <div className="divPassengerPanel">
-                  <h2>Select Travelers</h2>
-                  <div className="divPassenger">
-                    <div className="divPassengerType">
-                      <p>Adult</p>
-                      <span>(18+ yrs)</span>
-                    </div>
-                    <div className="divPassengerCount">
-                      <div className="Add_Less_Passenger">
-                        <div className="MinusPassenger">
-                          <input
-                            type="button"
-                            defaultValue="-"
-                            className="MinusPassengerBox"
-                            field="quantity"
-                            onclick="UpdatePassengerCount(2,'ADT',1)"
-                          />
-                        </div>
-                        <div className="PassengerCount">
-                          <input
-                            type="text"
-                            defaultValue={1}
-                            className="CountPassengerBox"
-                            name="AdultPaxCount"
-                            id="txtAdultPassenger"
-                            readOnly=""
-                          />
-                        </div>
-                        <div className="PlusPassenger">
-                          <input
-                            type="button"
-                            defaultValue="+"
-                            className="PlusPassengerBox"
-                            field="quantity"
-                            onclick="UpdatePassengerCount(1,'ADT',1)"
-                          />
-                        </div>
-                        <div className="ClearPassengerCount" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="divPassenger">
-                    <div className="divPassengerType">
-                      <p>Children</p>
-                      <span>(2 - 11 yrs)</span>
-                    </div>
-                    <div className="divPassengerCount">
-                      <div className="Add_Less_Passenger">
-                        <div className="MinusPassenger">
-                          <input
-                            type="button"
-                            defaultValue="-"
-                            className="MinusPassengerBox"
-                            field="quantity"
-                            onclick="UpdatePassengerCount(2,'CHD',1)"
-                          />
-                        </div>
-                        <div className="PassengerCount">
-                          <input
-                            type="text"
-                            defaultValue={0}
-                            className="CountPassengerBox"
-                            name="ChildPaxCount"
-                            paxtype="CHD"
-                            id="txtChildPassenger"
-                            readOnly=""
-                          />
-                        </div>
-                        <div className="PlusPassenger">
-                          <input
-                            type="button"
-                            defaultValue="+"
-                            className="PlusPassengerBox"
-                            field="quantity"
-                            onclick="UpdatePassengerCount(1,'CHD',1)"
-                          />
-                        </div>
-                        <div className="ClearPassengerCount" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="divPassenger">
-                    <div className="divPassengerType">
-                      <p>Infant (on lap)</p>
-                      <span>(Below 2 yrs)</span>
-                    </div>
-                    <div className="divPassengerCount">
-                      <div className="Add_Less_Passenger">
-                        <div className="MinusPassenger">
-                          <input
-                            type="button"
-                            defaultValue="-"
-                            className="MinusPassengerBox"
-                            field="quantity"
-                            onclick="UpdatePassengerCount(2,'INFL',1)"
-                          />
-                        </div>
-                        <div className="PassengerCount">
-                          <input
-                            type="text"
-                            defaultValue={0}
-                            className="CountPassengerBox"
-                            name="InfantLapPaxCount"
-                            paxtype="INF"
-                            id="txtInfantPassenger"
-                            readOnly=""
-                          />
-                        </div>
-                        <div className="PlusPassenger">
-                          <input
-                            type="button"
-                            defaultValue="+"
-                            className="PlusPassengerBox"
-                            field="quantity"
-                            onclick="UpdatePassengerCount(1,'INFL',1)"
-                          />
-                        </div>
-                        <div className="ClearPassengerCount" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="divPassenger">
-                    <div className="divPassengerType">
-                      <p>Infant (on seat)</p>
-                      <span>(Below 2 yrs)</span>
-                    </div>
-                    <div className="divPassengerCount">
-                      <div className="Add_Less_Passenger">
-                        <div className="MinusPassenger">
-                          <input
-                            type="button"
-                            defaultValue="-"
-                            className="MinusPassengerBox"
-                            field="quantity"
-                            onclick="UpdatePassengerCount(2,'INFS',1)"
-                          />
-                        </div>
-                        <div className="PassengerCount">
-                          <input
-                            type="text"
-                            defaultValue={0}
-                            className="CountPassengerBox"
-                            name="InfantSeatPaxCount"
-                            paxtype="INFS"
-                            id="txtInfantSeatPassenger"
-                            readOnly=""
-                          />
-                        </div>
-                        <div className="PlusPassenger">
-                          <input
-                            type="button"
-                            defaultValue="+"
-                            className="PlusPassengerBox"
-                            field="quantity"
-                            onclick="UpdatePassengerCount(1,'INFS',1)"
-                          />
-                        </div>
-                        <div className="ClearPassengerCount" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-               
-                <div className="class-mpopup">
-                  <div className="pnlInner">
-                    <div className="divClassTypePanel">
-                      <h2>Select Class</h2>
-                      <select
-                        name="CabinClass"
-                        id="LstCabinClass"
-                        style={{ display: "none" }}
-                      >
-                        <option value={1} selected="">
-                          Coach
-                        </option>
-                        <option value={2}>Premium Economy</option>
-                        <option value={3}>Business Class</option>
-                        <option value={4}>First Class</option>
-                      </select>
-                      <div className="pnlInner">
-                        <div id="rdoCabin1" className="selectpassenger active">
-                          <span>Coach</span> <span className="act1" />
-                        </div>
-                        <div id="rdoCabin2" className="selectpassenger">
-                          <span>Premium Economy</span> <span className="" />
-                        </div>
-                        <div id="rdoCabin3" className="selectpassenger">
-                          <span>Business Class</span> <span className="" />
-                        </div>
-                        <div id="rdoCabin4" className="selectpassenger">
-                          <span>First Class</span> <span className="" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="btsy">
-                  <a className="g-orange" id="btnPassengerDone">
-                    Done
-                  </a>
-                </div>
-              </div>
-            </div>
-         
-          </form> */}
-            {/* <form id="formFlightSearchEngine" >
-            <section className="flight-trip">
-              <div className="roundTripHolder">
-                <ul className="active">
-                  <li
-                    className={!oneWay && "active"}
-                    id="T_RT"
-                    onclick="ShowHideSearchEngineTab('RT')"
-                    onClick={() => setOneWay(false)}
-                  >
-                    ROUND-TRIP
-                  </li>
-                  <li
-                    id="T_OW"
-                    onclick="ShowHideSearchEngineTab('OW')"
-                    className={oneWay && "active"}
-                    onClick={() => setOneWay(true)}
-                  >
-                    ONE-WAY
-                  </li>
-                </ul>
-              </div>
-              <div className="searchbox in active" id="Tp_roundtrip">
-                <input
-                  name="Direct"
-                  type="hidden"
-                  id="hdnDirectIndirect"
-                  defaultValue="off"
-                />
-                <input
-                  name="Airline"
-                  type="hidden"
-                  id="hdnAirlineCode"
-                  defaultValue="All"
-                />
-                <input
-                  name="FlightUniqueId"
-                  type="hidden"
-                  id="hdnFlightUniqueCode"
-                  defaultValue="563ac62b-df16-4efc-ab8d-693299a28d17"
-                />
-                <input
-                  name="MCSector_2"
-                  type="hidden"
-                  id="hdnMC_Sec_2"
-                  defaultValue=""
-                />
-                <input
-                  name="TripType"
-                  type="hidden"
-                  id="hdnTripTypeCode"
-                  defaultValue={1}
-                />
-                <div className="From searchSec origin">
-                  <div className="icon-class">
-                    <img src="/Content/images/plane.png" />
-                  </div>
-                  <span>From</span>
-
-                  <input
-                    id="txtOriginCode"
-                    type="text"
-                    className="ui-autocomplete-input"
-                    autoComplete="off"
-                    value={originInputValue}
-
-                    required
-                    placeholder="Departure"
-                    onChange={handleOriginChange}
-                  />
-                  <i className="fa fa-times-circle demo-label" style={{ display: "none" }} />
-
-                  {isDropdownVisible && originAirportList.length > 0 && (
-                    <ul
-                      id="ui-id-1"
-                      tabIndex={0}
-                      className="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front"
-                      style={{
-                        top: 88,
-                        left: "37.5px",
-                        width: "338.5px",
-                        display: originAirportList.length ? "block" : "none",
-                      }}
-                    >
-                      {originAirportList.map((city, index) => (
-                        <li
-                          key={index} // Use a unique key
-                          className="airList parent-auto-list ui-menu-item"
-                          onClick={() => handleSelectAirport(city)} // Handle selection
-                        >
-                          <span className="highlight-auto-list"></span>
-                          {city.label}, <span className="highlight-auto-list"></span> {city.iataCode}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-
-                  <input name="OriginCode" type="hidden" id="hdnOriginCode" />
-                  <span
-                    id="spanOriginCityName"
-                    className="spanCity"
-                    style={{ display: "none" }}
-                  />
-                  <div
-                    id="spnOriginErrMsg"
-                    className="errorMsg"
-                    style={{ display: "none" }}
-                  >
-                    Please select origin
-                  </div>
-                  <img
-                    src="/Content/images/destChange-icon.png"
-                    className="swapDest"
-                    style={{ display: "none" }}
-                  />
-                </div>
-                <div className="To searchSec origin dset">
-                  <div className="icon-class">
-                    <img src="/Content/images/point.png" />
-                  </div>
-                  <span>To</span>
-
-                  <input
-                    id="txtDestCode"
-                    type="text"
-                    className="ui-autocomplete-input"
-                    autoComplete="off"
-                    value={desInputValue}
-                    required
-                    placeholder="Destination"
-                    onChange={handleDesChange}
-                  />
-                  <i
-                    className="fa fa-times-circle demo-label"
-                    style={{ display: "none" }}
-                  />
-
-                  {isDropdownVisibleDes && desAirportList.length > 0 && (
-                    <ul
-                      id="ui-id-1"
-                      tabIndex={0}
-                      className="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front"
-                      style={{
-                        top: 88, // Adjust based on your layout
-                        left: "37.5px", // Adjust based on your layout
-                        width: "338.5px",
-                        display: desAirportList.length ? "block" : "none",
-                      }}
-                    >
-                      {desAirportList.map((city, index) => (
-                        <li
-                          key={index} // Use a unique key
-                          className="airList parent-auto-list ui-menu-item"
-                          onClick={() => handleSelectDesAirport(city)} // Handle selection
-                        >
-                          <span className="highlight-auto-list"></span>
-                          {city.label}, <span className="highlight-auto-list"></span> {city.iataCode}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  <input
-                    name="DestinationCode"
-                    type="hidden"
-                    id="hdnDestinationCode"
-                  />
-                  <span
-                    id="spanDestCityName"
-                    className="spanCity"
-                    style={{ display: "none" }}
-                  />
-                  <div
-                    id="spnDestErrMsg"
-                    className="errorMsg"
-                    style={{ display: "none" }}
-                  >
-                    Please select destination
-                  </div>
-                </div>
-
-
-                <div id="divDepartSecton" className="Date searchSec datepic">
-                  <div className="icon-class">
-                    <img src="/Content/images/date1.png" alt="Date Icon" />
-                  </div>
-                  <span>
-                    Depart <i className="fa fa-angle-down" aria-hidden="true" />
-                  </span>
-                  <Flatpickr
-                    value={depDate}
-                    onChange={handleDepartureChange}
-                    options={{
-                      dateFormat: 'Y-m-d',
-                      minDate: "today",
-                      disableMobile: true,
-                    }}
-                    render={({ defaultValue, value, ...props }, ref) => (
-                      <input
-                        {...props}
-                        ref={ref}
-                        type="text"
-                        id="txtDepartDate"
-                        name="DepDate"
-                        className="date"
-                        placeholder="Date"
-                        readOnly
-                      />
-                    )}
-                  />
-                  <p style={{ display: "none" }}>
-                    <span className="date" id="txtDepartDate_MMM">Date</span>
-                    <span className="date" id="txtDepartDate_DD" style={{ display: "none" }} />
-                  </p>
-                  <span id="txtDepartDate_DAY" style={{ display: "none" }} />
-                  <span id="txtDepartDate_YYYY" style={{ display: "none" }} />
-                  {errorMessage && (
-                    <div id="spnDepDateErrMsg" className="errorMsg">
-                      {errorMessage}
-                    </div>
-                  )}
-                </div>
-
-
-
-
-
-                <div id="divReturnSection" className="Date searchSec datepic" style={{ display: oneWay ? "none" : "" }}
-                >
-                  <div className="icon-class">
-                    <img src="/Content/images/date1.png" alt="Date Icon" />
-                  </div>
-                  <span>
-                    Return <i className="fa fa-angle-down" aria-hidden="true" />
-                  </span>
-                  <Flatpickr
-                    value={returnDate}
-                    onChange={handleReturnChange}
-                    options={{
-                      dateFormat: 'Y-m-d',
-                      minDate: "today",
-                      disableMobile: true,
-                    }}
-                    render={({ defaultValue, value, ...props }, ref) => (
-                      <input
-                        {...props}
-                        ref={ref}
-                        type="text"
-                        id="txtReturnDate"
-                        name="RetDate"
-                        className="date"
-                        placeholder="Date"
-                        readOnly
-                      />
-                    )}
-                  />
-                  <p style={{ display: "none" }}>
-                    <span className="date" id="txtReturnDate_MMM">Date</span>
-                    <span className="date" id="txtReturnDate_DD" style={{ display: "none" }} />
-                  </p>
-                  <span id="txtReturnDate_DAY" style={{ display: "none" }} />
-                  <span id="txtReturnDate_YYYY" style={{ display: "none" }} />
-                  {errorMessage && (
-                    <div id="spnRetDateErrMsg" className="errorMsg">
-                      {errorMessage}
-                    </div>
-                  )}
-                </div>
-
-
-                <div className="Traveler searchSec txtPassengers" onClick={() => setTravellerToggle(prev => !prev)}>
-                  <div className="icon-class">
-                    <img src="/Content/images/psger.png" alt="Traveler Icon" />
-                  </div>
-                  <span>
-                    Travelers{" "}
-                    <i className="fa fa-angle-down" aria-hidden="true" />
-                  </span>
-                  <h6>
-                    <input
-                      id="txtPassengers"
-                      type="text"
-                      placeholder={`${travellerDetail.totalTraveller != 1 ? 1 : 1} Traveler${travellerDetail.totalTraveller !== 1 ? 's' : ''}, ${travellerDetail.cabinType}`}
-                      value={`${travellerDetail.totalTraveller} Traveler${travellerDetail.totalTraveller !== 1 ? 's' : ''}, ${travellerDetail.cabinType}`}
-                      readOnly
-                      onClick={() => { setShowPax((p) => !p) }}
-                      ref={paxRef}
-                    />
-                    <b id="txtClassType" style={{ display: "none" }}>
-                      {travellerDetail.cabinType}
-                    </b>
-                  </h6>
-                  <b id="txtPassengersDetails" style={{ display: "none" }}>
-                    {travellerDetail.adultCount} Adult{travellerDetail.adultCount !== 1 ? 's' : ''}
-                  </b>
-                </div>
-
-
-
-
-
-
-                <div className="button-search">
-                  <button
-                    type="button"
-                    style={{ display: "none" }}
-                    className="submit g-orange"
-                    id="BtnSearchFare_RTOW_Deal"
-                    onClick={handleOnSubmit}
-                  >
-                    Search Now
-                  </button>
-                  <button
-                    type="button"
-                    className="submit g-orange"
-                    id="BtnSearchFare_RTOW"
-                    onClick={handleOnSubmit}
-                  >
-                    Search Flights
-                  </button>
-                </div>
-              </div>
-              <span className="advance ">
-                <a
-                  className="lnk_RUHUS_advanceSearch"
-                  href="javascript:void(0);"
-                >
-                  Advanced Search (+)
-                </a>
-              </span>
-              <div
-                className="advance_ruhus_SearchHolder"
-                style={{ display: "none" }}
-              >
-                <ul>
-                  <li>
-                    <input
-                      id="txt_RUHUS_PreferredAirlines"
-                      type="text"
-                      autoComplete="off"
-                      onkeypress="return OnlyCharNumberKey(event)"
-                      required=""
-                      placeholder="Preferred Airline"
-                      name="PreferredAirlineName"
-                      className="ui-autocomplete-input"
-                    />
-                    <input
-                      name="PreferredAirline"
-                      type="hidden"
-                      id="hdn_RUHUS_PreferredAirline"
-                    />
-                  </li>
-                  <li>
-                    <label>
-                      <input
-                        type="checkbox"
-                        id="chk_RUHUS_DirectFlight"
-                        onclick="Check_RUHUS_DirectFlight()"
-                        defaultValue="Direct"
-                      />{" "}
-                      <span> Non-Stop</span>
-                    </label>
-                  </li>
-                </ul>
-              </div>
-              <span className="minor">
-                <a
-                  href="javascript:void(0);"
-                  style={{ color: "#000" }}
-                  className="lnkUMNR_RUHUS"
-                >
-                  Unaccompanied Minor
-                </a>
-              </span>
-              <div
-                className="searchbox"
-                id="Tp_multicity"
-                style={{ display: "none" }}
-              ></div>
-            </section>
-            <div className="" id="divUnaccompaniedMinorPopup">
-              <a className="linkUnaccompaniedMinorClose">x</a>
-              <div>
-                Flight tickets for an unaccompanied minor are not available
-                online. To book a flight for a UMNR, directly reach out to our
-                experts at{" "}
-                <strong style={{ fontWeight: "bold" }}>1-833-914-2482</strong>.
-                For more details, <a href="/unaccompanied-minor">READ HERE</a>.
-              </div>
-            </div>
-
-
-
-            <div id="divPassengerDDL" className="pasenger-popup" style={{ display: travellerToggle ? "" : "none" }}>
-              <div className="divPassengerPanel">
-                <h2>Select Travelers</h2>
-
-
-                <div className="divPassenger">
-                  <div className="divPassengerType">
-                    <p>Adult</p>
-                    <span>(18+ yrs)</span>
-                  </div>
-                  <div className="divPassengerCount">
-                    <div className="Add_Less_Passenger">
-                      <div className="MinusPassenger">
-                        <input
-                          type="button"
-                          value="-"
-                          className="MinusPassengerBox"
-                          onClick={() => setAdultCount(prev => Math.max(0, prev - 1))}
-                        />
-                      </div>
-                      <div className="PassengerCount">
-                        <input
-                          type="text"
-                          value={adultCount}
-                          className="CountPassengerBox"
-                          readOnly
-                        />
-                      </div>
-                      <div className="PlusPassenger">
-                        <input
-                          type="button"
-                          value="+"
-                          className="PlusPassengerBox"
-                          onClick={() => setAdultCount(prev => Math.min(9, prev + 1))}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="divPassenger">
-                  <div className="divPassengerType">
-                    <p>Children</p>
-                    <span>(2 - 11 yrs)</span>
-                  </div>
-                  <div className="divPassengerCount">
-                    <div className="Add_Less_Passenger">
-                      <div className="MinusPassenger">
-                        <input
-                          type="button"
-                          value="-"
-                          className="MinusPassengerBox"
-                          onClick={() => setChildrenCount(prev => Math.max(0, prev - 1))}
-                        />
-                      </div>
-                      <div className="PassengerCount">
-                        <input
-                          type="text"
-                          value={childrenCount}
-                          className="CountPassengerBox"
-                          readOnly
-                        />
-                      </div>
-                      <div className="PlusPassenger">
-                        <input
-                          type="button"
-                          value="+"
-                          className="PlusPassengerBox"
-                          onClick={() => setChildrenCount(prev => Math.min(8, prev + 1))}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-                <div className="divPassenger">
-                  <div className="divPassengerType">
-                    <p>Infant (on lap)</p>
-                    <span>(Below 2 yrs)</span>
-                  </div>
-                  <div className="divPassengerCount">
-                    <div className="Add_Less_Passenger">
-                      <div className="MinusPassenger">
-                        <input
-                          type="button"
-                          value="-"
-                          className="MinusPassengerBox"
-                          onClick={() => setInfantCount(prev => Math.max(0, prev - 1))}
-                        />
-                      </div>
-                      <div className="PassengerCount">
-                        <input
-                          type="text"
-                          value={infantCount}
-                          className="CountPassengerBox"
-                          readOnly
-                        />
-                      </div>
-                      <div className="PlusPassenger">
-                        <input
-                          type="button"
-                          value="+"
-                          className="PlusPassengerBox"
-                          onClick={() => setInfantCount(prev => Math.min(4, prev + 1))}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="divPassenger">
-                  <div className="divPassengerType">
-                    <p>Infant (on seat)</p>
-                    <span>(Below 2 yrs)</span>
-                  </div>
-                  <div className="divPassengerCount">
-                    <div className="Add_Less_Passenger">
-                      <div className="MinusPassenger">
-                        <input
-                          type="button"
-                          value="-"
-                          className="MinusPassengerBox"
-                          onClick={() => setInfantOnSeatCount(prev => Math.max(0, prev - 1))}
-                        />
-                      </div>
-                      <div className="PassengerCount">
-                        <input
-                          type="text"
-                          value={infantOnSeatCount}
-                          className="CountPassengerBox"
-                          readOnly
-                        />
-                      </div>
-                      <div className="PlusPassenger">
-                        <input
-                          type="button"
-                          value="+"
-                          className="PlusPassengerBox"
-                          onClick={() => setInfantOnSeatCount(prev => Math.min(4, prev + 1))}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-                <div className="class-mpopup">
-                  <h2>Select Class</h2>
-                  <select name="CabinClass" id="LstCabinClass" value={cabinType} onChange={handleCabinTypeChange}>
-                    <option value="ECONOMY">Economy</option>
-                    <option value="Premium_Economy">Premium Economy</option>
-                    <option value="BUSINESS">Business</option>
-                    <option value="FIRST">First</option>
-                  </select>
-                </div>
-
-
-                <div className="btsy">
-                  <button onClick={handleApplyFilter} className="g-orange" id="btnPassengerDone">
-                    Done
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form> */}
             <ModifyForm
               oneWay={oneWay}
               setOneWay={setOneWay}
@@ -2958,7 +1739,10 @@ const SearchFlight = () => {
                       </a>
                     </h2>
                   </li>
-                  <li className="allfares-stp">
+                  <li
+                    className="allfares-stp"
+                    onClick={() => handleStopFilter("Non-Stop")}
+                  >
                     <a
                       href="#"
                       className="am-flight"
@@ -2967,559 +1751,16 @@ const SearchFlight = () => {
                       Non-Stop
                     </a>
                   </li>
-                  <li className="allfares-more-result">
+                  <li
+                    className="allfares-more-result"
+                    onClick={() => handleStopFilter("1 Stop")}
+                  >
                     <a href="#" onclick="GetMatrixSorting('M||')">
                       1+ Stops
                     </a>
                   </li>
                 </ul>
-                {/* <div className="owl-carousel fare-slide owl-loaded owl-drag">
-                <div className="owl-stage-outer">
-                  <div
-                    className="owl-stage"
-                    style={{
-                      transform: "translate3d(-1973px, 0px, 0px)",
-                      transition: "0.25s",
-                      width: 2691
-                    }}
-                  >
-                    <div className="owl-item" style={{ width: "179.399px" }}>
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|AI|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/AI.png"
-                                alt="Air India"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|AI|')"
-                          >
-                            <p className="fw600">Air India</p>
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="#"
-                            onclick="GetMatrixSorting('DO|AI|$1264.35')"
-                          >
-                            <span>
-                              $1264<sup className="small">.35</sup>
-                            </span>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|AI|$1028.35')">
-                            <span>
-                              $1028<sup className="small">.35</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="owl-item" style={{ width: "179.399px" }}>
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|UA|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/UA.png"
-                                alt="United Airlines"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|UA|')"
-                          >
-                            <p className="fw600">United Airlines</p>
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="#"
-                            onclick="GetMatrixSorting('DO|UA|$1125.55')"
-                          >
-                            <span>
-                              $1125<sup className="small">.55</sup>
-                            </span>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|UA|$1125.55')">
-                            <span>
-                              $1125<sup className="small">.55</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="owl-item" style={{ width: "179.399px" }}>
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|UA-|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/UA.png"
-                                alt="United Airlines"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|UA-|')"
-                          >
-                            <p className="fw600">United Airlines </p>
-                            <p style={{ fontSize: 9 }}>(with others)</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a
-                            href="#"
-                            onclick="GetMatrixSorting('M|UA-|$1125.55')"
-                          >
-                            <span>
-                              $1125<sup className="small">.55</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="owl-item" style={{ width: "179.399px" }}>
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|EY|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/EY.png"
-                                alt="Etihad Airways"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|EY|')"
-                          >
-                            <p className="fw600">Etihad Airways</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|EY|$1203.15')">
-                            <span>
-                              $1203<sup className="small">.15</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="owl-item" style={{ width: "179.399px" }}>
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|AA|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/AA.png"
-                                alt="American Airlines"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|AA|')"
-                          >
-                            <p className="fw600">American Airlines</p>
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="#"
-                            onclick="GetMatrixSorting('DO|AA|$1300.55')"
-                          >
-                            <span>
-                              $1300<sup className="small">.55</sup>
-                            </span>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                      </ul>
-                    </div>
-                    <div className="owl-item" style={{ width: "179.399px" }}>
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|LH|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/LH.png"
-                                alt="Lufthansa Airline"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|LH|')"
-                          >
-                            <p className="fw600">Lufthansa Airline</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|LH|$1353.05')">
-                            <span>
-                              $1353<sup className="small">.05</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="owl-item" style={{ width: "179.399px" }}>
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|LX|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/LX.png"
-                                alt="Swiss International Airlines"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|LX|')"
-                          >
-                            <p className="fw600">Swiss International A</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|LX|$1376.25')">
-                            <span>
-                              $1376<sup className="small">.25</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="owl-item" style={{ width: "179.399px" }}>
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|CX|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/CX.png"
-                                alt="Cathay Pacific"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|CX|')"
-                          >
-                            <p className="fw600">Cathay Pacific</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|CX|$1448.35')">
-                            <span>
-                              $1448<sup className="small">.35</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="owl-item" style={{ width: "179.399px" }}>
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|AY|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/AY.png"
-                                alt="Finnair"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|AY|')"
-                          >
-                            <p className="fw600">Finnair</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|AY|$1689.75')">
-                            <span>
-                              $1689<sup className="small">.75</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="owl-item" style={{ width: "179.399px" }}>
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|AC|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/AC.png"
-                                alt="Air Canada"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|AC|')"
-                          >
-                            <p className="fw600">Air Canada</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|AC|$1717.7')">
-                            <span>
-                              $1717<sup className="small">.70</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="owl-item" style={{ width: "179.399px" }}>
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|DL|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/GEN.png"
-                                alt="Secret Deal"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|DL|')"
-                          >
-                            <p className="fw600">Secret Deal</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|DL|$1721.65')">
-                            <span>
-                              $1721<sup className="small">.65</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div
-                      className="owl-item active"
-                      style={{ width: "179.399px" }}
-                    >
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|QR|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/QR.png"
-                                alt="Qatar Airways"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|QR|')"
-                          >
-                            <p className="fw600">Qatar Airways</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|QR|$1865.95')">
-                            <span>
-                              $1865<sup className="small">.95</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div
-                      className="owl-item active"
-                      style={{ width: "179.399px" }}
-                    >
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|AF-|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/AF.png"
-                                alt="Air France"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|AF-|')"
-                          >
-                            <p className="fw600">Air France </p>
-                            <p style={{ fontSize: 9 }}>(with others)</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a
-                            href="#"
-                            onclick="GetMatrixSorting('M|AF-|$1884.65')"
-                          >
-                            <span>
-                              $1884<sup className="small">.65</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div
-                      className="owl-item active"
-                      style={{ width: "179.399px" }}
-                    >
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|BA|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/BA.png"
-                                alt="British Airways"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|BA|')"
-                          >
-                            <p className="fw600">British Airways</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|BA|$2085.55')">
-                            <span>
-                              $2085<sup className="small">.55</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div
-                      className="owl-item active"
-                      style={{ width: "179.399px" }}
-                    >
-                      <ul className="item">
-                        <li>
-                          <a
-                            href="JavaScript:void(0)"
-                            onclick="GetMatrixSorting('|AZ|')"
-                          >
-                            <span className="l-img">
-                              <img
-                                src="/Content/images/AirlinesLogo/AZ.png"
-                                alt="ITA Airways"
-                              />
-                            </span>
-                          </a>
-                          <a
-                            href="#"
-                            className="am-flight"
-                            onclick="GetMatrixSorting('|AZ|')"
-                          >
-                            <p className="fw600">ITA Airways</p>
-                          </a>
-                        </li>
-                        <li>--- </li>
-                        <li>
-                          <a href="#" onclick="GetMatrixSorting('M|AZ|$2176.75')">
-                            <span>
-                              $2176<sup className="small">.75</sup>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <div className="owl-nav">
-                  <button type="button" role="presentation" className="owl-prev">
-                    <span aria-label="Previous">‹</span>
-                  </button>
-                  <button
-                    type="button"
-                    role="presentation"
-                    className="owl-next disabled"
-                  >
-                    <span aria-label="Next">›</span>
-                  </button>
-                </div>
-                <div className="owl-dots disabled" />
-              </div> */}
+
                 {/* <Carousel/> */}
 
                 {/* <MyTextCarousel FlightList={FlightList} oneWay={oneWay} /> */}
@@ -3548,7 +1789,10 @@ const SearchFlight = () => {
                   />
                   <a href="javascript:void(0)">cheapest</a>
                 </li>
-                <li className="tipsy-best sort-pricetime ">
+                <li
+                  className="tipsy-best sort-pricetime "
+                  onClick={handleCheapest}
+                >
                   <input
                     type="hidden"
                     id="hdnsortpricetime"
@@ -3614,6 +1858,7 @@ const SearchFlight = () => {
             {!quickest &&
               !earliest &&
               cheapest &&
+              !filter &&
               FlightList &&
               FlightList.map((a) => {
                 return (
@@ -3642,6 +1887,7 @@ const SearchFlight = () => {
               })} */}
             {/* listing box */}
             {earliest &&
+              !filter &&
               flightListToRenderEarliest.map((a) => {
                 return (
                   <SearchFlightCard
@@ -3655,7 +1901,21 @@ const SearchFlight = () => {
               })}
 
             {quickest &&
+              !filter &&
               flightListToRenderQuickest.map((a) => {
+                return (
+                  <SearchFlightCard
+                    setSelectedFlight={setSelectedFlight}
+                    setFlightDetailVisible={setFlightDetailVisible}
+                    flight={a}
+                    oneWay={oneWay.toString()}
+                    token={searchParam.get("token")}
+                  />
+                );
+              })}
+
+            {filter &&
+              filteredFlights.map((a) => {
                 return (
                   <SearchFlightCard
                     setSelectedFlight={setSelectedFlight}

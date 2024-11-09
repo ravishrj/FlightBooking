@@ -120,25 +120,34 @@ const ContainerForm = () => {
   const [des, setDes] = useState("");
   const [desAirportList, setDesAirportList] = useState([]);
   const [desInputValue, setDesInputValue] = useState("");
+
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [isDropdownVisibleDes, setDropdownVisibleDes] = useState(false);
+  const [showPax, setShowPax] = useState(false);
+  const [flights, setFlights] = useState([]);
+  const [depDate, setDepDate] = useState(new Date());
+  const [returnDate, setReturnDate] = useState(new Date());
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [travellerToggle, setTravellerToggle] = useState(false);
+
+  const paxRef = useRef(null);
+
+  const [adultCount, setAdultCount] = useState(1);
+  const [childrenCount, setChildrenCount] = useState(0);
+  const [infanctCount, setInfantCount] = useState(0);
+  const [infantOnSeatCount, setInfantOnSeatCount] = useState(0);
+  const [cabinType, setCabinType] = useState("ECONOMY");
+  const [totalTraveller, setTotalTraveller] = useState(1);
   const [travellerDetail, setTravellerDetail] = useState({
     adultCount: 1,
     childrenCount: 0,
     infanctCount: 0,
     cabinType: "ECONOMY",
+    totalTraveller: adultCount + childrenCount + infanctCount,
   });
-  const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const [isDropdownVisibleDes, setDropdownVisibleDes] = useState(false);
-  const [showPax, setShowPax] = useState(false);
-  const [flights, setFlights] = useState([]);
 
-  const [travellerToggle, setTravellerToggle] = useState(false);
-  const [adultCount, setAdultCount] = useState(1);
-  const [childrenCount, setChildrenCount] = useState(0);
-  const [infantCount, setInfantCount] = useState(0);
-  const [infantOnSeatCount, setInfantOnSeatCount] = useState(0);
-  const [cabinType, setCabinType] = useState("ECONOMY");
-  const paxRef = useRef(null);
-  //const [totalTraveller,setTotalTraveller]=useState(1);
+  //const [totalTraveller, setTotalTraveller] = useState(1);
   // Function to handle the application of filters and closing the dropdown
   //const  totalTraveller=adultCount + childrenCount + infantCount + infantOnSeatCount;
 
@@ -167,40 +176,35 @@ const ContainerForm = () => {
   //   setTravellerToggle(false);
 
   // };
+  // useEffect(() => {
+  //   // Load from local storage
+  //   const storedTravellerDetail = localStorage.getItem("travellerDetail");
+  //   if (storedTravellerDetail) {
+  //     setTravellerDetail(JSON.parse(storedTravellerDetail));
+  //   }
+  // }, []);
+
   useEffect(() => {
-    // Load from local storage
-    const storedTravellerDetail = localStorage.getItem("travellerDetail");
-    if (storedTravellerDetail) {
-      setTravellerDetail(JSON.parse(storedTravellerDetail));
-    }
+    const currentDate = new Date();
+    const defaultDate = new Date(
+      currentDate.setDate(currentDate.getDate() + 7)
+    );
+    setReturnDate(defaultDate);
   }, []);
 
-  const handleApplyFilter = () => {
-    const totalTraveller =
-      adultCount + childrenCount + infantCount + infantOnSeatCount;
-
-    const newTravellerDetail = {
-      adultCount,
-      childrenCount,
-      infantCount,
-      infantOnSeatCount,
-      cabinType,
-      totalTraveller,
-    };
-
-    // Save to local storage
-    localStorage.setItem("travellerDetail", JSON.stringify(newTravellerDetail));
-
-    setTravellerDetail(newTravellerDetail);
-
-    if (paxRef.current) {
-      paxRef.current.focus();
-    }
-
+  const handleApplyFilter = (e) => {
+    e.preventDefault();
+    let filter = travellerDetail;
+    filter.adultCount = adultCount;
+    filter.childrenCount = childrenCount;
+    filter.infanctCount = infanctCount + infantOnSeatCount;
+    filter.cabinType = cabinType;
+    filter.totalTraveller = totalTraveller;
+    setTravellerDetail(filter);
     setTravellerToggle(false);
+    setShowPax(false);
   };
 
-  // Function to handle changes in cabin type
   const handleCabinTypeChange = (event) => {
     setCabinType(event.target.value);
   };
@@ -283,14 +287,14 @@ const ContainerForm = () => {
   };
   const handleSelectAirport = (city) => {
     // console.log(city,"city in handleSelectAirport");
-    setOriginInputValue(`${city.label}, ${city.iataCode}`);
+    setOriginInputValue(`${city.label}`);
     setOrigin(city.value);
 
     setDropdownVisible(false); // Update input with selected airport
   };
 
   const handleSelectDesAirport = (city) => {
-    setDesInputValue(`${city.label}, ${city.iataCode}`);
+    setDesInputValue(`${city.label}`);
     setDes(city.value);
     setDropdownVisibleDes(false); // Update input with selected airport
   };
@@ -353,7 +357,7 @@ const ContainerForm = () => {
           );
 
           const result = await response.json();
-
+          console.log(result, "result");
           // Check if the response is valid and has data
           if (response.ok && Array.isArray(result.data)) {
             // Map the response to label and value format
@@ -364,6 +368,7 @@ const ContainerForm = () => {
 
             // Set the nearest airport list
             setOriginAirportList(options);
+            console.log(options, "options in fetch nearest airport");
 
             if (options.length > 0) {
               setOriginInputValue(options[0].label); // Set the first airport as the default value
@@ -374,12 +379,31 @@ const ContainerForm = () => {
           }
         },
         (error) => {
-          console.error("Geolocation error:", error); // Handle geolocation errors
+          console.error("Geolocation error:", error);
+          if (error.code === 1) {
+            // User denied geolocation permission
+            alert(
+              "You denied access to your location. Please enable location services to find nearby airports."
+            );
+            // You can provide a fallback mechanism here, like letting them search manually
+          } else if (error.code === 2) {
+            alert(
+              "Unable to retrieve your location. Please ensure you have a valid GPS signal."
+            );
+          } else if (error.code === 3) {
+            alert("Geolocation request timed out. Please try again.");
+          }
         }
       );
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error("Unexpected error:", err);
     }
+
+    //  catch (err) {
+    //   console.log("fetch error in nearest airport");
+    //   console.error("Fetch error:", err);
+    // }
+    //console.log(token, "token in fetch nearest airport");
   };
 
   const filterDesAirportValue = async () => {
@@ -428,8 +452,10 @@ const ContainerForm = () => {
                 .toISOString()
                 .substring(0, 10)}`
             : ""
-        }&adults=${
-          searchObj.adults
+        }&adult=${travellerDetail.adultCount}&child=${
+          travellerDetail.childrenCount
+        }&infant=${travellerDetail.infanctCount}&cabin=${
+          travellerDetail.cabinType
         }&token=${accessToken}&oneWay=${oneWay.toString()}&originInputValue=${originInputValue}&originDesValue=${originInputValue}&desInputValue=${desInputValue}`
       );
     } catch (error) {
@@ -442,24 +468,29 @@ const ContainerForm = () => {
     fetchNearestAirports();
   }, [token]);
 
-  const [depDate, setDepDate] = useState(new Date());
-  const [errorMessage, setErrorMessage] = useState("");
-
   const handleDepartureChange = (date) => {
     if (date.length > 0) {
-      setDepDate(date[0]);
+      const utcDate = new Date(
+        Date.UTC(date[0].getFullYear(), date[0].getMonth(), date[0].getDate())
+      );
+
+      // Use .toISOString() or other methods to display as needed
+      setDepDate(utcDate);
       setErrorMessage(""); // Clear error message
     } else {
       setErrorMessage("Select depart date");
     }
   };
 
-  const [returnDate, setReturnDate] = useState(new Date());
   //const [errorMessage, setErrorMessage] = useState('');
 
   const handleReturnChange = (date) => {
     if (date.length > 0) {
-      setReturnDate(date[0]);
+      const utcDate = new Date(
+        Date.UTC(date[0].getFullYear(), date[0].getMonth(), date[0].getDate())
+      );
+
+      setReturnDate(utcDate);
       setErrorMessage(""); // Clear error message
     } else {
       setErrorMessage("Select return date");
@@ -951,9 +982,21 @@ const ContainerForm = () => {
                           } Traveler${
                             travellerDetail.totalTraveller !== 1 ? "s" : ""
                           }, ${travellerDetail.cabinType}`}
-                          value={`${travellerDetail.totalTraveller} Traveler${
-                            travellerDetail.totalTraveller !== 1 ? "s" : ""
-                          }, ${travellerDetail.cabinType}`}
+                          // value={`${travellerDetail.totalTraveller} Traveler${
+                          //   travellerDetail.totalTraveller !== 1 ? "s" : ""
+                          // }, ${travellerDetail.cabinType}`}
+                          value={`${travellerDetail.adultCount} Traveller, ${
+                            travellerDetail.childrenCount
+                              ? travellerDetail.childrenCount + "Children,"
+                              : ""
+                          } ${
+                            travellerDetail.infanctCount
+                              ? travellerDetail.infanctCount + "Infants,"
+                              : ""
+                          } ${
+                            travellerDetail.cabinType &&
+                            travellerDetail.cabinType
+                          } `}
                           readOnly
                           onClick={() => {
                             setShowPax((p) => !p);
@@ -1576,7 +1619,7 @@ const ContainerForm = () => {
                           <div className="PassengerCount">
                             <input
                               type="text"
-                              value={infantCount}
+                              value={infanctCount}
                               className="CountPassengerBox"
                               readOnly
                             />
