@@ -44,7 +44,7 @@ const BaggagePolicy = () => {
 
     console.log("Is Mobile Loaded");
     document.head.appendChild(mobileCss);
-    document.head.appendChild(mobileHomeCss);
+    //document.head.appendChild(mobileHomeCss);
     document.head.appendChild(listnav);
 
     return () => {
@@ -7420,6 +7420,52 @@ const BaggagePolicy = () => {
           </ul>
         </div>
       </div>
+      <div className="header-heading">
+        <h1>Baggage Policy</h1>
+      </div>
+
+      <div className="footer-links">{/* Footer links content */}</div>
+
+      <div className="ln-letters">
+        <a href="#">A</a>
+        <a href="#">B</a>
+        <a href="#">C</a>
+        {/* Other letters or links */}
+      </div>
+
+      <style>{`
+        .header-heading h1 {
+          margin: 0;
+          padding: 20px 0 18px 0;
+          font-size: 25px;
+          color: #034053;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+
+        .header-heading h1 {
+          padding: 105px 0 18px 0 !important;
+        }
+
+        .footer-links {
+          display: none;
+        }
+
+        body .ln-letters a {
+          padding: 6px 14px;
+          color: #000;
+        }
+
+        .ln-letters {
+          margin-bottom: 15px;
+        }
+
+        body .ln-letters a:hover,
+        body .ln-letters .ln-selected {
+          background-color: #f1750e;
+          color: #fff;
+        }
+      `}</style>
     </section>
   );
 };
