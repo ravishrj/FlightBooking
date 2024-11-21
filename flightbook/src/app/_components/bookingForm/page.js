@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { Country, State, City } from "country-state-city";
+import { toast } from "react-toastify";
 
 const BookingForm = () => {
   const paymentRef = useRef("");
@@ -136,7 +137,9 @@ const BookingForm = () => {
       missingFields.push("Emails do not match");
 
     if (missingFields.length > 0) {
-      alert(`Please fill the following fields: ${missingFields.join(", ")}`);
+      toast.error(
+        `Please fill the following fields: ${missingFields.join(", ")}`
+      );
       return false;
     }
 
@@ -156,7 +159,7 @@ const BookingForm = () => {
 
       // Add the new traveler to the array of travelers
       setTravellersDetails((prevState) => [...prevState, newTraveler]);
-      console.log("travellers detail added", travellersDetails);
+
       // Clear individual fields after adding to the array
       setTravelerInfo({
         title: "",
@@ -189,12 +192,16 @@ const BookingForm = () => {
         email: "",
         retypeEmail: "",
       });
+      setSelectedCountry("");
+      setSelectedState("");
 
       // Optionally, show a success message or redirect the user
       alert("Traveler details have been successfully added!");
     }
   };
-
+  useEffect(() => {
+    console.log("Updated travellers details:", travellersDetails);
+  }, [travellersDetails]);
   const updateCurrency = (newCurrency) => {
     setCardDetails((prevDetails) => ({
       ...prevDetails,

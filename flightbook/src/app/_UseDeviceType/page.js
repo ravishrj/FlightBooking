@@ -1,10 +1,11 @@
-"use client"
-import Mobile from '../_components/MobileView/mobile';
-import Desktop from '../_components/DesktopView/page';
-import Footer from '../_components/footer/page';
-import FooterDesktop from '../_components/FooterDesktop/page';
-import { useEffect, useState } from 'react';
-import Navbar from '../_components/navbar/page';
+"use client";
+import Mobile from "../_components/MobileView/mobile";
+import Desktop from "../_components/DesktopView/page";
+import Footer from "../_components/footer/page";
+import FooterDesktop from "../_components/FooterDesktop/page";
+import { useEffect, useState } from "react";
+import Navbar from "../_components/navbar/page";
+import BookingMobile from "../confirmationMobille/[token]/page";
 
 const useWindowWidth = () => {
   const [windowWidth, setWindowWidth] = useState(0);
@@ -18,11 +19,11 @@ const useWindowWidth = () => {
     handleResize();
 
     // Add event listener
-    window.addEventListener('resize', handleResize);
-    
+    window.addEventListener("resize", handleResize);
+
     // Cleanup listener on unmount
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -35,14 +36,15 @@ const MyComponent = () => {
 
   return (
     <div>
-      
-        {isMobile ?   <Navbar /> :""}
+      {/* {isMobile ? <BookingMobile /> : ""} */}
+      {/* niche ka dono real hai isi ko use karna hai bs as trial hamlog isko comment kiye hai */}
+      {isMobile && <Navbar />}
       {isMobile ? <Mobile /> : <Desktop />}
-      {isMobile ? <Footer /> :<FooterDesktop />}
+      {/* {isMobile ? "" : <Desktop />} */}
+
+      {isMobile ? <Footer /> : <FooterDesktop />}
     </div>
   );
 };
-
-
 
 export default MyComponent;

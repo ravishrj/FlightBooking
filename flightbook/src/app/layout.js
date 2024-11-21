@@ -9,6 +9,8 @@ import Copyright from "./_components/copyright/page";
 import useDeviceType from "./_UseDeviceType/page";
 import FooterDesktop from "./_components/FooterDesktop/page";
 import useWindowWidth from "./_UseDeviceType/page";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -59,6 +61,7 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* Load Owl Carousel scripts */}
+        <ToastContainer />
         {children}
       </body>
     </html>

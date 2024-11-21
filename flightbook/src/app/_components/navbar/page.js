@@ -473,15 +473,15 @@ const Navbar = () => {
     listnav.rel = "stylesheet";
     listnav.href = "/Content/css/listnav.css";
 
-    const listing = document.createElement("link");
-    listing.rel = "stylesheet";
-    listing.href = "/listing.css";
+    // const listing = document.createElement("link");
+    // listing.rel = "stylesheet";
+    // listing.href = "/listing.css";
 
     console.log("Is Mobile Loaded");
     document.head.appendChild(mobileCss);
     document.head.appendChild(mobileHomeCss);
     document.head.appendChild(listnav);
-    document.head.appendChild(listing);
+    // document.head.appendChild(listing);
     return () => {
       if (document.head.contains(mobileCss)) {
         document.head.removeChild(mobileCss);
@@ -492,9 +492,9 @@ const Navbar = () => {
       if (document.head.contains(listnav)) {
         document.head.removeChild(listnav);
       }
-      if (document.head.contains(listing)) {
-        document.head.removeChild(listing);
-      }
+      // if (document.head.contains(listing)) {
+      //   document.head.removeChild(listing);
+      // }
     };
   }, [isMobile]);
 
