@@ -1,0 +1,54 @@
+.sitemap-content {
+  padding: 10px 0 20px 0;
+}
+.container {
+  width: auto;
+  margin: 0 auto;
+}
+.sitemap-content .header-heading.text-center {
+  margin-bottom: 33px;
+  margin-top: 10px;
+}
+
+.sitemap-content h3 {
+  background: rgb(91, 1, 1);
+  background: linear-gradient(
+    90deg,
+    rgba(91, 1, 1, 1) 0%,
+    rgba(214, 0, 1, 1) 51%,
+    rgba(128, 1, 1, 1) 100%
+  );
+  display: inline-block;
+  clear: both;
+  font-size: 15px;
+  border-radius: 20px;
+  padding: 11px 25px;
+  color: #fff;
+  margin-bottom: 15px;
+}
+.sitemap-content ul {
+  display: inline-block;
+  width: 100%;
+  border-bottom: 1px solid #d20001;
+  padding-bottom: 17px;
+  margin-bottom: 30px;
+}
+.sitemap-content ul li {
+  float: left;
+  width: 50%;
+}
+.sitemap-content ul li a {
+  font-size: 12px;
+  color: #fff;
+  display: inline-block;
+  background-image: url(/Content/images/depart-icon-red.png);
+  background-repeat: no-repeat;
+  padding: 3px 0 7px 21px;
+  background-position: top 4px left;
+  text-decoration: none;
+  background-size: 15px;
+  margin-bottom: 5px;
+}
+.getcode {
+  margin-top: 0;
+}

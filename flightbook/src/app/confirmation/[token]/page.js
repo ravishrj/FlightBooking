@@ -4,22 +4,17 @@ import BookingForm from "@/app/_components/bookingForm/page";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Loading from "@/app/_components/loading/page";
 
 const useWindowWidth = () => {
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Initial value
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    // Set initial width
-    handleResize();
-
-    // Add event listener
     window.addEventListener("resize", handleResize);
-
-    // Cleanup listener on unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -212,8 +207,8 @@ const Booking = () => {
     }
   }, [searchParams]);
   if (!flight) {
-    console.log("data is loading");
-    return <div>Loading...</div>;
+    ///console.log("data is loading");
+    return <Loading />;
   } else console.log("flight", flight);
 
   return (

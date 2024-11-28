@@ -12,22 +12,17 @@ import Flatpickr from "react-flatpickr";
 import { useRef } from "react";
 import "flatpickr/dist/flatpickr.css";
 import ModifyForm from "../_components/searchFlightForm/page";
+import Loading from "../_components/loading/page";
 
 const useWindowWidth = () => {
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Initial value
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    // Set initial width
-    handleResize();
-
-    // Add event listener
     window.addEventListener("resize", handleResize);
-
-    // Cleanup listener on unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -88,6 +83,10 @@ const SearchFlight = () => {
   const [quickest, setQuickest] = useState(false);
   const [cheapest, setCheapest] = useState(true);
   const [filter, setFilter] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(10);
+  const loadMoreResult = () => {
+    setVisibleCount(visibleCount + 10);
+  };
 
   const [isMobile, setIsMobile] = useState(false);
   const width = useWindowWidth();
@@ -549,6 +548,7 @@ const SearchFlight = () => {
       setQuickest(false);
       setCheapest(true);
       setFilter(false);
+      setVisibleCount(10);
       let travellersArr = [];
       if (searchParam.get("adult")) {
         for (let x = 0; x < parseInt(searchParam.get("adult")); x++) {
@@ -707,11 +707,20 @@ const SearchFlight = () => {
         if (oneWay) {
           console.log("Flight List Changed");
           setFlightList(newFlightList);
+          setFlightDetails(FlightList);
+          if (newFlightList.length > 0) {
+            setLoading(false);
+            console.log(loading, "loading in one way"); // Mark loading as complete
+          } else router.push("/no-result");
         } else {
           // const twoWay = [...newFlightList, ...newFlightList1];
           // setFlightList(twoWay);
           const twoWay = [...(newFlightList || []), ...(newFlightList1 || [])];
           setFlightList(twoWay);
+          if (twoWay.length > 0) {
+            setLoading(false);
+            console.log(loading, "loading in two way"); // Mark loading as complete
+          } else router.push("/no-result");
           console.log(twoWay, "FlightList in searchflight");
         }
         const flightDetailsCarausel = processFlightData(json);
@@ -719,11 +728,13 @@ const SearchFlight = () => {
         setUniqueAirlines(flightDetailsCarausel);
 
         setFlightDetails(FlightList);
+
         if (FlightList.length <= 0) {
-          // router.push("/home/no-results");
+          // router.push("/no-result");
         } else {
           setFlightList(FlightList);
           setLoading(false);
+
           let offerInterval = setInterval(() => {
             if (!offerPopupVisible) {
               setOfferPopupVisible(true);
@@ -731,7 +742,8 @@ const SearchFlight = () => {
           }, 25000);
         }
       } catch (err) {
-        // router.push("/home/no-results");
+        // router.push("/no-result");
+
         console.log("Found an error");
         console.log("error", err);
       }
@@ -745,6 +757,7 @@ const SearchFlight = () => {
     setEarliest(true);
     setCheapest(false);
     setFilter(false);
+    setVisibleCount(10);
 
     return [...FlightList].sort((a, b) => {
       return (
@@ -759,6 +772,7 @@ const SearchFlight = () => {
     setEarliest(false);
     setCheapest(false);
     setFilter(false);
+    setVisibleCount(10);
     return [...FlightList].sort((a, b) => {
       return (
         a.itineraries[0].segments.length - b.itineraries[0].segments.length
@@ -771,6 +785,7 @@ const SearchFlight = () => {
     setEarliest(false);
     setCheapest(true);
     setFilter(false);
+    setVisibleCount(10);
   };
 
   const calculateTotalDuration = (itinerary) => {
@@ -1030,6 +1045,8 @@ const SearchFlight = () => {
         </div>
       </div>
       {/* main Listing */}
+
+      {loading && <Loading />}
       <div className="main-lisitng">
         <div className="filter-btn">
           <a href="javascript:void(0);" className="filter-side">
@@ -1860,7 +1877,7 @@ const SearchFlight = () => {
               cheapest &&
               !filter &&
               FlightList &&
-              FlightList.map((a) => {
+              FlightList.slice(0, visibleCount).map((a) => {
                 return (
                   <SearchFlightCard
                     setSelectedFlight={setSelectedFlight}
@@ -1873,22 +1890,22 @@ const SearchFlight = () => {
               })}
 
             {/* {!earliest &&
-              FlightList &&
-              FlightList.map((a) => {
-                return (
-                  <SearchFlightCard
-                    setSelectedFlight={setSelectedFlight}
-                    setFlightDetailVisible={setFlightDetailVisible}
-                    flight={a}
-                    oneWay={oneWay.toString()}
-                    token={searchParam.get("token")}
-                  />
-                );
-              })} */}
+            FlightList &&
+            FlightList.map((a) => {
+              return (
+                <SearchFlightCard
+                  setSelectedFlight={setSelectedFlight}
+                  setFlightDetailVisible={setFlightDetailVisible}
+                  flight={a}
+                  oneWay={oneWay.toString()}
+                  token={searchParam.get("token")}
+                />
+              );
+            })} */}
             {/* listing box */}
             {earliest &&
               !filter &&
-              flightListToRenderEarliest.map((a) => {
+              flightListToRenderEarliest.slice(0, visibleCount).map((a) => {
                 return (
                   <SearchFlightCard
                     setSelectedFlight={setSelectedFlight}
@@ -1902,7 +1919,7 @@ const SearchFlight = () => {
 
             {quickest &&
               !filter &&
-              flightListToRenderQuickest.map((a) => {
+              flightListToRenderQuickest.slice(0, visibleCount).map((a) => {
                 return (
                   <SearchFlightCard
                     setSelectedFlight={setSelectedFlight}
@@ -1915,7 +1932,7 @@ const SearchFlight = () => {
               })}
 
             {filter &&
-              filteredFlights.map((a) => {
+              filteredFlights.slice(0, visibleCount).map((a) => {
                 return (
                   <SearchFlightCard
                     setSelectedFlight={setSelectedFlight}
@@ -1934,12 +1951,36 @@ const SearchFlight = () => {
                 <div className="pagination-container">
                   <ul className="pagination">
                     <li className="PagedList-skipToNext">
-                      <a
-                        href="/FlightListing/ShowNextPage?Page_No=2"
-                        rel="next"
-                      >
-                        show more
-                      </a>
+                      {!quickest &&
+                        !earliest &&
+                        cheapest &&
+                        !filter &&
+                        FlightList &&
+                        filteredFlights.length > visibleCount && (
+                          <a rel="next" onClick={loadMoreResult}>
+                            show more
+                          </a>
+                        )}
+
+                      {earliest &&
+                        !filter &&
+                        flightListToRenderEarliest.length > visibleCount && (
+                          <a rel="next" onClick={loadMoreResult}>
+                            show more
+                          </a>
+                        )}
+                      {quickest &&
+                        !filter &&
+                        flightListToRenderQuickest.length > visibleCount && (
+                          <a rel="next" onClick={loadMoreResult}>
+                            show more
+                          </a>
+                        )}
+                      {filter && filteredFlights.length > visibleCount && (
+                        <a rel="next" onClick={loadMoreResult}>
+                          show more
+                        </a>
+                      )}
                     </li>
                   </ul>
                 </div>
@@ -1961,6 +2002,7 @@ const SearchFlight = () => {
           </div>
         </div>
       </div>
+
       {/* End main Listing */}
     </section>
   );

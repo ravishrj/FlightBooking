@@ -1,0 +1,146 @@
+/*.TabSearchCopmonent .f-tabs {
+    display: flex;
+}*/
+#Hotels {
+  display: none;
+}
+.swapHolidayDest {
+  position: absolute;
+  right: -31px;
+  top: 20px;
+  z-index: 1;
+  cursor: pointer;
+}
+#Hotels #spn_RUH_US_LongDurationErrMsg.errorMsg {
+  position: absolute;
+  bottom: 43px;
+  left: 27px;
+}
+
+body .date.searchSec {
+  width: 100%;
+  position: relative;
+}
+#Hotels .date .calender {
+  display: inline-block;
+  width: 18%;
+  text-align: center;
+  position: relative;
+}
+.date.searchSec .Date:nth-child(2) {
+  padding-left: 10px;
+}
+#Hotels .date .calender img {
+  position: absolute;
+  top: -27px;
+}
+.destination-heading .leftSection h2 {
+  margin-top: 5px;
+}
+.searchSec.roomselect {
+  width: 97%;
+  padding-left: 14px;
+  padding-right: 4px;
+}
+.searchSec.roomselect span {
+  padding-left: 26px;
+}
+.searchSec.roomselect input {
+  background-repeat: no-repeat;
+  background-position: left center;
+  padding-left: 26px;
+  height: 28px;
+  font-size: 13px;
+  background-size: 30px;
+  background-position-y: 4px;
+  text-overflow: ellipsis;
+}
+#Hotels .searchSec span {
+  padding-bottom: 2px;
+}
+.heading {
+  text-align: center;
+}
+.heading h2 {
+  font-size: 29px;
+  color: #c60001;
+  text-transform: uppercase;
+}
+.heading p {
+  width: 80%;
+  margin-left: 10%;
+  font-size: 14px;
+  color: #191819;
+  margin-top: 10px;
+  line-height: 20px;
+}
+
+/*Ipad pro Landscape*/
+@media only screen and (min-width: 1024px) and (max-width: 1366px) {
+  .TabSearchCopmonent {
+    height: auto;
+  }
+}
+
+/*Ipad Landscape*/
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  #Hotels #spn_RUH_US_LongDurationErrMsg.errorMsg {
+    left: 11px;
+  }
+  .searchSec.roomselect input {
+    height: auto;
+    font-size: 12px;
+    margin-top: 0;
+  }
+}
+#Hotels #spn_RUH_US_LongDurationErrMsg.errorMsg {
+  bottom: 6px;
+}
+
+@media only screen and (max-width: 768px) {
+  body #Hotels .searchSec.roomselect {
+    width: 46%;
+  }
+  .searchSec.roomselect input {
+    padding-left: 19px;
+    height: 24px;
+    background-size: 30px;
+    margin-top: 0;
+    font-size: 9px;
+  }
+  .hotelguestdrop,
+  .hotelvacationguestdrop {
+    width: 50%;
+    top: 80px;
+  }
+  #Hotels #spn_RUH_US_LongDurationErrMsg.errorMsg {
+    bottom: 7px;
+    left: 11px;
+  }
+  .searchSec.roomselect span {
+    padding-left: 19px;
+  }
+  .confirmation .headings h1 {
+    font-size: 25px;
+  }
+  .priceboxdtl ul.totlevlu li {
+    font-size: 15px;
+  }
+  div#Hotels .date.searchSec .Date:nth-child(2) {
+    padding-left: 2px;
+  }
+  .date.searchSec .Date.Date.Datee {
+    padding-left: 10px;
+  }
+  body #Hotels .From.searchSec.origin {
+    width: 55%;
+    min-width: 250px;
+  }
+  body #Hotels i.demo-label {
+    right: 5px;
+    top: 33px;
+  }
+  .searchSec.roomselect input {
+    letter-spacing: -0.2px;
+  }
+}

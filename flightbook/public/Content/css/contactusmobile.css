@@ -1,0 +1,223 @@
+.contact-usbanner {
+  background-image: url(/Content/images/mobile/contact-bannermobile.jpg);
+  background-size: cover;
+  display: inline-block;
+  width: 100%;
+  height: 548px;
+  margin-top: -3px;
+}
+.contact-btm .flight-details ul li.li-contact p strong {
+  font-size: 16px;
+}
+
+.locatonmap .fdetail-hdr {
+  color: #000;
+  padding-bottom: 0px;
+}
+.container {
+  width: auto;
+  margin: 0 auto;
+}
+.locatonmap .flight-details {
+  background: none;
+}
+.fdetail-hdr {
+  text-align: center;
+  color: #fff;
+  padding-bottom: 15px;
+  margin-bottom: 10px;
+}
+.fdetail-hdr h4 {
+  font-size: 13px;
+}
+.fdetail-hdr h3 {
+  font-size: 20px;
+  font-family: "poppinssemibold";
+  letter-spacing: 0.2px;
+  font-weight: 700;
+  padding-bottom: 12px;
+}
+.flight-details {
+  background: #393939;
+  border-radius: 5px;
+}
+
+.fdetail-hdr.red {
+  background: #c70000;
+  background: linear-gradient(90deg, #a80000 0%, #e00000 51%);
+  padding: 16px 20px;
+  margin-top: 0;
+}
+.flight-details.black {
+  padding: 20px;
+  background: #212021;
+}
+.fdetail-hdr.red h3 {
+  color: #fff;
+  font-size: 19px;
+}
+.contact-form {
+  padding-top: 30px;
+  margin-bottom: 35px;
+}
+.contact-form .flight-details {
+  background: none;
+}
+
+.contact-form .forms textarea,
+.contact-form .forms input {
+  width: 100%;
+  border: 0;
+  border-radius: 4px;
+  padding: 0 15px;
+  height: 53px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #9e9e9e;
+  box-shadow: inset 0 0 5px 8px #e9e9e9;
+}
+.contact-form .fdetail-hdr {
+  color: #000;
+  padding-bottom: 0;
+}
+.contact-form .forms textarea {
+  height: 80px;
+  padding-top: 10px;
+  font-family: "poppinsmedium";
+  resize: none;
+}
+.contact-form .forms .form-field {
+  margin-bottom: 10px;
+}
+.contact-form .forms .btsc {
+  text-align: center;
+}
+.contact-form .forms button {
+  color: #fff;
+  background: #c70000;
+  background: linear-gradient(90deg, #a80000 0%, #e00000 51%);
+  border: 0;
+  font-size: 19px;
+  padding: 13px 83px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.error {
+  color: #f00;
+  font-size: 11px;
+}
+#thanksmsg {
+  background: #e00000;
+  padding: 13px 0;
+  border-radius: 4px;
+  margin-top: 18px;
+  color: #fff;
+  padding-left: 36px;
+  font-size: 11px;
+  letter-spacing: 0;
+  position: relative;
+  width: 98%;
+  left: 1%;
+}
+#thanksmsg:before {
+  content: "";
+  background-image: url(../images/check-icon-white.png);
+  position: absolute;
+  background-size: 100%;
+  width: 22px;
+  height: 22px;
+  background-repeat: no-repeat;
+  left: 12px;
+  top: 8px;
+}
+#thanksmsg span {
+  display: none;
+}
+
+.contact-btm {
+  position: relative;
+  top: 57px;
+  margin: 0;
+}
+.contact-btm .flight-details ul {
+  /*display: flex;*/
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.contact-btm .flight-details ul li div:first-child {
+  width: 16%;
+}
+.contact-btm .flight-details ul li p.flag-div {
+  padding-bottom: 5px;
+}
+.contact-btm .flight-details ul li p img:first-child {
+  padding-right: 6px;
+}
+.contact-btm .flight-details ul li p img {
+  display: inline;
+  padding-right: 8px;
+}
+.contact-btm .flight-details ul li p.flag-div strong {
+  display: inline-block;
+  vertical-align: top;
+  padding-top: 4px;
+  font-family: "poppinsmedium";
+  font-size: 13px;
+}
+.contact-btm .flight-details ul li {
+  color: #fff;
+  margin: 0 6px;
+  height: 100px;
+  padding: 17px 13px;
+  display: flex;
+  border-bottom: 1px solid #5a5a5a;
+}
+.helpline {
+  font-family: "poppinsregular";
+  display: inline-block;
+  letter-spacing: 1.1px;
+  padding-top: 4px;
+}
+.contact-btm .flight-details ul li.li-contact {
+  padding: 26px 13px 17px;
+}
+.contact-btm .flight-details ul li.li-contact:first-child {
+  border-right: none;
+}
+
+.contact-btm .flight-details ul li div:last-child {
+  width: 84%;
+}
+.add-ress {
+  padding-top: 8px;
+  font-family: "poppinsregular";
+  line-height: 1.3;
+}
+.contact-btm .flight-details ul li p a.tel-phone {
+  font-size: 19px;
+  font-family: "poppinsbold";
+}
+
+.contact-btm .flight-details ul li p {
+  color: #fff;
+  font-size: 15px;
+}
+.contact-btm .flight-details ul li p a {
+  color: #fff;
+  text-decoration: none;
+}
+.contact-btm .flight-details ul li p strong {
+  color: #fff;
+  vertical-align: top;
+  padding-top: 4px;
+  display: inline-block;
+}
+
+.locatonmap {
+  padding-bottom: 50px;
+}
+.locatonmap iframe {
+  width: 100%;
+  height: 375px;
+}

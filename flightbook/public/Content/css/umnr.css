@@ -1,0 +1,102 @@
+header nav {
+  position: relative;
+  background: #181818;
+  margin: 0;
+}
+.searchWidget {
+  top: 0;
+  margin: 0;
+}
+.bannerumnr img {
+  width: 100%;
+}
+.bannerumnr {
+  position: relative;
+}
+.contentumnr {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+}
+.contentumnr h1 {
+  color: #181818;
+  font-size: 22px;
+  text-transform: uppercase;
+  font-weight: 300;
+  margin-top: 0;
+}
+.umnrmain {
+  margin-bottom: 50px;
+}
+.contentumnr h2 {
+  color: #181818;
+  font-size: 35px;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.umnr-page h2 {
+  color: #181818;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 30px;
+  line-height: 25px;
+}
+
+.umnr-page p {
+  color: #181818;
+  font-size: 14px;
+  margin-top: 10px;
+  line-height: 20px;
+  text-align: justify;
+}
+.umnrmain {
+  display: flex;
+  justify-content: space-between;
+}
+.umnrmain > div {
+  width: 48%;
+}
+.umnrmain .rightumnr > img {
+  width: 100%;
+  margin-top: 20px;
+}
+.ctinfo a.phonen img {
+  width: 16px;
+}
+.ctinfo a img {
+  margin-right: 4px;
+}
+.ctinfo {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.ctinfo a {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #d90001;
+  text-decoration: none;
+}
+.ctinfo span {
+  margin: 0 10px;
+  font-size: 15px;
+}
+.ctinfo a.phonen {
+  font-weight: bold;
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .ctinfo {
+    flex-direction: column;
+    align-items: baseline;
+  }
+  .ctinfo a {
+    margin: 8px 0;
+  }
+  header .callUs {
+    margin-left: 0;
+  }
+}

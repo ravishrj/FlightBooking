@@ -11,6 +11,7 @@ import FooterDesktop from "./_components/FooterDesktop/page";
 import useWindowWidth from "./_UseDeviceType/page";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Header from "./_components/HeaderDesktop/page";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -39,10 +40,7 @@ export default function RootLayout({ children }) {
           crossorigin="anonymous"
           referrerpolicy="no-referrer"
         />
-        <link
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-          rel="stylesheet"
-        />
+        <link href="/font-awesome.css" rel="stylesheet" />
         {/* <link rel="stylesheet" href="/usmobile.css" /> */}
         {/* <link rel="stylesheet" href="/usmobile_home.css" /> */}
         {/* <link rel="stylesheet" href="/US_customcss.css" />
@@ -61,6 +59,8 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* Load Owl Carousel scripts */}
+
+        {/* <Navbar /> */}
         <ToastContainer />
         {children}
       </body>

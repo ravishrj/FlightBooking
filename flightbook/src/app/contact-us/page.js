@@ -6,22 +6,19 @@ import Footer from "../_components/footer/page";
 import LocatonMap from "../locatonmap/locatonmap";
 
 import { useState, useEffect } from "react";
+import Navbar from "../_components/navbar/page";
+import NavbarDesktop from "../_components/NavbarDesktop/page";
+import FooterDesktop from "../_components/FooterDesktop/page";
 
 const useWindowWidth = () => {
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Initial value
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    // Set initial width
-    handleResize();
-
-    // Add event listener
     window.addEventListener("resize", handleResize);
-
-    // Cleanup listener on unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -29,15 +26,16 @@ const useWindowWidth = () => {
 
   return windowWidth;
 };
+
 const ContactUs = () => {
-  const [isMobile, setIsMobile] = useState(true);
   const width = useWindowWidth();
+  const isMobile = width <= 768;
 
   useEffect(() => {
     console.log(isMobile, "is mobile");
     const mobileCss = document.createElement("link");
     mobileCss.rel = "stylesheet";
-    mobileCss.href = "/usmobile.css";
+    mobileCss.href = "/Content/css/contactus.css";
 
     const mobileHomeCss = document.createElement("link");
     mobileHomeCss.rel = "stylesheet";
@@ -46,31 +44,46 @@ const ContactUs = () => {
     const listnav = document.createElement("link");
     listnav.rel = "stylesheet";
     listnav.href = "/Content/css/m.lightpick.css?v=RUS2021";
+    const contactusmobile = document.createElement("link");
+    contactusmobile.rel = "stylesheet";
+    contactusmobile.href = "/Content/css/contactusmobile.css";
 
     console.log("Is Mobile Loaded");
-    document.head.appendChild(mobileCss);
-    document.head.appendChild(mobileHomeCss);
-    document.head.appendChild(listnav);
+    // If the page is NOT 'Contact Us', load the lightpick CSS and other styles
 
-    return () => {
-      if (document.head.contains(mobileCss)) {
-        document.head.removeChild(mobileCss);
-      }
-      if (document.head.contains(mobileHomeCss)) {
-        document.head.removeChild(mobileHomeCss);
-      }
-      if (document.head.contains(listnav)) {
-        document.head.removeChild(listnav);
-      }
-    };
+    if (!isMobile) {
+      document.head.appendChild(mobileCss);
+      // document.head.appendChild(mobileHomeCss);
+      //document.head.appendChild(listnav);
+
+      return () => {
+        if (document.head.contains(mobileCss)) {
+          document.head.removeChild(mobileCss);
+        }
+        if (document.head.contains(mobileHomeCss)) {
+          document.head.removeChild(mobileHomeCss);
+        }
+        if (document.head.contains(listnav)) {
+          document.head.removeChild(listnav);
+        }
+      };
+    }
+    if (isMobile) {
+      document.head.appendChild(contactusmobile);
+      return () => {
+        if (document.head.contains(contactusmobile)) {
+          document.head.removeChild(contactusmobile);
+        }
+      };
+    }
   }, [isMobile]);
   return (
     <>
-      {" "}
+      {isMobile ? <Navbar /> : <NavbarDesktop />}
       <section className="contact-usbanner">
         {/* Contact details */}
         <section className="contact-btm">
-          <div className="container">
+          <div className={isMobile ? "container" : ""}>
             <div className="fdetail-hdr">
               <h3>How to contact us?</h3>
               <h4>Email us or call our travel experts.</h4>
@@ -151,9 +164,9 @@ const ContactUs = () => {
       </section>
       <ContactForm />
       <LocatonMap />
-      <Section4 />
-      <Footer />
-      <Copyright />
+      {isMobile ? <Section4 /> : ""}
+      {isMobile ? <Footer /> : <FooterDesktop />}
+      {isMobile ? <Copyright /> : ""}
     </>
   );
 };

@@ -6,22 +6,17 @@ import FooterDesktop from "../_components/FooterDesktop/page";
 import { useEffect, useState } from "react";
 import Navbar from "../_components/navbar/page";
 import BookingMobile from "../confirmationMobille/[token]/page";
+import NavbarDesktop from "../_components/NavbarDesktop/page";
 
 const useWindowWidth = () => {
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Initial value
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    // Set initial width
-    handleResize();
-
-    // Add event listener
     window.addEventListener("resize", handleResize);
-
-    // Cleanup listener on unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -37,8 +32,8 @@ const MyComponent = () => {
   return (
     <div>
       {/* {isMobile ? <BookingMobile /> : ""} */}
-      {/* niche ka dono real hai isi ko use karna hai bs as trial hamlog isko comment kiye hai */}
-      {isMobile && <Navbar />}
+      {/* niche ka dono real hai isi ko use karna hai bs as a trial hamlog isko comment kiye hai */}
+      {isMobile ? <Navbar /> : ""}
       {isMobile ? <Mobile /> : <Desktop />}
       {/* {isMobile ? "" : <Desktop />} */}
 

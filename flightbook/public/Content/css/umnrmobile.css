@@ -1,0 +1,85 @@
+.umnrbnrm {
+  width: 100%;
+}
+.contentumnr h1 {
+  color: #fff;
+  font-size: 26px;
+  text-transform: uppercase;
+  font-weight: 300;
+  margin-top: 40px;
+  text-shadow: 1px 1px 1px #666;
+}
+.umnrmain {
+  margin-bottom: 24px;
+}
+.contentumnr h2 {
+  color: #fff;
+  font-size: 40px;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-top: 10px;
+  text-shadow: 1px 1px 1px #666;
+}
+.contentumnr p {
+  color: #313131;
+  font-size: 18px;
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
+.umnr-page h2 {
+  color: #181818;
+  font-size: 15px;
+  font-weight: bold;
+  margin-top: 20px;
+  line-height: 21px;
+}
+
+.umnr-page p {
+  color: #181818;
+  font-size: 13px;
+  margin-top: 5px;
+  line-height: 20px;
+  text-align: justify;
+}
+.umnrmain {
+  display: flex;
+  justify-content: space-between;
+}
+.umnrmain > div {
+  width: 100%;
+}
+.umnrmain .leftumnr > img {
+  width: 100%;
+  margin-top: 20px;
+}
+.ctinfo a.phonen img {
+  width: 20px;
+}
+.ctinfo a img {
+  margin-right: 4px;
+}
+.ctinfo {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 10px;
+  flex-direction: column;
+}
+.ctinfo a {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #d90001;
+  text-decoration: none;
+}
+.ctinfo span {
+  margin: 8px 0;
+  font-size: 15px;
+}
+.ctinfo a.phonen {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.umnrbnrm img {
+  width: 100%;
+}

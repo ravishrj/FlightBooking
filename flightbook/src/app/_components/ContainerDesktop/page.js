@@ -10,20 +10,14 @@ import "flatpickr/dist/flatpickr.css";
 //import './PassengerStyles.module.css'
 
 const useWindowWidth = () => {
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Initial value
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    // Set initial width
-    handleResize();
-
-    // Add event listener
     window.addEventListener("resize", handleResize);
-
-    // Cleanup listener on unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -128,7 +122,7 @@ const ContainerForm = () => {
   const [depDate, setDepDate] = useState(new Date());
   const [returnDate, setReturnDate] = useState(new Date());
   const [errorMessage, setErrorMessage] = useState("");
-
+  const [minorToggle, setMinorToggle] = useState(false);
   const [travellerToggle, setTravellerToggle] = useState(false);
 
   const paxRef = useRef(null);
@@ -1272,6 +1266,7 @@ const ContainerForm = () => {
                       href="javascript:void(0);"
                       style={{ color: "#000" }}
                       className="lnkUMNR_RUHUS"
+                      onClick={() => setMinorToggle(true)}
                     >
                       Unaccompanied Minor
                     </a>
@@ -1282,8 +1277,16 @@ const ContainerForm = () => {
                     style={{ display: "none" }}
                   ></div>
                 </section>
-                <div className="" id="divUnaccompaniedMinorPopup">
-                  <a className="linkUnaccompaniedMinorClose">x</a>
+                <div
+                  className={minorToggle ? "active" : ""}
+                  id="divUnaccompaniedMinorPopup"
+                >
+                  <a
+                    className="linkUnaccompaniedMinorClose"
+                    onClick={() => setMinorToggle(false)}
+                  >
+                    x
+                  </a>
                   <div>
                     Flight tickets for an unaccompanied minor are not available
                     online. To book a flight for a UMNR, directly reach out to

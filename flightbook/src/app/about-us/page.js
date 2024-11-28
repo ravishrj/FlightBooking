@@ -7,22 +7,19 @@ import Section4 from "../_components/section4/page";
 import Style from "./about.module.css";
 
 import { useState, useEffect } from "react";
+import Navbar from "../_components/navbar/page";
+import NavbarDesktop from "../_components/NavbarDesktop/page";
+import FooterDesktop from "../_components/FooterDesktop/page";
 
 const useWindowWidth = () => {
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Initial value
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    // Set initial width
-    handleResize();
-
-    // Add event listener
     window.addEventListener("resize", handleResize);
-
-    // Cleanup listener on unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -30,9 +27,10 @@ const useWindowWidth = () => {
 
   return windowWidth;
 };
+
 const AboutUs = () => {
-  const [isMobile, setIsMobile] = useState(false);
   const width = useWindowWidth();
+  const isMobile = width <= 768;
 
   // useEffect(() => {
   //   if (width <= 768) {
@@ -42,34 +40,35 @@ const AboutUs = () => {
   //   }
   // }, []);
 
-  useEffect(() => {
-    console.log(isMobile, "is Mobile from desktop navbar");
-    const desktopCss = document.createElement("link");
-    desktopCss.rel = "stylesheet";
-    desktopCss.href = "/usmobile.css";
+  // useEffect(() => {
+  //   console.log(isMobile, "is Mobile from desktop navbar");
+  //   const desktopCss = document.createElement("link");
+  //   desktopCss.rel = "stylesheet";
+  //   desktopCss.href = "/usmobile.css";
 
-    const desktopHomeCss = document.createElement("link");
-    desktopHomeCss.rel = "stylesheet";
-    desktopHomeCss.href = "/usmobile_home.css";
+  //   const desktopHomeCss = document.createElement("link");
+  //   desktopHomeCss.rel = "stylesheet";
+  //   desktopHomeCss.href = "/usmobile_home.css";
 
-    if (!isMobile) {
-      console.log("Destop View loaded");
-      document.head.appendChild(desktopCss);
-      document.head.appendChild(desktopHomeCss);
+  //   if (!isMobile) {
+  //     console.log("Destop View loaded");
+  //     document.head.appendChild(desktopCss);
+  //     document.head.appendChild(desktopHomeCss);
 
-      return () => {
-        if (document.head.contains(desktopCss)) {
-          document.head.removeChild(desktopCss);
-        }
-        if (document.head.contains(desktopHomeCss)) {
-          document.head.removeChild(desktopHomeCss);
-        }
-      };
-    }
-  }, [isMobile]);
+  //     return () => {
+  //       if (document.head.contains(desktopCss)) {
+  //         document.head.removeChild(desktopCss);
+  //       }
+  //       if (document.head.contains(desktopHomeCss)) {
+  //         document.head.removeChild(desktopHomeCss);
+  //       }
+  //     };
+  //   }
+  // }, [isMobile]);
 
   return (
     <>
+      {isMobile ? <Navbar /> : <NavbarDesktop />}
       <div className="contentWrp">
         <div className="container">
           <div className="header-heading text-center">
@@ -156,9 +155,9 @@ const AboutUs = () => {
           </p>
         </div>
       </div>
-      <Section4 />
-      <Footer />
-      <Copyright />
+      {isMobile ? <Section4 /> : ""}
+      {isMobile ? <Footer /> : <FooterDesktop />}
+      {isMobile ? <Copyright /> : ""}
     </>
   );
 };

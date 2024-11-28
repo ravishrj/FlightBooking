@@ -10,20 +10,14 @@ import Footer from "../footer/page";
 import Copyright from "../copyright/page";
 
 const useWindowWidth = () => {
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Initial value
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    // Set initial width
-    handleResize();
-
-    // Add event listener
     window.addEventListener("resize", handleResize);
-
-    // Cleanup listener on unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -31,6 +25,7 @@ const useWindowWidth = () => {
 
   return windowWidth;
 };
+
 export default function Mobile({}) {
   const [mobMenuActive, setMobMenuActive] = useState(false);
   const [importantLinkActive, setimportantLinkActive] = useState(false);

@@ -286,22 +286,17 @@
 
 "use client";
 import { useState, useEffect } from "react";
+import NavbarDesktop from "../NavbarDesktop/page";
 
 const useWindowWidth = () => {
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Initial value
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    // Set initial width
-    handleResize();
-
-    // Add event listener
     window.addEventListener("resize", handleResize);
-
-    // Cleanup listener on unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -603,6 +598,7 @@ const Header = ({ selectedAirline }) => {
           </li>
         </ul>
       </nav>
+      {/* <NavbarDesktop /> */}
       {/*Navigation*/}
       <link
         href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700&display=swap"
