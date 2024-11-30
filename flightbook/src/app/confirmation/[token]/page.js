@@ -25,6 +25,31 @@ const useWindowWidth = () => {
 
 const Booking = () => {
   const router = useRouter();
+  const [travellerDetails, setTravellerDetails] = useState({});
+
+  useEffect(() => {
+    try {
+      const updatetravellerDetails = JSON.parse(
+        localStorage.getItem("travellerDetails")
+      );
+      //setSelectedFlight(JSON.parse(localStorage.getItem("selectedflight")));
+      setTravellerDetails(updatetravellerDetails);
+      // setTravellerCount(
+      //   summarizeTravelers(
+      //     JSON.parse(localStorage.getItem("selectedflight")).travelerPricings
+      //   )
+      // );
+      // console.log(
+      //   summarizeTravelers(
+      //     JSON.parse(localStorage.getItem("selectedflight")).travelerPricings
+      //   ),
+      //   "SUMMARIZED"
+      // );
+      console.log(updatetravellerDetails, "travellerDetails in conf");
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
 
   const handleGoBack = () => {
     router.back(); // This will navigate to the previous page
@@ -461,7 +486,7 @@ const Booking = () => {
             }}
           />
 
-          <BookingForm />
+          <BookingForm adultCount={travellerDetails} />
         </div>
         <div className="col-sm-4">
           <div

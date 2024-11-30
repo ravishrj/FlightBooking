@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const useWindowWidth = () => {
@@ -32,6 +32,7 @@ const SearchFlightCard = ({
   oneWay,
   token,
 }) => {
+  const searchParam = useSearchParams();
   console.log(oneWay, "oneWay");
   const isOneWay = oneWay === "true";
   const [isMobile, setIsMobile] = useState(false);
@@ -100,6 +101,14 @@ const SearchFlightCard = ({
   console.log(isOneWay, "oneWay in SearchFlightCard");
   const router = useRouter();
   const handleOnSubmit = (flight) => {
+    const travellerDetails = {
+      adults: searchParam.get("adult") || 0, // Default to 0 if no "adult" parameter is found
+      child: searchParam.get("child") || 0,
+      infant: searchParam.get("infant") || 0,
+      cabin: searchParam.get("cabin") || "Economy", // Default to "Economy" if no cabin type is provided
+    };
+
+    localStorage.setItem("travellerDetails", JSON.stringify(travellerDetails));
     console.log(flight, "flight in handleonsubmit");
     // router.push(`/confirmation/token=${token}?flight=${flight}`);
     const jsonString = encodeURIComponent(JSON.stringify(flight));
