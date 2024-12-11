@@ -486,7 +486,11 @@ const Booking = () => {
             }}
           />
 
-          <BookingForm adultCount={travellerDetails} />
+          <BookingForm
+            adultCount={travellerDetails}
+            flight={flight}
+            oneWay={oneWay.toString()}
+          />
         </div>
         <div className="col-sm-4">
           <div
@@ -531,44 +535,183 @@ const Booking = () => {
                 </li>
               </ul>
               <ul>
-                <li>1 x Adult(s)</li>
                 <li>
-                  {flight.price.currency}
-                  {flight.price.base}
+                  <p> {parseInt(travellerDetails.adults, 10) || 0}*Adults</p>
                 </li>
                 <li>
-                  {flight.price.currency}
-                  {flight.price.total}-{flight.price.base}
+                  $
+                  {flight.travelerPricings.find(
+                    (a) => a.travelerType === "ADULT"
+                  )
+                    ? parseFloat(
+                        flight.travelerPricings.find(
+                          (a) => a.travelerType === "ADULT"
+                        ).price.base
+                      ).toFixed(2)
+                    : "N/A"}
                 </li>
                 <li>
-                  {flight.price.currency}
-                  {flight.price.total}
+                  $
+                  {flight.travelerPricings.find(
+                    (a) => a.travelerType === "ADULT"
+                  )
+                    ? // Calculate the difference and then format it to 2 decimal places
+                      (
+                        parseFloat(
+                          flight.travelerPricings.find(
+                            (a) => a.travelerType === "ADULT"
+                          ).price.total
+                        ) -
+                        parseFloat(
+                          flight.travelerPricings.find(
+                            (a) => a.travelerType === "ADULT"
+                          ).price.base
+                        )
+                      ).toFixed(2)
+                    : "N/A"}
+                </li>
+                <li>
+                  {" "}
+                  $
+                  {flight.travelerPricings.find(
+                    (a) => a.travelerType === "ADULT"
+                  )
+                    ? parseInt(travellerDetails.adults, 10) *
+                      parseFloat(
+                        flight.travelerPricings.find(
+                          (a) => a.travelerType === "ADULT"
+                        ).price.total
+                      ).toFixed(2)
+                    : "N/A"}
                 </li>
               </ul>
+
+              {parseInt(travellerDetails.child, 10) > 0 && (
+                <ul>
+                  <li>
+                    <p> {parseInt(travellerDetails.child, 10) || 0}*Children</p>
+                  </li>
+                  <li>
+                    $
+                    {flight.travelerPricings.find(
+                      (a) => a.travelerType === "CHILD"
+                    )
+                      ? parseFloat(
+                          flight.travelerPricings.find(
+                            (a) => a.travelerType === "CHILD"
+                          ).price.base
+                        ).toFixed(2)
+                      : "N/A"}
+                  </li>
+                  <li>
+                    $
+                    {flight.travelerPricings.find(
+                      (a) => a.travelerType === "CHILD"
+                    )
+                      ? // Calculate the difference and then format it to 2 decimal places
+                        (
+                          parseFloat(
+                            flight.travelerPricings.find(
+                              (a) => a.travelerType === "CHILD"
+                            ).price.total
+                          ) -
+                          parseFloat(
+                            flight.travelerPricings.find(
+                              (a) => a.travelerType === "CHILD"
+                            ).price.base
+                          )
+                        ).toFixed(2)
+                      : "N/A"}
+                  </li>
+                  <li>
+                    {" "}
+                    $
+                    {flight.travelerPricings.find(
+                      (a) => a.travelerType === "CHILD"
+                    )
+                      ? parseInt(travellerDetails.child, 10) *
+                        parseFloat(
+                          flight.travelerPricings.find(
+                            (a) => a.travelerType === "CHILD"
+                          ).price.total
+                        ).toFixed(2)
+                      : "N/A"}
+                  </li>
+                </ul>
+              )}
+              {parseInt(travellerDetails.infant, 10) > 0 && (
+                <ul>
+                  <li>
+                    <p> {parseInt(travellerDetails.infant, 10) || 0}*Infant</p>
+                  </li>
+                  <li>
+                    $
+                    {flight.travelerPricings.find(
+                      (a) => a.travelerType === "INFANT"
+                    )
+                      ? parseFloat(
+                          flight.travelerPricings.find(
+                            (a) => a.travelerType === "INFANT"
+                          ).price.base
+                        ).toFixed(2)
+                      : "N/A"}
+                  </li>
+                  <li>
+                    $
+                    {flight.travelerPricings.find(
+                      (a) => a.travelerType === "INFANT"
+                    )
+                      ? // Calculate the difference and then format it to 2 decimal places
+                        (
+                          parseFloat(
+                            flight.travelerPricings.find(
+                              (a) => a.travelerType === "INFANT"
+                            ).price.total
+                          ) -
+                          parseFloat(
+                            flight.travelerPricings.find(
+                              (a) => a.travelerType === "INFANT"
+                            ).price.base
+                          )
+                        ).toFixed(2)
+                      : "N/A"}
+                  </li>
+                  <li>
+                    {" "}
+                    $
+                    {flight.travelerPricings.find(
+                      (a) => a.travelerType === "INFANT"
+                    )
+                      ? parseInt(travellerDetails.child, 10) *
+                        parseFloat(
+                          flight.travelerPricings.find(
+                            (a) => a.travelerType === "INFANT"
+                          ).price.total
+                        ).toFixed(2)
+                      : "N/A"}
+                  </li>
+                </ul>
+              )}
+
               <ul>
                 <li className="PcOldfare" style={{ display: "none" }}>
                   <span>Total Price</span>{" "}
                   <span className="PcOldfare" style={{ display: "none" }}>
-                    {flight.price.currency}
-                    {flight.price.total}
+                    ${flight.price.total}
                   </span>
                 </li>
               </ul>
               <hr />
               <ul className="totlevlu totalPrice">
-                <li id="spnTotalfareHeading">
-                  Total Price {flight.price.currency}
-                </li>
+                <li id="spnTotalfareHeading">Total Price (USD)</li>
                 <li id="spnTotalfare" className="spnTotalfareGeneral">
-                  {flight.price.currency}
-                  {flight.price.total}
+                  ${flight.price.total}
                 </li>
               </ul>
               <ul className="avg-fare" style={{ display: "none" }}>
                 <li>Average Price Per Person: {flight.price.currency}</li>
                 <li className="avg-fare avg-fare-value">
-                  {flight.price.currency}
-                  {flight.price.total}
+                  ${flight.price.total}
                 </li>
               </ul>
               <input type="hidden" id="hdnNoofPaxForAvg" defaultValue={1} />

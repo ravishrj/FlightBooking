@@ -197,12 +197,16 @@ export async function POST(request) {
     transactionRequestType.setAmount(100); // Example amount, replace with actual flight amount
     transactionRequestType.setOrder(orderDetails);
     transactionRequestType.setBillTo(billTo);
+    // Customer Request
+    var customer = new APIContracts.CustomerDataType();
+    customer.setEmail(`${contactInfo.email}`);
 
+    // Attach customer email for receipt
     // Create transaction request
     const createRequest = new APIContracts.CreateTransactionRequest();
     createRequest.setMerchantAuthentication(merchantAuthenticationType);
     createRequest.setTransactionRequest(transactionRequestType);
-
+    transactionRequestType.setCustomer(customer);
     const ctrl = new APIControllers.CreateTransactionController(
       createRequest.getJSON()
     );

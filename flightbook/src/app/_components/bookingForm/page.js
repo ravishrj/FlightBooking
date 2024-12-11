@@ -2,11 +2,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Country, State, City } from "country-state-city";
 import { toast } from "react-toastify";
-
-const BookingForm = ({ adultCount }) => {
+import { useRouter } from "next/navigation";
+const BookingForm = ({ adultCount, flight, oneWay }) => {
   const paymentRef = useRef("");
   const cardRef = useRef("");
-
+  const router = useRouter();
   const cvvRef = useRef("");
   const cardnoRef = useRef("");
   const expmonthRef = useRef("");
@@ -242,6 +242,14 @@ const BookingForm = ({ adultCount }) => {
       } catch (error) {
         alert("Error: " + error.message);
       }
+      const jsonString = encodeURIComponent(JSON.stringify(flight));
+      const isOneWay = oneWay === "true";
+      console.log(isOneWay, "isOneWay");
+
+      router.push(
+        `/thankyou?flight=${jsonString}&oneWay=${isOneWay.toString()}`
+      );
+
       // Optionally, show a success message or redirect the user
       alert("Traveler details have been successfully added!");
     }
