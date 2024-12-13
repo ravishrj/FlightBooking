@@ -494,11 +494,14 @@ const BookingMobile = () => {
         alert("Error: " + error.message);
       }
       const jsonString = encodeURIComponent(JSON.stringify(flight));
-      const isOneWay = oneWay === "true";
-      console.log(isOneWay, "isOneWay");
+      const travelerinfoString = encodeURIComponent(
+        JSON.stringify(travelerInfo)
+      );
+      //const isOneWay = oneWay === "true";
+      // console.log(isOneWay, "isOneWay");
 
       router.push(
-        `/thankYouMobile?flight=${jsonString}&oneWay=${isOneWay.toString()}`
+        `/thankYouMobile?flight=${jsonString}&oneWay=${oneWay.toString()}&travelerInfo=${travelerinfoString.toString()}`
       );
 
       // Optionally, show a success message or redirect the user
@@ -687,7 +690,7 @@ const BookingMobile = () => {
       <Navbar />
       <section className="modifysearch">
         <div className="backrslt">
-          <a href="#" className="btn-sm">
+          <a className="btn-sm" onClick={handleGoBack}>
             GO BACK
           </a>
         </div>
@@ -788,7 +791,7 @@ const BookingMobile = () => {
                 <h3>Total Price (USD)</h3>
               </li>
               <li>
-                <h4>$664.90</h4>
+                <h4>${flight.price.total}</h4>
                 <h5
                   className={priceDetailToggle ? "active" : ""}
                   onClick={() => {
@@ -835,29 +838,180 @@ const BookingMobile = () => {
               </li>
             </ul>
             <ul>
-              <li>1 x Adult(s)</li>
-              <li>$438.00</li>
-              <li>$226.90</li>
-              <li>$664.90</li>
+              <li>
+                {" "}
+                {parseInt(travellerDetails.adults, 10) || 0} * {"Adults"}
+              </li>
+              <li>
+                $
+                {flight.travelerPricings.find((a) => a.travelerType === "ADULT")
+                  ? parseFloat(
+                      flight.travelerPricings.find(
+                        (a) => a.travelerType === "ADULT"
+                      ).price.base
+                    ).toFixed(2)
+                  : "N/A"}
+              </li>
+              <li>
+                {" "}
+                $
+                {flight.travelerPricings.find((a) => a.travelerType === "ADULT")
+                  ? // Calculate the difference and then format it to 2 decimal places
+                    (
+                      parseFloat(
+                        flight.travelerPricings.find(
+                          (a) => a.travelerType === "ADULT"
+                        ).price.total
+                      ) -
+                      parseFloat(
+                        flight.travelerPricings.find(
+                          (a) => a.travelerType === "ADULT"
+                        ).price.base
+                      )
+                    ).toFixed(2)
+                  : "N/A"}
+              </li>
+              <li>
+                {" "}
+                $
+                {flight.travelerPricings.find((a) => a.travelerType === "ADULT")
+                  ? parseInt(travellerDetails.adults, 10) *
+                    parseFloat(
+                      flight.travelerPricings.find(
+                        (a) => a.travelerType === "ADULT"
+                      ).price.total
+                    ).toFixed(2)
+                  : "N/A"}
+              </li>
             </ul>
-            <ul>
+            {parseInt(travellerDetails.child, 10) > 0 && (
+              <ul>
+                <li>
+                  {" "}
+                  {parseInt(travellerDetails.child, 10) || 0} * {"Child"}
+                </li>
+                <li>
+                  $
+                  {flight.travelerPricings.find(
+                    (a) => a.travelerType === "CHILD"
+                  )
+                    ? parseFloat(
+                        flight.travelerPricings.find(
+                          (a) => a.travelerType === "CHILD"
+                        ).price.base
+                      ).toFixed(2)
+                    : "N/A"}
+                </li>
+                <li>
+                  {" "}
+                  $
+                  {flight.travelerPricings.find(
+                    (a) => a.travelerType === "CHILD"
+                  )
+                    ? // Calculate the difference and then format it to 2 decimal places
+                      (
+                        parseFloat(
+                          flight.travelerPricings.find(
+                            (a) => a.travelerType === "CHILD"
+                          ).price.total
+                        ) -
+                        parseFloat(
+                          flight.travelerPricings.find(
+                            (a) => a.travelerType === "CHILD"
+                          ).price.base
+                        )
+                      ).toFixed(2)
+                    : "N/A"}
+                </li>
+                <li>
+                  {" "}
+                  $
+                  {flight.travelerPricings.find(
+                    (a) => a.travelerType === "CHILD"
+                  )
+                    ? parseInt(travellerDetails.child, 10) *
+                      parseFloat(
+                        flight.travelerPricings.find(
+                          (a) => a.travelerType === "CHILD"
+                        ).price.total
+                      ).toFixed(2)
+                    : "N/A"}
+                </li>
+              </ul>
+            )}
+            {parseInt(travellerDetails.infant, 10) > 0 && (
+              <ul>
+                <li>
+                  {" "}
+                  {parseInt(travellerDetails.infant, 10) || 0} * {"Infant"}
+                </li>
+                <li>
+                  $
+                  {flight.travelerPricings.find(
+                    (a) => a.travelerType === "SEATED_INFANT"
+                  )
+                    ? parseFloat(
+                        flight.travelerPricings.find(
+                          (a) => a.travelerType === "SEATED_INFANT"
+                        ).price.base
+                      ).toFixed(2)
+                    : "N/A"}
+                </li>
+                <li>
+                  {" "}
+                  $
+                  {flight.travelerPricings.find(
+                    (a) => a.travelerType === "SEATED_INFANT"
+                  )
+                    ? // Calculate the difference and then format it to 2 decimal places
+                      (
+                        parseFloat(
+                          flight.travelerPricings.find(
+                            (a) => a.travelerType === "SEATED_INFANT"
+                          ).price.total
+                        ) -
+                        parseFloat(
+                          flight.travelerPricings.find(
+                            (a) => a.travelerType === "SEATED_INFANT"
+                          ).price.base
+                        )
+                      ).toFixed(2)
+                    : "N/A"}
+                </li>
+                <li>
+                  {" "}
+                  $
+                  {flight.travelerPricings.find(
+                    (a) => a.travelerType === "SEATED_INFANT"
+                  )
+                    ? parseInt(travellerDetails.infant, 10) *
+                      parseFloat(
+                        flight.travelerPricings.find(
+                          (a) => a.travelerType === "SEATED_INFANT"
+                        ).price.total
+                      ).toFixed(2)
+                    : "N/A"}
+                </li>
+              </ul>
+            )}
+            {/* <ul>
               <li className="PcOldfare" style={{ display: "none" }}>
                 <span>Total Price</span>{" "}
                 <span className="PcOldfare" style={{ display: "none" }}>
                   $664.90
                 </span>
               </li>
-            </ul>
+            </ul> */}
             <hr />
             <ul className="totlevlu totalPrice">
               <li id="spnTotalfareHeading">Total Price (USD)</li>
               <li id="spnTotalfare" className="spnTotalfareGeneral">
-                $664.90
+                ${flight.price.total}
               </li>
             </ul>
             <ul className="avg-fare" style={{ display: "none" }}>
               <li>Average Price Per Person: (USD)</li>
-              <li className="avg-fare avg-fare-value">$664.90</li>
+              <li className="avg-fare avg-fare-value">${flight.price.total}</li>
             </ul>
           </div>
           <input type="hidden" id="hdnNoofPaxForAvg" defaultValue={1} />
@@ -888,7 +1042,7 @@ const BookingMobile = () => {
                 <h3>Flight Details</h3>
               </div>
               <div className="flight-details">
-                <div className="depart-flight">
+                {/* <div className="depart-flight">
                   <div className="box-left">
                     <img src="/Content/images/depart-icon-red.png" />
                     <h3>Depart</h3>
@@ -980,77 +1134,494 @@ const BookingMobile = () => {
                       </li>
                     </ul>
                   </div>
-                </div>
-                <div className="depart-flight return-flight">
+                </div> */}
+                <div className="depart-flight">
                   <div className="box-left">
-                    <img src="/Content/images/return-icon-red.png" />
-                    <h3>Return</h3>
+                    <img src="/Content/images/depart-icon-red.png" />
+                    <h3>Depart</h3>
                   </div>
                   <div className="box-right">
                     <div className="flightlogosection">
                       <ul>
                         <li>
                           <img
-                            src="/Content/images/AirlinesLogo/GEN.png"
+                            src={flight.itineraries[0].segments[0].airline.logo}
+                            alt="Air India"
+                            title={
+                              flight.itineraries[0].segments[0].airline.name
+                            }
                             width={90}
                           />
                         </li>
                         <li>
                           <p>
-                            Secret Deal <span />
+                            {flight.itineraries[0].segments[0].airline.name}{" "}
+                            <span>
+                              {" "}
+                              Flight (
+                              {flight.itineraries[0].segments[0].airline.code}
+                              {flight.itineraries[0].segments[0].number} )
+                            </span>
+                          </p>
+                        </li>
+
+                        <li>
+                          <p className="CamelT">
+                            Operated by{" "}
+                            {flight.itineraries[0].segments[0].airline.name}{" "}
+                            airline
                           </p>
                         </li>
                       </ul>
                       <h3>
-                        Delhi (DEL) - New York (JFK) <br />
-                        Fri, Dec 13 | approx 19h
+                        {
+                          flight.itineraries[0].segments[0].departure.airport
+                            .city
+                        }{" "}
+                        {flight.itineraries[0].segments[0].departure.iataCode} -
+                        {
+                          flight.itineraries[0].segments[
+                            flight.itineraries[0].segments.length - 1
+                          ].arrival.airport.city
+                        }{" "}
+                        {
+                          flight.itineraries[0].segments[
+                            flight.itineraries[0].segments.length - 1
+                          ].arrival.iataCode
+                        }
+                        <span>|</span>{" "}
+                        {getFormattedDate(
+                          flight?.itineraries[0].segments[0].departure.at
+                        )}{" "}
+                        | {extractDuration(flight?.itineraries[0].duration)}
                       </h3>
                     </div>
-                    <ul className="con-main">
-                      <li>
-                        <p>Indira Gandhi Intl. (DEL)</p>
-                        <span>Fri | 10 AM-12 PM | Dec 13</span>
-                      </li>
-                      <li>
-                        <p>Heathrow (LHR)</p>
-                        <span>Fri | 03 PM-05 PM | Dec 13</span>
-                      </li>
-                      <li>
-                        <p>
-                          {" "}
-                          <strong>Coach</strong>
-                        </p>
-                        <span>10h 10m</span>
-                        <p className="bag-info">
+                    {flight?.itineraries[0].segments.map((segment, index) => {
+                      console.log(segment, "segment"); // Check the segment structure
+
+                      return (
+                        <>
+                          <ul key={index}>
+                            {/* <li>
+                            <img
+                              src="/Content/images/AirlinesLogo/AI.png"
+                              width={90}
+                              alt="Air India"
+                              title="Air India"
+                            />
+                          </li> */}
+                            <ul className="con-main">
+                              <li>
+                                <p>
+                                  {segment.departure?.airport?.name ||
+                                    "Unknown Airport"}
+                                  . {segment.departure?.iataCode || "N/A"}
+                                </p>
+                                <span>
+                                  {" "}
+                                  Mon | {getTimeFromDate(
+                                    segment.departure?.at
+                                  )}{" "}
+                                  | {getFormattedDate(segment.departure?.at)}
+                                </span>
+                              </li>
+                              <li>
+                                <p>
+                                  {" "}
+                                  {segment.arrival?.airport?.name ||
+                                    "Unknown Airport"}
+                                  . {segment.arrival?.iataCode || "N/A"}
+                                </p>
+                                <span>
+                                  {" "}
+                                  Mon | {getTimeFromDate(
+                                    segment.arrival?.at
+                                  )} | {getFormattedDate(segment.arrival?.at)}
+                                </span>
+                              </li>
+                              <li>
+                                <p>
+                                  {" "}
+                                  <strong>Coach </strong>
+                                </p>
+                                <span>
+                                  {" "}
+                                  {extractDuration(segment.duration) ||
+                                    "Duration unknown"}
+                                </span>
+                                {/* <p className="bag-info">
                           <i>1 PC</i>
-                        </p>
-                      </li>
-                    </ul>
-                    <div className="changefligth">
-                      <p>London (LHR) | 1h 0m Layover</p>
-                    </div>
-                    <ul className="con-main">
-                      <li>
-                        <p>Heathrow (LHR)</p>
-                        <span>Fri | 04 PM-06 PM | Dec 13</span>
-                      </li>
-                      <li>
-                        <p>John F Kennedy Intl. (JFK)</p>
-                        <span>Fri | 07 PM-09 PM | Dec 13</span>
-                      </li>
-                      <li>
-                        <p>
-                          {" "}
-                          <strong>Coach</strong>
-                        </p>
-                        <span>8h 0m</span>
-                        <p className="bag-info">
-                          <i>1 PC</i>
-                        </p>
-                      </li>
-                    </ul>
+                        </p> */}
+                              </li>
+                            </ul>
+                            {/* <li>
+                              <p>
+                                {segment.departure?.airport?.name ||
+                                  "Unknown Airport"}
+                                . {segment.departure?.iataCode || "N/A"}
+                              </p>
+                              <span>
+                                Mon | {getTimeFromDate(segment.departure?.at)} |{" "}
+                                {getFormattedDate(segment.departure?.at)}
+                              </span>
+                            </li> */}
+                            {/* <li>
+                              <p>
+                                {segment.arrival?.airport?.name ||
+                                  "Unknown Airport"}
+                                . {segment.arrival?.iataCode || "N/A"}
+                              </p>
+                              <span>
+                                Mon | {getTimeFromDate(segment.arrival?.at)} |{" "}
+                                {getFormattedDate(segment.arrival?.at)}
+                              </span>
+                            </li> */}
+                            {/* <li>
+                              <p>
+                                <strong>Coach</strong>
+                              </p>
+                              <span>
+                                {extractDuration(segment.duration) ||
+                                  "Duration unknown"}
+                              </span>
+                              <p className="bag-info">
+                              <i
+                                className="fa fa-suitcase"
+                                aria-hidden="true"
+                              />
+                              <i>2 PC</i>
+                            </p>
+                            </li> */}
+                          </ul>
+                          {flight?.itineraries[0].segments.length > 1 &&
+                            segment !=
+                              flight?.itineraries[0].segments[
+                                flight?.itineraries[0].segments.length - 1
+                              ] && (
+                              <div className="changefligth">
+                                <p>
+                                  {" "}
+                                  {segment.arrival.airport
+                                    ? segment.arrival.airport.name
+                                    : ""}
+                                  ,
+                                  {segment.arrival.airport
+                                    ? segment.arrival.airport.city
+                                    : ""}{" "}
+                                  |
+                                  {
+                                    calculateLayoverTime(flight)[0]?.itineraries
+                                      .layover_time
+                                  }{" "}
+                                  Layover
+                                </p>
+                                <b></b>
+                              </div>
+                            )}
+                        </>
+                      );
+                    })}
                   </div>
+                  {/* <div className="box-right">
+                  <h3>
+                    {flight.itineraries[0].segments[0].departure.airport.city}{" "}
+                    {flight.itineraries[0].segments[0].departure.iataCode} -
+                    {
+                      flight.itineraries[0].segments[
+                        flight.itineraries[0].segments.length - 1
+                      ].arrival.airport.city
+                    }{" "}
+                    {
+                      flight.itineraries[0].segments[
+                        flight.itineraries[0].segments.length - 1
+                      ].arrival.iataCode
+                    }
+                    <span>|</span>{" "}
+                    {getFormattedDate(
+                      flight?.itineraries[0].segments[0].departure.at
+                    )}{" "}
+                    | {extractDuration(flight?.itineraries[0].duration)}
+                  </h3>
+                  {flight?.itineraries[0].segments.map((segment, index) => {
+                    console.log(segment, "segment"); // Check the segment structure
+
+                    return (
+                      <>
+                        <ul key={index}>
+                          <li>
+                            <img
+                              src="/Content/images/AirlinesLogo/AI.png"
+                              width={90}
+                              alt="Air India"
+                              title="Air India"
+                            />
+                          </li>
+
+                          <li>
+                            <p>
+                              {segment.departure?.airport?.name ||
+                                "Unknown Airport"}
+                              . {segment.departure?.iataCode || "N/A"}
+                            </p>
+                            <span>
+                              Mon | {getTimeFromDate(segment.departure?.at)} |{" "}
+                              {getFormattedDate(segment.departure?.at)}
+                            </span>
+                          </li>
+                          <li>
+                            <p>
+                              {segment.arrival?.airport?.name ||
+                                "Unknown Airport"}
+                              . {segment.arrival?.iataCode || "N/A"}
+                            </p>
+                            <span>
+                              Mon | {getTimeFromDate(segment.arrival?.at)} |{" "}
+                              {getFormattedDate(segment.arrival?.at)}
+                            </span>
+                          </li>
+                          <li>
+                            <p>
+                              <strong>Coach</strong>
+                            </p>
+                            <span>
+                              {extractDuration(segment.duration) ||
+                                "Duration unknown"}
+                            </span>
+                            <p className="bag-info">
+                              <i
+                                className="fa fa-suitcase"
+                                aria-hidden="true"
+                              />
+                              <i>2 PC</i>
+                            </p>
+                          </li>
+                        </ul>
+                        {flight?.itineraries[0].segments.length > 1 &&
+                          segment !=
+                            flight?.itineraries[0].segments[
+                              flight?.itineraries[0].segments.length - 1
+                            ] && (
+                            <div className="changefligth">
+                              <p>
+                                {" "}
+                                {segment.arrival.airport
+                                  ? segment.arrival.airport.name
+                                  : ""}
+                                ,
+                                {segment.arrival.airport
+                                  ? segment.arrival.airport.city
+                                  : ""}{" "}
+                                |
+                                {
+                                  calculateLayoverTime(flight)[0]?.itineraries
+                                    .layover_time
+                                }{" "}
+                                Layover
+                              </p>
+                              <b></b>
+                            </div>
+                          )}
+                      </>
+                    );
+                  })}
+                </div> */}
                 </div>
+                {!oneWay && (
+                  <div className="depart-flight return-flight">
+                    <div className="box-left">
+                      <img src="/Content/images/return-icon-red.png" />
+                      <h3>Return</h3>
+                    </div>
+                    <div className="box-right">
+                      <div className="flightlogosection">
+                        <ul>
+                          <li>
+                            <img
+                              src={
+                                flight.itineraries[1].segments[0].airline.logo
+                              }
+                              alt="Air India"
+                              title={
+                                flight.itineraries[1].segments[0].airline.name
+                              }
+                              width={90}
+                            />
+                          </li>
+                          <li>
+                            <p>
+                              {flight.itineraries[1].segments[0].airline.name}{" "}
+                              <span>
+                                {" "}
+                                Flight (
+                                {flight.itineraries[1].segments[0].airline.code}
+                                {flight.itineraries[1].segments[0].number} )
+                              </span>
+                            </p>
+                          </li>
+
+                          <li>
+                            <p className="CamelT">
+                              Operated by{" "}
+                              {flight.itineraries[1].segments[0].airline.name}{" "}
+                              airline
+                            </p>
+                          </li>
+                        </ul>
+                        <h3>
+                          {
+                            flight.itineraries[1].segments[0].departure.airport
+                              .city
+                          }{" "}
+                          {flight.itineraries[1].segments[0].departure.iataCode}{" "}
+                          -
+                          {
+                            flight.itineraries[1].segments[
+                              flight.itineraries[1].segments.length - 1
+                            ].arrival.airport.city
+                          }{" "}
+                          {
+                            flight.itineraries[1].segments[
+                              flight.itineraries[1].segments.length - 1
+                            ].arrival.iataCode
+                          }
+                          <span>|</span>{" "}
+                          {getFormattedDate(
+                            flight?.itineraries[1].segments[0].departure.at
+                          )}{" "}
+                          | {extractDuration(flight?.itineraries[0].duration)}
+                        </h3>
+                      </div>
+                      {flight?.itineraries[1].segments.map((segment, index) => {
+                        console.log(segment, "segment"); // Check the segment structure
+
+                        return (
+                          <>
+                            <ul key={index}>
+                              {/* <li>
+                            <img
+                              src="/Content/images/AirlinesLogo/AI.png"
+                              width={90}
+                              alt="Air India"
+                              title="Air India"
+                            />
+                          </li> */}
+                              <ul className="con-main">
+                                <li>
+                                  <p>
+                                    {segment.departure?.airport?.name ||
+                                      "Unknown Airport"}
+                                    . {segment.departure?.iataCode || "N/A"}
+                                  </p>
+                                  <span>
+                                    {" "}
+                                    Mon |{" "}
+                                    {getTimeFromDate(
+                                      segment.departure?.at
+                                    )} |{" "}
+                                    {getFormattedDate(segment.departure?.at)}
+                                  </span>
+                                </li>
+                                <li>
+                                  <p>
+                                    {" "}
+                                    {segment.arrival?.airport?.name ||
+                                      "Unknown Airport"}
+                                    . {segment.arrival?.iataCode || "N/A"}
+                                  </p>
+                                  <span>
+                                    {" "}
+                                    Mon | {getTimeFromDate(
+                                      segment.arrival?.at
+                                    )}{" "}
+                                    | {getFormattedDate(segment.arrival?.at)}
+                                  </span>
+                                </li>
+                                <li>
+                                  <p>
+                                    {" "}
+                                    <strong>Coach </strong>
+                                  </p>
+                                  <span>
+                                    {" "}
+                                    {extractDuration(segment.duration) ||
+                                      "Duration unknown"}
+                                  </span>
+                                  {/* <p className="bag-info">
+                          <i>1 PC</i>
+                        </p> */}
+                                </li>
+                              </ul>
+                              {/* <li>
+                              <p>
+                                {segment.departure?.airport?.name ||
+                                  "Unknown Airport"}
+                                . {segment.departure?.iataCode || "N/A"}
+                              </p>
+                              <span>
+                                Mon | {getTimeFromDate(segment.departure?.at)} |{" "}
+                                {getFormattedDate(segment.departure?.at)}
+                              </span>
+                            </li> */}
+                              {/* <li>
+                              <p>
+                                {segment.arrival?.airport?.name ||
+                                  "Unknown Airport"}
+                                . {segment.arrival?.iataCode || "N/A"}
+                              </p>
+                              <span>
+                                Mon | {getTimeFromDate(segment.arrival?.at)} |{" "}
+                                {getFormattedDate(segment.arrival?.at)}
+                              </span>
+                            </li> */}
+                              {/* <li>
+                              <p>
+                                <strong>Coach</strong>
+                              </p>
+                              <span>
+                                {extractDuration(segment.duration) ||
+                                  "Duration unknown"}
+                              </span>
+                              <p className="bag-info">
+                              <i
+                                className="fa fa-suitcase"
+                                aria-hidden="true"
+                              />
+                              <i>2 PC</i>
+                            </p>
+                            </li> */}
+                            </ul>
+                            {flight?.itineraries[0].segments.length > 1 &&
+                              segment !=
+                                flight?.itineraries[1].segments[
+                                  flight?.itineraries[1].segments.length - 1
+                                ] && (
+                                <div className="changefligth">
+                                  <p>
+                                    {" "}
+                                    {segment.arrival.airport
+                                      ? segment.arrival.airport.name
+                                      : ""}
+                                    ,
+                                    {segment.arrival.airport
+                                      ? segment.arrival.airport.city
+                                      : ""}{" "}
+                                    |
+                                    {
+                                      calculateLayoverTime(flight)[0]
+                                        ?.itineraries.layover_time
+                                    }{" "}
+                                    Layover
+                                  </p>
+                                  <b></b>
+                                </div>
+                              )}
+                          </>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* End collspan */}
                 <div className="msnos">
                   <b>Secret Deal!</b>{" "}
@@ -1556,15 +2127,6 @@ const BookingMobile = () => {
                             </li>
                           </ul>
 
-                          <div className="note ">
-                            <p>
-                              <strong>Note:</strong> Use first name &amp; last
-                              name, date of birth as per the passport/ travel
-                              document since it’s a mandatory requirement for
-                              ticket issuance.
-                            </p>
-                          </div>
-
                           <div
                             className="Alert AdultDOBMsg "
                             style={{ display: "none" }}
@@ -1600,10 +2162,17 @@ const BookingMobile = () => {
                           </div>
                         </>
                       ))}
+                    <div className="note">
+                      <p>
+                        <strong>Note:</strong> Use first name &amp; last name,
+                        date of birth as per the passport/ travel document since
+                        it’s a mandatory requirement for ticket issuance.
+                      </p>
+                    </div>
 
                     {travelerInfo
                       .filter((traveler) => traveler.travelerType === "Child")
-                      .map((adult, index) => (
+                      .map((child, index) => (
                         <>
                           <div className="info-deading">
                             <h3>Child {index + 1}</h3>
@@ -1962,40 +2531,6 @@ const BookingMobile = () => {
                                   handleInputChangeTravellersInfo(child.id, e)
                                 }
                               >
-                                {/* <option value="" selected="selected">
-                        Day
-                      </option>
-                      <option value={1}>01</option>
-                      <option value={2}>02</option>
-                      <option value={3}>03</option>
-                      <option value={4}>04</option>
-                      <option value={5}>05</option>
-                      <option value={6}>06</option>
-                      <option value={7}>07</option>
-                      <option value={8}>08</option>
-                      <option value={9}>09</option>
-                      <option value={10}>10</option>
-                      <option value={11}>11</option>
-                      <option value={12}>12</option>
-                      <option value={13}>13</option>
-                      <option value={14}>14</option>
-                      <option value={15}>15</option>
-                      <option value={16}>16</option>
-                      <option value={17}>17</option>
-                      <option value={18}>18</option>
-                      <option value={19}>19</option>
-                      <option value={20}>20</option>
-                      <option value={21}>21</option>
-                      <option value={22}>22</option>
-                      <option value={23}>23</option>
-                      <option value={24}>24</option>
-                      <option value={25}>25</option>
-                      <option value={26}>26</option>
-                      <option value={27}>27</option>
-                      <option value={28}>28</option>
-                      <option value={29}>29</option>
-                      <option value={30}>30</option>
-                      <option value={31}>31</option> */}
                                 <option value="">Day</option>
                                 {Array.from(
                                   { length: 31 },
@@ -2011,9 +2546,9 @@ const BookingMobile = () => {
                               <select
                                 id="DOBYAdult1"
                                 name="year"
-                                value={adult.dob.year}
+                                value={child.dob.year}
                                 onChange={(e) =>
-                                  handleInputChangeTravellersInfo(adult.id, e)
+                                  handleInputChangeTravellersInfo(child.id, e)
                                 }
                               >
                                 <option value="">Year</option>
@@ -2029,14 +2564,14 @@ const BookingMobile = () => {
                             </li>
                           </ul>
 
-                          <div className="note ">
+                          {/* <div className="note ">
                             <p>
                               <strong>Note:</strong> Use first name &amp; last
                               name, date of birth as per the passport/ travel
                               document since it’s a mandatory requirement for
                               ticket issuance.
                             </p>
-                          </div>
+                          </div> */}
 
                           <div
                             className="Alert AdultDOBMsg "
@@ -2502,14 +3037,14 @@ const BookingMobile = () => {
                             </li>
                           </ul>
 
-                          <div className="note ">
+                          {/* <div className="note ">
                             <p>
                               <strong>Note:</strong> Use first name &amp; last
                               name, date of birth as per the passport/ travel
                               document since it’s a mandatory requirement for
                               ticket issuance.
                             </p>
-                          </div>
+                          </div> */}
 
                           <div
                             className="Alert AdultDOBMsg "

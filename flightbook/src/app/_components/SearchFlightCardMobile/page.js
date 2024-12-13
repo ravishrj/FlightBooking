@@ -27,10 +27,10 @@ const SearchFlightCardMobile = ({
     console.log(flight, "flight in handleonsubmit");
     // router.push(`/confirmation/token=${token}?flight=${flight}`);
     const jsonString = encodeURIComponent(JSON.stringify(flight));
-    console.log(oneWay, "oneWay in handleSubmit");
+    console.log(isOneWay, "oneWay in handleSubmit");
     console.log(flight.price.total, "flight.itineraries[0].price");
     router.push(
-      `/confirmationMobille/${token}?flight=${jsonString} &oneWay=${isOneWay.toString()}`
+      `/confirmationMobille/${token}?flight=${jsonString}&oneWay=${isOneWay.toString()}`
     );
   };
   function calculateLayoverTime(flightOffer) {

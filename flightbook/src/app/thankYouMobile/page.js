@@ -56,6 +56,7 @@ const Thank_you_mobile = () => {
   //   const priceReturn = searchParams.get("price");
   //console.log("price", price);
   const [travellerDetails, setTravellerDetails] = useState({});
+  const [travelerInfo, setTravelerInfo] = useState({});
 
   useEffect(() => {
     try {
@@ -82,6 +83,7 @@ const Thank_you_mobile = () => {
   }, []);
   useEffect(() => {
     const flightParam = searchParams.get("flight");
+    const entravelerInfo = searchParams.get("travelerInfo");
     console.log(flightParam, "flightParam ");
     console.log("oneWay", oneWay);
     //console.log("price",flight.price.total);
@@ -91,6 +93,16 @@ const Thank_you_mobile = () => {
         const decodedFlight = decodeURIComponent(flightParam);
         const flightObject = JSON.parse(decodedFlight);
         setFlight(flightObject);
+      } catch (error) {
+        console.error("Error parsing flight object:", error);
+      }
+    }
+    if (entravelerInfo) {
+      try {
+        const decodedTravelerInfo = decodeURIComponent(entravelerInfo);
+        const travelerObject = JSON.parse(decodedTravelerInfo);
+        setTravelerInfo(travelerObject);
+        console.log(travelerInfo, "travelerObject");
       } catch (error) {
         console.error("Error parsing flight object:", error);
       }
@@ -111,7 +123,7 @@ const Thank_you_mobile = () => {
   //       if (travelertype === "CHILD") {
   //         return setPriceChild(parseFloat(a.price.base).toFixed(2));
   //       }
-  //       if (travelertype === "INFANT") {
+  //       if (travelertype === "SEATED_INFANT") {
   //         return setPriceInfant(parseFloat(a.price.base).toFixed(2));
   //       }
   //     });
@@ -122,6 +134,10 @@ const Thank_you_mobile = () => {
     ///console.log("data is loading");
     return <Loading />;
   } else console.log("flight", flight);
+  if (!travelerInfo) {
+    ///console.log("data is loading");
+    return <Loading />;
+  } else console.log("travelerInfo", travelerInfo);
 
   function calculateLayoverTime(flightOffer) {
     const itineraries = flightOffer.itineraries;
@@ -541,6 +557,255 @@ const Thank_you_mobile = () => {
                   })}
                 </div> */}
               </div>
+              {!oneWay && (
+                <div className="depart-flight  return-flight">
+                  <div className="box-left">
+                    <img src="/Content/images/depart-icon-red.png" />
+                    <h3>Return</h3>
+                  </div>
+                  <div className="box-right">
+                    <div className="flightlogosection">
+                      <ul>
+                        <li>
+                          <img
+                            src={flight.itineraries[1].segments[0].airline.logo}
+                            alt="Air India"
+                            title={
+                              flight.itineraries[1].segments[0].airline.name
+                            }
+                            width={90}
+                          />
+                        </li>
+                        <li>
+                          <p>
+                            {flight.itineraries[1].segments[0].airline.name}{" "}
+                            <span>
+                              {" "}
+                              Flight (
+                              {flight.itineraries[1].segments[0].airline.code}
+                              {flight.itineraries[1].segments[0].number} )
+                            </span>
+                          </p>
+                        </li>
+                        <li>
+                          <p className="CamelT">
+                            Operated by{" "}
+                            {flight.itineraries[1].segments[0].airline.name}{" "}
+                            airline
+                          </p>
+                        </li>
+                      </ul>
+                      <h3>
+                        {
+                          flight.itineraries[1].segments[0].departure.airport
+                            .city
+                        }{" "}
+                        {flight.itineraries[1].segments[0].departure.iataCode} -
+                        {
+                          flight.itineraries[1].segments[
+                            flight.itineraries[1].segments.length - 1
+                          ].arrival.airport.city
+                        }{" "}
+                        {
+                          flight.itineraries[1].segments[
+                            flight.itineraries[1].segments.length - 1
+                          ].arrival.iataCode
+                        }
+                        <span>|</span>{" "}
+                        {getFormattedDate(
+                          flight?.itineraries[1].segments[0].departure.at
+                        )}{" "}
+                        | {extractDuration(flight?.itineraries[1].duration)}
+                      </h3>
+                    </div>
+                    {flight?.itineraries[1].segments.map((segment, index) => {
+                      console.log(segment, "segment"); // Check the segment structure
+
+                      return (
+                        <>
+                          <ul key={index}>
+                            {/* <li>
+                            <img
+                              src="/Content/images/AirlinesLogo/AI.png"
+                              width={90}
+                              alt="Air India"
+                              title="Air India"
+                            />
+                          </li> */}
+
+                            <li>
+                              <p>
+                                {segment.departure?.airport?.name ||
+                                  "Unknown Airport"}
+                                . {segment.departure?.iataCode || "N/A"}
+                              </p>
+                              <span>
+                                Mon | {getTimeFromDate(segment.departure?.at)} |{" "}
+                                {getFormattedDate(segment.departure?.at)}
+                              </span>
+                            </li>
+                            <li>
+                              <p>
+                                {segment.arrival?.airport?.name ||
+                                  "Unknown Airport"}
+                                . {segment.arrival?.iataCode || "N/A"}
+                              </p>
+                              <span>
+                                Mon | {getTimeFromDate(segment.arrival?.at)} |{" "}
+                                {getFormattedDate(segment.arrival?.at)}
+                              </span>
+                            </li>
+                            <li>
+                              <p>
+                                <strong>Coach</strong>
+                              </p>
+                              <span>
+                                {extractDuration(segment.duration) ||
+                                  "Duration unknown"}
+                              </span>
+                              {/* <p className="bag-info">
+                              <i
+                                className="fa fa-suitcase"
+                                aria-hidden="true"
+                              />
+                              <i>2 PC</i>
+                            </p> */}
+                            </li>
+                          </ul>
+                          {flight?.itineraries[1].segments.length > 1 &&
+                            segment !=
+                              flight?.itineraries[1].segments[
+                                flight?.itineraries[1].segments.length - 1
+                              ] && (
+                              <div className="changefligth">
+                                <p>
+                                  {" "}
+                                  {segment.arrival.airport
+                                    ? segment.arrival.airport.name
+                                    : ""}
+                                  ,
+                                  {segment.arrival.airport
+                                    ? segment.arrival.airport.city
+                                    : ""}{" "}
+                                  |
+                                  {
+                                    calculateLayoverTime(flight)[0]?.itineraries
+                                      .layover_time
+                                  }{" "}
+                                  Layover
+                                </p>
+                                <b></b>
+                              </div>
+                            )}
+                        </>
+                      );
+                    })}
+                  </div>
+                  {/* <div className="box-right">
+                  <h3>
+                    {flight.itineraries[0].segments[0].departure.airport.city}{" "}
+                    {flight.itineraries[0].segments[0].departure.iataCode} -
+                    {
+                      flight.itineraries[0].segments[
+                        flight.itineraries[0].segments.length - 1
+                      ].arrival.airport.city
+                    }{" "}
+                    {
+                      flight.itineraries[0].segments[
+                        flight.itineraries[0].segments.length - 1
+                      ].arrival.iataCode
+                    }
+                    <span>|</span>{" "}
+                    {getFormattedDate(
+                      flight?.itineraries[0].segments[0].departure.at
+                    )}{" "}
+                    | {extractDuration(flight?.itineraries[0].duration)}
+                  </h3>
+                  {flight?.itineraries[0].segments.map((segment, index) => {
+                    console.log(segment, "segment"); // Check the segment structure
+
+                    return (
+                      <>
+                        <ul key={index}>
+                          <li>
+                            <img
+                              src="/Content/images/AirlinesLogo/AI.png"
+                              width={90}
+                              alt="Air India"
+                              title="Air India"
+                            />
+                          </li>
+
+                          <li>
+                            <p>
+                              {segment.departure?.airport?.name ||
+                                "Unknown Airport"}
+                              . {segment.departure?.iataCode || "N/A"}
+                            </p>
+                            <span>
+                              Mon | {getTimeFromDate(segment.departure?.at)} |{" "}
+                              {getFormattedDate(segment.departure?.at)}
+                            </span>
+                          </li>
+                          <li>
+                            <p>
+                              {segment.arrival?.airport?.name ||
+                                "Unknown Airport"}
+                              . {segment.arrival?.iataCode || "N/A"}
+                            </p>
+                            <span>
+                              Mon | {getTimeFromDate(segment.arrival?.at)} |{" "}
+                              {getFormattedDate(segment.arrival?.at)}
+                            </span>
+                          </li>
+                          <li>
+                            <p>
+                              <strong>Coach</strong>
+                            </p>
+                            <span>
+                              {extractDuration(segment.duration) ||
+                                "Duration unknown"}
+                            </span>
+                            <p className="bag-info">
+                              <i
+                                className="fa fa-suitcase"
+                                aria-hidden="true"
+                              />
+                              <i>2 PC</i>
+                            </p>
+                          </li>
+                        </ul>
+                        {flight?.itineraries[0].segments.length > 1 &&
+                          segment !=
+                            flight?.itineraries[0].segments[
+                              flight?.itineraries[0].segments.length - 1
+                            ] && (
+                            <div className="changefligth">
+                              <p>
+                                {" "}
+                                {segment.arrival.airport
+                                  ? segment.arrival.airport.name
+                                  : ""}
+                                ,
+                                {segment.arrival.airport
+                                  ? segment.arrival.airport.city
+                                  : ""}{" "}
+                                |
+                                {
+                                  calculateLayoverTime(flight)[0]?.itineraries
+                                    .layover_time
+                                }{" "}
+                                Layover
+                              </p>
+                              <b></b>
+                            </div>
+                          )}
+                      </>
+                    );
+                  })}
+                </div> */}
+                </div>
+              )}
             </div>
             <style
               dangerouslySetInnerHTML={{
@@ -576,7 +841,34 @@ const Thank_you_mobile = () => {
                   </p>
                 </li>
               </ul>
-              <ul className="td-repeater">
+              {travelerInfo.map((a) => {
+                return (
+                  <ul className="td-repeater" key={a.id}>
+                    <li>
+                      <p>
+                        <span>{a.travelerType}</span>
+                      </p>
+                    </li>
+                    <li>
+                      <p>
+                        <span>{a.firstName}</span>
+                      </p>
+                    </li>
+                    <li>
+                      <p>
+                        <span>{a.middleName}</span>
+                      </p>
+                    </li>
+                    <li>
+                      <p>
+                        <span>{a.lastName}</span>
+                      </p>
+                    </li>
+                  </ul>
+                );
+              })}
+
+              {/* <ul className="td-repeater">
                 <li>
                   <p>
                     <span>Adult</span>
@@ -597,7 +889,7 @@ const Thank_you_mobile = () => {
                     <span>aaaaaaaaaaaa</span>
                   </p>
                 </li>
-              </ul>
+              </ul> */}
             </div>
             {/* End Traveler Details */}
             {/* Fare Details */}
@@ -630,25 +922,223 @@ const Thank_you_mobile = () => {
               <ul className="td-repeater">
                 <li>
                   <p>
-                    <span>1 Adult</span>
+                    <span>
+                      {" "}
+                      {parseInt(travellerDetails.adults, 10) || 0} * {"Adults"}
+                    </span>
                   </p>
                 </li>
-                <li>
+                {/* <li>
                   <p>
                     <span>$1,048.00</span>
                   </p>
-                </li>
+                </li> */}
                 <li>
                   <p>
-                    <span>$365.00</span>
+                    $
+                    {flight.travelerPricings.find(
+                      (a) => a.travelerType === "ADULT"
+                    )
+                      ? parseFloat(
+                          flight.travelerPricings.find(
+                            (a) => a.travelerType === "ADULT"
+                          ).price.base
+                        ).toFixed(2)
+                      : "N/A"}
                   </p>
                 </li>
                 <li>
                   <p>
-                    <span>$1,413.00</span>
+                    <span>
+                      {" "}
+                      $
+                      {flight.travelerPricings.find(
+                        (a) => a.travelerType === "ADULT"
+                      )
+                        ? // Calculate the difference and then format it to 2 decimal places
+                          (
+                            parseFloat(
+                              flight.travelerPricings.find(
+                                (a) => a.travelerType === "ADULT"
+                              ).price.total
+                            ) -
+                            parseFloat(
+                              flight.travelerPricings.find(
+                                (a) => a.travelerType === "ADULT"
+                              ).price.base
+                            )
+                          ).toFixed(2)
+                        : "N/A"}
+                    </span>
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    <span>
+                      {" "}
+                      $
+                      {flight.travelerPricings.find(
+                        (a) => a.travelerType === "ADULT"
+                      )
+                        ? parseInt(travellerDetails.adults, 10) *
+                          parseFloat(
+                            flight.travelerPricings.find(
+                              (a) => a.travelerType === "ADULT"
+                            ).price.total
+                          ).toFixed(2)
+                        : "N/A"}
+                    </span>
                   </p>
                 </li>
               </ul>
+              {parseInt(travellerDetails.child, 10) > 0 && (
+                <ul className="td-repeater">
+                  <li>
+                    <p>
+                      <span>
+                        {" "}
+                        {parseInt(travellerDetails.child, 10) || 0} {"Childs"}
+                      </span>
+                    </p>
+                  </li>
+                  {/* <li>
+                  <p>
+                    <span>$1,048.00</span>
+                  </p>
+                </li> */}
+                  <li>
+                    <p>
+                      $
+                      {flight.travelerPricings.find(
+                        (a) => a.travelerType === "CHILD"
+                      )
+                        ? parseFloat(
+                            flight.travelerPricings.find(
+                              (a) => a.travelerType === "CHILD"
+                            ).price.base
+                          ).toFixed(2)
+                        : "N/A"}
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      <span>
+                        {" "}
+                        $
+                        {flight.travelerPricings.find(
+                          (a) => a.travelerType === "CHILD"
+                        )
+                          ? // Calculate the difference and then format it to 2 decimal places
+                            (
+                              parseFloat(
+                                flight.travelerPricings.find(
+                                  (a) => a.travelerType === "CHILD"
+                                ).price.total
+                              ) -
+                              parseFloat(
+                                flight.travelerPricings.find(
+                                  (a) => a.travelerType === "CHILD"
+                                ).price.base
+                              )
+                            ).toFixed(2)
+                          : "N/A"}
+                      </span>
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      <span>
+                        {" "}
+                        $
+                        {flight.travelerPricings.find(
+                          (a) => a.travelerType === "CHILD"
+                        )
+                          ? parseInt(travellerDetails.adults, 10) *
+                            parseFloat(
+                              flight.travelerPricings.find(
+                                (a) => a.travelerType === "CHILD"
+                              ).price.total
+                            ).toFixed(2)
+                          : "N/A"}
+                      </span>
+                    </p>
+                  </li>
+                </ul>
+              )}
+              {parseInt(travellerDetails.infant, 10) > 0 && (
+                <ul className="td-repeater">
+                  <li>
+                    <p>
+                      <span>
+                        {" "}
+                        {parseInt(travellerDetails.infant, 10) || 0} {"Infants"}
+                      </span>
+                    </p>
+                  </li>
+                  {/* <li>
+                  <p>
+                    <span>$1,048.00</span>
+                  </p>
+                </li> */}
+                  <li>
+                    <p>
+                      $
+                      {flight.travelerPricings.find(
+                        (a) => a.travelerType === "SEATED_INFANT"
+                      )
+                        ? parseFloat(
+                            flight.travelerPricings.find(
+                              (a) => a.travelerType === "SEATED_INFANT"
+                            ).price.base
+                          ).toFixed(2)
+                        : "N/A"}
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      <span>
+                        {" "}
+                        $
+                        {flight.travelerPricings.find(
+                          (a) => a.travelerType === "SEATED_INFANT"
+                        )
+                          ? // Calculate the difference and then format it to 2 decimal places
+                            (
+                              parseFloat(
+                                flight.travelerPricings.find(
+                                  (a) => a.travelerType === "SEATED_INFANT"
+                                ).price.total
+                              ) -
+                              parseFloat(
+                                flight.travelerPricings.find(
+                                  (a) => a.travelerType === "SEATED_INFANT"
+                                ).price.base
+                              )
+                            ).toFixed(2)
+                          : "N/A"}
+                      </span>
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      <span>
+                        {" "}
+                        $
+                        {flight.travelerPricings.find(
+                          (a) => a.travelerType === "SEATED_INFANT"
+                        )
+                          ? parseInt(travellerDetails.infant, 10) *
+                            parseFloat(
+                              flight.travelerPricings.find(
+                                (a) => a.travelerType === "SEATED_INFANT"
+                              ).price.total
+                            ).toFixed(2)
+                          : "N/A"}
+                      </span>
+                    </p>
+                  </li>
+                </ul>
+              )}
               <ul className="totals">
                 <li>
                   <h2>
@@ -656,7 +1146,7 @@ const Thank_you_mobile = () => {
                   </h2>
                 </li>
                 <li>
-                  <h3>$1,413.00</h3>
+                  <h3>${flight.price.total}</h3>
                 </li>
               </ul>
               <ul className="totals">
@@ -677,7 +1167,7 @@ const Thank_you_mobile = () => {
                   </h2>
                 </li>
                 <li>
-                  <h3>$1,413.00</h3>
+                  <h3>${flight.price.total}</h3>
                 </li>
               </ul>
             </div>

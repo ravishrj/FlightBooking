@@ -521,7 +521,6 @@ position: absolute;
   align-items: center;
   position: relative;
   z-index: 1;
-  margin-right: -10%;
 }
 .list-left li p,
 .list-left h3,

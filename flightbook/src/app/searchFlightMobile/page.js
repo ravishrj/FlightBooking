@@ -12,6 +12,7 @@ import Navbar from "../_components/navbar/page";
 import FlightForm from "../_components/flightform/page";
 import Slider, { Range } from "rc-slider";
 import "rc-slider/assets/index.css";
+import Loading from "../_components/loading/page";
 
 const searchFlightMobile = () => {
   const searchRef = useRef(null);
@@ -1111,7 +1112,7 @@ const searchFlightMobile = () => {
           {isSearchVisible && <FlightForm />}
         </div>
       </div>
-
+      {loading && <Loading />}
       <section className="listingmain">
         {/* main Listing */}
         <div className="main-lisitng">

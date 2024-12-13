@@ -647,11 +647,11 @@ const Booking = () => {
                   <li>
                     $
                     {flight.travelerPricings.find(
-                      (a) => a.travelerType === "INFANT"
+                      (a) => a.travelerType === "SEATED_INFANT"
                     )
                       ? parseFloat(
                           flight.travelerPricings.find(
-                            (a) => a.travelerType === "INFANT"
+                            (a) => a.travelerType === "SEATED_INFANT"
                           ).price.base
                         ).toFixed(2)
                       : "N/A"}
@@ -659,18 +659,18 @@ const Booking = () => {
                   <li>
                     $
                     {flight.travelerPricings.find(
-                      (a) => a.travelerType === "INFANT"
+                      (a) => a.travelerType === "SEATED_INFANT"
                     )
                       ? // Calculate the difference and then format it to 2 decimal places
                         (
                           parseFloat(
                             flight.travelerPricings.find(
-                              (a) => a.travelerType === "INFANT"
+                              (a) => a.travelerType === "SEATED_INFANT"
                             ).price.total
                           ) -
                           parseFloat(
                             flight.travelerPricings.find(
-                              (a) => a.travelerType === "INFANT"
+                              (a) => a.travelerType === "SEATED_INFANT"
                             ).price.base
                           )
                         ).toFixed(2)
@@ -680,12 +680,12 @@ const Booking = () => {
                     {" "}
                     $
                     {flight.travelerPricings.find(
-                      (a) => a.travelerType === "INFANT"
+                      (a) => a.travelerType === "SEATED_INFANT"
                     )
                       ? parseInt(travellerDetails.child, 10) *
                         parseFloat(
                           flight.travelerPricings.find(
-                            (a) => a.travelerType === "INFANT"
+                            (a) => a.travelerType === "SEATED_INFANT"
                           ).price.total
                         ).toFixed(2)
                       : "N/A"}

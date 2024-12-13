@@ -36,32 +36,32 @@ const NavbarDesktop = () => {
     desktopCss.rel = "stylesheet";
     desktopCss.href = "/US_customcss.css";
 
-    const desktopHomeCss = document.createElement("link");
-    desktopHomeCss.rel = "stylesheet";
-    desktopHomeCss.href = "/UScustomhome.css";
+    // const desktopHomeCss = document.createElement("link");
+    // desktopHomeCss.rel = "stylesheet";
+    // desktopHomeCss.href = "/UScustomhome.css";
 
-    const listing = document.createElement("link");
-    listing.rel = "stylesheet";
-    listing.href = "/listing.css";
+    // const listing = document.createElement("link");
+    // listing.rel = "stylesheet";
+    // listing.href = "/listing.css";
 
-    const owlCarausel = document.createElement("link");
-    owlCarausel.rel = "stylesheet";
-    owlCarausel.href = "/owlCarausel.css";
+    // const owlCarausel = document.createElement("link");
+    // owlCarausel.rel = "stylesheet";
+    // owlCarausel.href = "/owlCarausel.css";
 
-    const confirmation = document.createElement("link");
-    confirmation.rel = "stylesheet";
-    confirmation.href = "/Content/css/confirmation.css";
+    // const confirmation = document.createElement("link");
+    // confirmation.rel = "stylesheet";
+    // confirmation.href = "/Content/css/confirmation.css";
 
-    const flight_popup = document.createElement("link");
-    flight_popup.rel = "stylesheet";
-    flight_popup.href = "/Content/css/hotel-home.css";
+    // const flight_popup = document.createElement("link");
+    // flight_popup.rel = "stylesheet";
+    // flight_popup.href = "/Content/css/hotel-home.css";
 
-    const e28 = document.createElement("link");
-    e28.rel = "stylesheet";
-    e28.href = "Content/css/e28";
-    const lightPick = document.createElement("link");
-    lightPick.rel = "stylesheet";
-    lightPick.href = "/Content/css/m.lightpick.css";
+    // const e28 = document.createElement("link");
+    // e28.rel = "stylesheet";
+    // e28.href = "Content/css/e28";
+    // const lightPick = document.createElement("link");
+    // lightPick.rel = "stylesheet";
+    // lightPick.href = "/Content/css/m.lightpick.css";
 
     if (!isMobile) {
       console.log("Destop View loaded");
@@ -106,39 +106,39 @@ const NavbarDesktop = () => {
     // }
   }, [isMobile]);
   return (
-    <div className="wrapper">
-      <header>
-        <nav>
-          <section className="logo">
-            <a href="/" id="lnk_RUHUS_Logo_URL" title="Red Umbrella Holidays">
-              <img src="/Content/images/logo.png" alt="Red Umbrella" />
+    // <div className="wrapper">
+    <header>
+      <nav>
+        <section className="logo">
+          <a href="/" id="lnk_RUHUS_Logo_URL" title="Red Umbrella Holidays">
+            <img src="/Content/images/logo.png" alt="Red Umbrella" />
+          </a>
+        </section>
+        <ul>
+          <li>
+            <a href="/" title="Home">
+              Home
             </a>
-          </section>
-          <ul>
-            <li>
-              <a href="/" title="Home">
-                Home
-              </a>
-            </li>
+          </li>
 
-            <li>
-              <a href="/flight" title="Flights">
-                Flights
+          <li>
+            <a href="/flight" title="Flights">
+              Flights
+            </a>
+          </li>
+          <li className="show">
+            <h2 className="callUs">
+              <span>Call Us At</span>
+              <a className="call-phone-number" href="javascript:void(0);">
+                1-833-914-2482 <img src="/Content/images/phone.png" />
               </a>
-            </li>
-            <li className="show">
-              <h2 className="callUs">
-                <span>Call Us At</span>
-                <a className="call-phone-number" href="javascript:void(0);">
-                  1-833-914-2482 <img src="/Content/images/phone.png" />
-                </a>
-                <b>7am - 5pm EST</b>
-              </h2>
-            </li>
-          </ul>
+              <b>7am - 5pm EST</b>
+            </h2>
+          </li>
+        </ul>
 
-          {/* Scoped styles using styled-jsx */}
-          <style>{`
+        {/* Scoped styles using styled-jsx */}
+        <style>{`
             header nav {
               background: #000;
             }
@@ -165,9 +165,9 @@ const NavbarDesktop = () => {
               }
             }
           `}</style>
-        </nav>
-      </header>
-    </div>
+      </nav>
+    </header>
+    // </div>
   );
 };
 export default NavbarDesktop;

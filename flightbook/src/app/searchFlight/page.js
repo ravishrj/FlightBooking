@@ -13,6 +13,8 @@ import { useRef } from "react";
 import "flatpickr/dist/flatpickr.css";
 import ModifyForm from "../_components/searchFlightForm/page";
 import Loading from "../_components/loading/page";
+import NavbarDesktop from "../_components/NavbarDesktop/page";
+import FooterDesktop from "../_components/FooterDesktop/page";
 
 const useWindowWidth = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Initial value
@@ -1020,876 +1022,890 @@ const SearchFlight = () => {
   };
 
   return (
-    <section className="listingmain">
-      <div className="overlay-div" />
-      <div className="">
-        <link href="/Content/css/lightpick.css?v=RUS2021" rel="stylesheet" />
-        <style
-          dangerouslySetInnerHTML={{
-            __html:
-              "\n    /*ul.ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content {\n        top: 178.719px !important;\n    }*/\n    #formFlightSearchEngine {\n    width: 86%;\n    margin: 0 auto;\n}\n    /*section.lightpick {\n        top: 434.17px !important;\n    }*/\n    .container-fluid{width:100%;display:inline-block;}\n    .advance_ruhus_SearchHolder {\n  z-index:1;top:150px!important;\n    left: 7px!important;\n}\n    .flight-trip{position:relative}\n\n    \n.advance_ruhus_SearchHolder {\n    display: none;\n    position: absolute;\n    width: 350px;\n    background: #fff;\n    top: 142px;\n    left: 0;\n    padding: 4px 15px 15px 28px;\n    box-shadow: 0 3px 4px #333;\n}\n.advance_ruhus_SearchHolder ul {\n    display: flex;\n    align-items: center;\n}\n.advance_ruhus_SearchHolder input {\n    padding: 10px 15px;\n    border: 1px solid #ccc;\n    margin-right: 15px;\n}\n.advance_ruhus_SearchHolder input#chk_RUHUS_DirectFlight {\n    margin: 0;\n    width: 17px;\n}\n.advance_ruhus_SearchHolder input#chk_RUHUS_DirectFlight {\n    width: 17px;\n    margin-right: 4px;\n}\n.advance_ruhus_SearchHolder ul label {\n    display: flex;\n    font-size: 12px;\n    color: #181818;\n}\n\n\n\n #formFlightSearchEngine{\n        position:relative;\n    }\n   .close-search {\n       cursor: pointer;\n    background: #d90001;\n    color: #fff;\n    font-family: 'poppinssemibold';\n    padding: 5px;\n    display: inline-block;\n    position: absolute;\n    right: 0;\n    border-bottom-left-radius: 50%;\n    border-bottom-right-radius: 50%;\n    width: 33px;\n    text-align: center;\n    z-index: 2;\n    text-decoration: none;\n}\n   \n   .btn-search-show {\n    color: #fff;\n    width: 144px;\n    padding: 7px;\n    text-align: center;\n    background: #d90001;\n    border: none;\n    text-transform: uppercase;\n    font-family: 'poppinssemibold';\n    border-bottom-left-radius: 50px;\n    border-bottom-right-radius: 50px;\n    cursor:pointer;\n}\n   .btn-show{\n       position: absolute;\n    right: 41px;\n   }\n   span.minor{\n       position: absolute;\n    top: 31px;\n    right: 4px;\n   }\n   .flight-trip .roundTripHolder{\n       padding-top:29px;\n   }\n",
-          }}
-        />
-        <div className="container-fluid">
-          <div className="landing-widget">
-            <ModifyForm
-              oneWay={oneWay}
-              setOneWay={setOneWay}
-              setFlightDetails={setFlightDetails}
-              setFlightList={setFlightList}
-              FlightList={FlightList}
-              modifyForm={modifyForm}
-              setModifyForm={setModifyForm}
+    <div className="wrapper">
+      <NavbarDesktop />
+      <div id="dvDummyListWrapper">
+        <section className="listingmain">
+          <div className="overlay-div" />
+          <div className="">
+            <link
+              href="/Content/css/lightpick.css?v=RUS2021"
+              rel="stylesheet"
             />
-          </div>
-        </div>
-      </div>
-      {/* main Listing */}
+            <style
+              dangerouslySetInnerHTML={{
+                __html:
+                  "\n    /*ul.ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content {\n        top: 178.719px !important;\n    }*/\n    #formFlightSearchEngine {\n    width: 86%;\n    margin: 0 auto;\n}\n    /*section.lightpick {\n        top: 434.17px !important;\n    }*/\n    .container-fluid{margin-top:7%;width:100%;display:inline-block;}\n    .advance_ruhus_SearchHolder {\n  z-index:1;top:150px!important;\n    left: 7px!important;\n}\n    .flight-trip{position:relative}\n\n    \n.advance_ruhus_SearchHolder {\n    display: none;\n    position: absolute;\n    width: 350px;\n    background: #fff;\n    top: 142px;\n    left: 0;\n    padding: 4px 15px 15px 28px;\n    box-shadow: 0 3px 4px #333;\n}\n.advance_ruhus_SearchHolder ul {\n    display: flex;\n    align-items: center;\n}\n.advance_ruhus_SearchHolder input {\n    padding: 10px 15px;\n    border: 1px solid #ccc;\n    margin-right: 15px;\n}\n.advance_ruhus_SearchHolder input#chk_RUHUS_DirectFlight {\n    margin: 0;\n    width: 17px;\n}\n.advance_ruhus_SearchHolder input#chk_RUHUS_DirectFlight {\n    width: 17px;\n    margin-right: 4px;\n}\n.advance_ruhus_SearchHolder ul label {\n    display: flex;\n    font-size: 12px;\n    color: #181818;\n}\n\n\n\n #formFlightSearchEngine{\n        position:relative;\n    }\n   .close-search {\n       cursor: pointer;\n    background: #d90001;\n    color: #fff;\n    font-family: 'poppinssemibold';\n    padding: 5px;\n    display: inline-block;\n    position: absolute;\n    right: 0;\n    border-bottom-left-radius: 50%;\n    border-bottom-right-radius: 50%;\n    width: 33px;\n    text-align: center;\n    z-index: 2;\n    text-decoration: none;\n}\n   \n   .btn-search-show {\n    color: #fff;\n    width: 144px;\n    padding: 7px;\n    text-align: center;\n    background: #d90001;\n    border: none;\n    text-transform: uppercase;\n    font-family: 'poppinssemibold';\n    border-bottom-left-radius: 50px;\n    border-bottom-right-radius: 50px;\n    cursor:pointer;\n}\n   .btn-show{\n       position: absolute;\n    right: 41px;\n   }\n   span.minor{\n       position: absolute;\n    top: 31px;\n    right: 4px;\n   }\n   .flight-trip .roundTripHolder{\n       padding-top:29px;\n   }\n",
+              }}
+            />
 
-      {loading && <Loading />}
-      <div className="main-lisitng">
-        <div className="filter-btn">
-          <a href="javascript:void(0);" className="filter-side">
-            Filter
-          </a>
-          <a href="javascript:void(0);" className="filter-close">
-            Close
-          </a>
-        </div>
-        <div className="container">
-          <div className="sidebar-left filter-option sidebar-filter">
-            <div className="fixme" style={{}}>
-              <div className="filtertop ">
-                <h2>Filter by</h2>
-                <a
-                  href="javascript:void(0)"
-                  id="top-filter-clear"
-                  className="clearftr"
-                  style={{ display: "none" }}
-                >
-                  Reset
-                </a>
-              </div>
-              <div className="filter-stops">
-                <h3>Stops</h3>
-                <input
-                  id="obstop-All"
-                  className="hidden"
-                  type="checkbox"
-                  defaultChecked="checked"
-                  name="stop"
-                  data-id="obstopAll"
+            <div className="container-fluid">
+              <div className="landing-widget">
+                <ModifyForm
+                  oneWay={oneWay}
+                  setOneWay={setOneWay}
+                  setFlightDetails={setFlightDetails}
+                  setFlightList={setFlightList}
+                  FlightList={FlightList}
+                  modifyForm={modifyForm}
+                  setModifyForm={setModifyForm}
                 />
-                <div className="stops">
-                  <label className="checkboxes checkboxlist-filter-view__checkbox">
-                    Non-Stop
-                    <input
-                      type="checkbox"
-                      id="obstop-0"
-                      name="obstop"
-                      data-id={60}
-                    />
-                    <span className="checkmark" />
-                  </label>
-                  <label className="checkboxes checkboxlist-filter-view__checkbox">
-                    1 Stop
-                    <input
-                      type="checkbox"
-                      id="obstop-1"
-                      name="obstop"
-                      data-id={61}
-                    />
-                    <span className="checkmark" />
-                  </label>
-                  <label className="checkboxes checkboxlist-filter-view__checkbox">
-                    1+ Stops
-                    <input
-                      type="checkbox"
-                      id="obstop-2"
-                      name="obstop"
-                      data-id={62}
-                    />
-                    <span className="checkmark" />
-                  </label>
-                </div>
               </div>
-              <div className="filter-flexi">
-                <h3>Flexi Fares</h3>
-                <ul>
-                  <li
-                    className="tipsy-alternate sort-alternate"
-                    style={{ display: "none" }}
-                  >
-                    <input
-                      type="hidden"
-                      id="hdnsortalternate"
-                      name="hdnsortalternate"
-                      defaultValue="ASC"
-                    />
-                    <a href="javascript:void(0)">Alternate Dates</a>
-                  </li>
-                  <li
-                    className="tipsy-nearby sort-nearby"
-                    style={{ display: "none" }}
-                  >
-                    <input
-                      type="hidden"
-                      id="hdnsortnearby"
-                      name="hdnsortnearby"
-                      defaultValue="ASC"
-                    />
-                    <a href="javascript:void(0)">Nearby Airports</a>
-                  </li>
-                </ul>
-              </div>
-              <div className="filter-price">
-                <h3>
-                  Price <span>( TotalPrice Per person inc. Fee)</span>
-                </h3>
-                {/* Ranger */}
-                <div
-                  id="slider-range"
-                  className="price-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
-                >
-                  <label className="label-min">$1028</label>
-                  <input
-                    id="price-slider"
-                    type="text"
-                    style={{ display: "none" }}
-                    className="range"
-                    defaultValue="1028,2177"
-                  />
-                  <div
-                    className="ui-slider-range ui-corner-all ui-widget-header"
-                    style={{ left: "0%", width: "100%" }}
-                  />
-                  <span
-                    tabIndex={0}
-                    className="ui-slider-handle ui-corner-all ui-state-default"
-                    style={{ left: "0%" }}
-                  />
-                  <span
-                    tabIndex={0}
-                    className="ui-slider-handle ui-corner-all ui-state-default"
-                    style={{ left: "100%" }}
-                  />
-                  <label className="label-max">$2177</label>
-                </div>
-                {/* End Ranger */}
-              </div>
-              <div className=" filter-duration">
-                <h3>Flight Duration</h3>
-                {/* Ranger */}
-                <div
-                  id="slider-ranged"
-                  className="duration-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
-                  data-start={820}
-                  data-end={1545}
-                >
-                  <input
-                    id="duration-slider"
-                    type="text"
-                    className="range"
-                    style={{ display: "none" }}
-                    defaultValue="13:40,25:45"
-                  />
-                  <div
-                    className="ui-slider-range ui-corner-all ui-widget-header"
-                    style={{ width: "100%", left: "0%" }}
-                  />
-                  <span
-                    tabIndex={0}
-                    className="ui-slider-handle ui-corner-all ui-state-default"
-                    style={{ left: "0%" }}
-                  />
-                  <span
-                    tabIndex={0}
-                    className="ui-slider-handle ui-corner-all ui-state-default"
-                    style={{ left: "100%" }}
-                  />
-                  <label className="label-min">13 hr 40 min</label>
-                  <label className="label-max">25 hr 45 min</label>
-                </div>
-                {/* End Ranger */}
-              </div>
-              {/* Departure time */}
-              <div className="departure-time">
-                <h3>
-                  Departure time <span>from New York </span>
-                </h3>
-                <ul className="box-design">
-                  <li>
-                    <a href="javascript:void(0)">
-                      <img src="/Content/images/morning-icon.png" />
-                      <p>Morning</p>
-                      <span>00:01AM-11:59AM</span>
-                      <input
-                        type="checkbox"
-                        id="obdepTime_0001_1159"
-                        name="obdepTime"
-                        data-id="0001_1159"
-                      />
-                    </a>
-                  </li>
-                  <li>
-                    <a href="javascript:void(0)">
-                      <img src="/Content/images/afternon-icon.png" />
-                      <p>Afternoon</p>
-                      <span>12:00PM-05:59PM</span>
-                      <input
-                        type="checkbox"
-                        id="obdepTime_1200_1759"
-                        name="obdepTime"
-                        data-id="1200_1759"
-                      />
-                    </a>
-                  </li>
-                  <li>
-                    <a href="javascript:void(0)">
-                      <img src="/Content/images/eveing-icon.png" />
-                      <p>Evening</p>
-                      <span>06:00PM-11:59PM</span>
-                      <input
-                        type="checkbox"
-                        id="obdepTime_1800_2359"
-                        name="obdepTime"
-                        data-id="1800_2359"
-                      />
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              {/* End Departure time */}
-              {/* Arrival time */}
-              <div className="Arrival-time">
-                <h3>
-                  Departure time <span>from Delhi</span>
-                </h3>
-                <ul className="box-design">
-                  <li>
-                    <a href="javascript:void(0)">
-                      <img src="/Content/images/morning-icon.png" />
-                      <p>Morning</p>
-                      <span>00:01AM-11:59AM</span>
-                      <input
-                        type="checkbox"
-                        id="obarrTime_0001_1159"
-                        name="obarrTime"
-                        data-id="0001_1159"
-                      />
-                    </a>
-                  </li>
-                  <li>
-                    <a href="javascript:void(0)">
-                      <img src="/Content/images/afternon-icon.png" />
-                      <p>Afternoon</p>
-                      <span>12:00PM-05:59PM</span>
-                      <input
-                        type="checkbox"
-                        id="obarrTime_1200_1759"
-                        name="obarrTime"
-                        data-id="1200_1759"
-                      />
-                    </a>
-                  </li>
-                  <li>
-                    <a href="javascript:void(0)">
-                      <img src="/Content/images/eveing-icon.png" />
-                      <p>Evening</p>
-                      <span>06:00PM-11:59PM</span>
-                      <input
-                        type="checkbox"
-                        id="obarrTime_1800_2359"
-                        name="obarrTime"
-                        data-id="1800_2359"
-                      />
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              {/* End Arrival time */}
-              {/* Departure Airports */}
-              <div className="Departure-airport">
-                <div className="main-maije">
-                  <h3>
-                    Departure Airports <span>From</span>
-                  </h3>
-                  <input
-                    id="obdepcity-All"
-                    type="checkbox"
-                    className="hidden"
-                    defaultChecked="checked"
-                    name="obdep"
-                    data-id="obdepcityAll"
-                  />
-                  <div className="">
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        EWR - Newark Liberty Intl.
-                        <input
-                          type="checkbox"
-                          id="obdepcity-EWR"
-                          name="obdepcity"
-                          data-id="00EWR"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                    </div>
-                    {/* End item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        JFK - John F Kennedy Intl.
-                        <input
-                          type="checkbox"
-                          id="obdepcity-JFK"
-                          name="obdepcity"
-                          data-id="00JFK"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                    </div>
-                    {/* End item */}
-                  </div>
-                </div>
-                <div className="main-maije">
-                  <h3>
-                    Arriving Airports <span>To</span>
-                  </h3>
-                  <input
-                    id="obarrcity-All"
-                    type="checkbox"
-                    className="hidden"
-                    defaultChecked="checked"
-                    name="obarr"
-                    data-id="obarrcityAll"
-                  />
-                  <div className="">
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        DEL - Indira Gandhi Intl.
-                        <input
-                          type="checkbox"
-                          id="obdepcity-DEL"
-                          name="obarrcity"
-                          data-id="01DEL"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                    </div>
-                    {/* End item */}
-                  </div>
-                </div>
-              </div>
-              {/* Departure Airports */}
-              {/*  Airlines */}
-              <div className="filter-airlines">
-                <div className="main-maije">
-                  <h3>Airlines</h3>
-                  <div className="checkboxs" style={{ display: "none" }}>
-                    <input
-                      id="airl-All"
-                      type="checkbox"
-                      className="hidden"
-                      defaultChecked="checked"
-                      name="airl"
-                      data-id="airlAll"
-                    />
-                    Select all
-                    <input
-                      id="airl"
-                      style={{ display: "none" }}
-                      type="checkbox"
-                      name="airl"
-                      data-id={9}
-                    />
-                    <span className="checkmark" />
-                  </div>
-                  <div className="showmoreitem">
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        Air India
-                        <input
-                          type="checkbox"
-                          id="airline-AI"
-                          name="airline"
-                          data-id="AI"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-AI');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        United Airlines
-                        <input
-                          type="checkbox"
-                          id="airline-UA"
-                          name="airline"
-                          data-id="UA"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-UA');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        Etihad Airways
-                        <input
-                          type="checkbox"
-                          id="airline-EY"
-                          name="airline"
-                          data-id="EY"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-EY');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        American Airlines
-                        <input
-                          type="checkbox"
-                          id="airline-AA"
-                          name="airline"
-                          data-id="AA"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-AA');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        Lufthansa Airline
-                        <input
-                          type="checkbox"
-                          id="airline-LH"
-                          name="airline"
-                          data-id="LH"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-LH');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        Swiss International Airlines
-                        <input
-                          type="checkbox"
-                          id="airline-LX"
-                          name="airline"
-                          data-id="LX"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-LX');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        Cathay Pacific
-                        <input
-                          type="checkbox"
-                          id="airline-CX"
-                          name="airline"
-                          data-id="CX"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-CX');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        Finnair
-                        <input
-                          type="checkbox"
-                          id="airline-AY"
-                          name="airline"
-                          data-id="AY"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-AY');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        Air Canada
-                        <input
-                          type="checkbox"
-                          id="airline-AC"
-                          name="airline"
-                          data-id="AC"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-AC');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        Qatar Airways
-                        <input
-                          type="checkbox"
-                          id="airline-QR"
-                          name="airline"
-                          data-id="QR"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-QR');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        Air France
-                        <input
-                          type="checkbox"
-                          id="airline-AF"
-                          name="airline"
-                          data-id="AF"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-AF');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        British Airways
-                        <input
-                          type="checkbox"
-                          id="airline-BA"
-                          name="airline"
-                          data-id="BA"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-BA');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                    {/* item */}
-                    <div className="maincheck">
-                      <label className="checkboxes">
-                        ITA Airways
-                        <input
-                          type="checkbox"
-                          id="airline-AZ"
-                          name="airline"
-                          data-id="AZ"
-                        />
-                        <span className="checkmark" />
-                      </label>
-                      <span className="price">
-                        <a
-                          href="javascript:void(0)"
-                          style={{ color: "white", textAlign: "right" }}
-                          onclick="return SelectOnlyAirlines('airline-AZ');"
-                        >
-                          Only
-                        </a>
-                      </span>
-                    </div>
-                    {/* End item */}
-                  </div>
-                  <div className="more-contents">
-                    <a href="javascript:void(0)" className="showmore">
-                      <span>+</span>Show More
-                    </a>
-                    <a href="javascript:void(0)" className="showless">
-                      <span>-</span>Show Less
-                    </a>
-                  </div>
-                </div>
-              </div>
-              {/* Departure Airports */}
-              {/* save-big */}
-              <div className="save-big">
-                <img src="/Content/images/savebig.png" />
-                <h4>Book over the phone for call-only deals</h4>
-                <div className="phonenbr">
-                  <span>Call Us On</span>
-                  <p>
-                    <a className="call-phone-number" href="tel:1-833-914-2482">
-                      1-833-914-2482
-                    </a>
-                  </p>
-                </div>
-              </div>
-              {/* End save-big */}
             </div>
           </div>
           {/* main Listing */}
-          {/* Class Main Container */}
-          <div className="cover-fltr" />
-          {/* Filter button */}
-          <div className="filter-sortbtn">
-            <a href="javascript:void(0);" className="filterbnt">
-              <i className="fa fa-th-list" /> FILTER
-            </a>
-          </div>
-          {/* End Filter button */}
-          <div className="right-listing right-bar">
-            {/* ALL FARES */}
-            <section className="all-fairs">
-              <div className="contents">
-                <ul className="fixed-content">
-                  <li className="first slider-wrp">
-                    <h2>
-                      <a href="#" onclick="GetMatrixSorting('||')">
-                        ALL FARES
-                      </a>
-                    </h2>
-                  </li>
-                  <li
-                    className="allfares-stp"
-                    onClick={() => handleStopFilter("Non-Stop")}
-                  >
+
+          {loading && <Loading />}
+          <div className="main-lisitng">
+            <div className="filter-btn">
+              <a href="javascript:void(0);" className="filter-side">
+                Filter
+              </a>
+              <a href="javascript:void(0);" className="filter-close">
+                Close
+              </a>
+            </div>
+            <div className="container">
+              <div className="sidebar-left filter-option sidebar-filter">
+                <div className="fixme" style={{}}>
+                  <div className="filtertop ">
+                    <h2>Filter by</h2>
                     <a
-                      href="#"
-                      className="am-flight"
-                      onclick="GetMatrixSorting('DO||')"
+                      href="javascript:void(0)"
+                      id="top-filter-clear"
+                      className="clearftr"
+                      style={{ display: "none" }}
                     >
-                      Non-Stop
+                      Reset
                     </a>
-                  </li>
-                  <li
-                    className="allfares-more-result"
-                    onClick={() => handleStopFilter("1 Stop")}
-                  >
-                    <a href="#" onclick="GetMatrixSorting('M||')">
-                      1+ Stops
-                    </a>
-                  </li>
-                </ul>
+                  </div>
+                  <div className="filter-stops">
+                    <h3>Stops</h3>
+                    <input
+                      id="obstop-All"
+                      className="hidden"
+                      type="checkbox"
+                      defaultChecked="checked"
+                      name="stop"
+                      data-id="obstopAll"
+                    />
+                    <div className="stops">
+                      <label className="checkboxes checkboxlist-filter-view__checkbox">
+                        Non-Stop
+                        <input
+                          type="checkbox"
+                          id="obstop-0"
+                          name="obstop"
+                          data-id={60}
+                        />
+                        <span className="checkmark" />
+                      </label>
+                      <label className="checkboxes checkboxlist-filter-view__checkbox">
+                        1 Stop
+                        <input
+                          type="checkbox"
+                          id="obstop-1"
+                          name="obstop"
+                          data-id={61}
+                        />
+                        <span className="checkmark" />
+                      </label>
+                      <label className="checkboxes checkboxlist-filter-view__checkbox">
+                        1+ Stops
+                        <input
+                          type="checkbox"
+                          id="obstop-2"
+                          name="obstop"
+                          data-id={62}
+                        />
+                        <span className="checkmark" />
+                      </label>
+                    </div>
+                  </div>
+                  <div className="filter-flexi">
+                    <h3>Flexi Fares</h3>
+                    <ul>
+                      <li
+                        className="tipsy-alternate sort-alternate"
+                        style={{ display: "none" }}
+                      >
+                        <input
+                          type="hidden"
+                          id="hdnsortalternate"
+                          name="hdnsortalternate"
+                          defaultValue="ASC"
+                        />
+                        <a href="javascript:void(0)">Alternate Dates</a>
+                      </li>
+                      <li
+                        className="tipsy-nearby sort-nearby"
+                        style={{ display: "none" }}
+                      >
+                        <input
+                          type="hidden"
+                          id="hdnsortnearby"
+                          name="hdnsortnearby"
+                          defaultValue="ASC"
+                        />
+                        <a href="javascript:void(0)">Nearby Airports</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="filter-price">
+                    <h3>
+                      Price <span>( TotalPrice Per person inc. Fee)</span>
+                    </h3>
+                    {/* Ranger */}
+                    <div
+                      id="slider-range"
+                      className="price-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
+                    >
+                      <label className="label-min">$1028</label>
+                      <input
+                        id="price-slider"
+                        type="text"
+                        style={{ display: "none" }}
+                        className="range"
+                        defaultValue="1028,2177"
+                      />
+                      <div
+                        className="ui-slider-range ui-corner-all ui-widget-header"
+                        style={{ left: "0%", width: "100%" }}
+                      />
+                      <span
+                        tabIndex={0}
+                        className="ui-slider-handle ui-corner-all ui-state-default"
+                        style={{ left: "0%" }}
+                      />
+                      <span
+                        tabIndex={0}
+                        className="ui-slider-handle ui-corner-all ui-state-default"
+                        style={{ left: "100%" }}
+                      />
+                      <label className="label-max">$2177</label>
+                    </div>
+                    {/* End Ranger */}
+                  </div>
+                  <div className=" filter-duration">
+                    <h3>Flight Duration</h3>
+                    {/* Ranger */}
+                    <div
+                      id="slider-ranged"
+                      className="duration-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
+                      data-start={820}
+                      data-end={1545}
+                    >
+                      <input
+                        id="duration-slider"
+                        type="text"
+                        className="range"
+                        style={{ display: "none" }}
+                        defaultValue="13:40,25:45"
+                      />
+                      <div
+                        className="ui-slider-range ui-corner-all ui-widget-header"
+                        style={{ width: "100%", left: "0%" }}
+                      />
+                      <span
+                        tabIndex={0}
+                        className="ui-slider-handle ui-corner-all ui-state-default"
+                        style={{ left: "0%" }}
+                      />
+                      <span
+                        tabIndex={0}
+                        className="ui-slider-handle ui-corner-all ui-state-default"
+                        style={{ left: "100%" }}
+                      />
+                      <label className="label-min">13 hr 40 min</label>
+                      <label className="label-max">25 hr 45 min</label>
+                    </div>
+                    {/* End Ranger */}
+                  </div>
+                  {/* Departure time */}
+                  <div className="departure-time">
+                    <h3>
+                      Departure time <span>from New York </span>
+                    </h3>
+                    <ul className="box-design">
+                      <li>
+                        <a href="javascript:void(0)">
+                          <img src="/Content/images/morning-icon.png" />
+                          <p>Morning</p>
+                          <span>00:01AM-11:59AM</span>
+                          <input
+                            type="checkbox"
+                            id="obdepTime_0001_1159"
+                            name="obdepTime"
+                            data-id="0001_1159"
+                          />
+                        </a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">
+                          <img src="/Content/images/afternon-icon.png" />
+                          <p>Afternoon</p>
+                          <span>12:00PM-05:59PM</span>
+                          <input
+                            type="checkbox"
+                            id="obdepTime_1200_1759"
+                            name="obdepTime"
+                            data-id="1200_1759"
+                          />
+                        </a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">
+                          <img src="/Content/images/eveing-icon.png" />
+                          <p>Evening</p>
+                          <span>06:00PM-11:59PM</span>
+                          <input
+                            type="checkbox"
+                            id="obdepTime_1800_2359"
+                            name="obdepTime"
+                            data-id="1800_2359"
+                          />
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  {/* End Departure time */}
+                  {/* Arrival time */}
+                  <div className="Arrival-time">
+                    <h3>
+                      Departure time <span>from Delhi</span>
+                    </h3>
+                    <ul className="box-design">
+                      <li>
+                        <a href="javascript:void(0)">
+                          <img src="/Content/images/morning-icon.png" />
+                          <p>Morning</p>
+                          <span>00:01AM-11:59AM</span>
+                          <input
+                            type="checkbox"
+                            id="obarrTime_0001_1159"
+                            name="obarrTime"
+                            data-id="0001_1159"
+                          />
+                        </a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">
+                          <img src="/Content/images/afternon-icon.png" />
+                          <p>Afternoon</p>
+                          <span>12:00PM-05:59PM</span>
+                          <input
+                            type="checkbox"
+                            id="obarrTime_1200_1759"
+                            name="obarrTime"
+                            data-id="1200_1759"
+                          />
+                        </a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">
+                          <img src="/Content/images/eveing-icon.png" />
+                          <p>Evening</p>
+                          <span>06:00PM-11:59PM</span>
+                          <input
+                            type="checkbox"
+                            id="obarrTime_1800_2359"
+                            name="obarrTime"
+                            data-id="1800_2359"
+                          />
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  {/* End Arrival time */}
+                  {/* Departure Airports */}
+                  <div className="Departure-airport">
+                    <div className="main-maije">
+                      <h3>
+                        Departure Airports <span>From</span>
+                      </h3>
+                      <input
+                        id="obdepcity-All"
+                        type="checkbox"
+                        className="hidden"
+                        defaultChecked="checked"
+                        name="obdep"
+                        data-id="obdepcityAll"
+                      />
+                      <div className="">
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            EWR - Newark Liberty Intl.
+                            <input
+                              type="checkbox"
+                              id="obdepcity-EWR"
+                              name="obdepcity"
+                              data-id="00EWR"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                        </div>
+                        {/* End item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            JFK - John F Kennedy Intl.
+                            <input
+                              type="checkbox"
+                              id="obdepcity-JFK"
+                              name="obdepcity"
+                              data-id="00JFK"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                        </div>
+                        {/* End item */}
+                      </div>
+                    </div>
+                    <div className="main-maije">
+                      <h3>
+                        Arriving Airports <span>To</span>
+                      </h3>
+                      <input
+                        id="obarrcity-All"
+                        type="checkbox"
+                        className="hidden"
+                        defaultChecked="checked"
+                        name="obarr"
+                        data-id="obarrcityAll"
+                      />
+                      <div className="">
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            DEL - Indira Gandhi Intl.
+                            <input
+                              type="checkbox"
+                              id="obdepcity-DEL"
+                              name="obarrcity"
+                              data-id="01DEL"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                        </div>
+                        {/* End item */}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Departure Airports */}
+                  {/*  Airlines */}
+                  <div className="filter-airlines">
+                    <div className="main-maije">
+                      <h3>Airlines</h3>
+                      <div className="checkboxs" style={{ display: "none" }}>
+                        <input
+                          id="airl-All"
+                          type="checkbox"
+                          className="hidden"
+                          defaultChecked="checked"
+                          name="airl"
+                          data-id="airlAll"
+                        />
+                        Select all
+                        <input
+                          id="airl"
+                          style={{ display: "none" }}
+                          type="checkbox"
+                          name="airl"
+                          data-id={9}
+                        />
+                        <span className="checkmark" />
+                      </div>
+                      <div className="showmoreitem">
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            Air India
+                            <input
+                              type="checkbox"
+                              id="airline-AI"
+                              name="airline"
+                              data-id="AI"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-AI');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            United Airlines
+                            <input
+                              type="checkbox"
+                              id="airline-UA"
+                              name="airline"
+                              data-id="UA"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-UA');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            Etihad Airways
+                            <input
+                              type="checkbox"
+                              id="airline-EY"
+                              name="airline"
+                              data-id="EY"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-EY');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            American Airlines
+                            <input
+                              type="checkbox"
+                              id="airline-AA"
+                              name="airline"
+                              data-id="AA"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-AA');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            Lufthansa Airline
+                            <input
+                              type="checkbox"
+                              id="airline-LH"
+                              name="airline"
+                              data-id="LH"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-LH');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            Swiss International Airlines
+                            <input
+                              type="checkbox"
+                              id="airline-LX"
+                              name="airline"
+                              data-id="LX"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-LX');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            Cathay Pacific
+                            <input
+                              type="checkbox"
+                              id="airline-CX"
+                              name="airline"
+                              data-id="CX"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-CX');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            Finnair
+                            <input
+                              type="checkbox"
+                              id="airline-AY"
+                              name="airline"
+                              data-id="AY"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-AY');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            Air Canada
+                            <input
+                              type="checkbox"
+                              id="airline-AC"
+                              name="airline"
+                              data-id="AC"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-AC');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            Qatar Airways
+                            <input
+                              type="checkbox"
+                              id="airline-QR"
+                              name="airline"
+                              data-id="QR"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-QR');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            Air France
+                            <input
+                              type="checkbox"
+                              id="airline-AF"
+                              name="airline"
+                              data-id="AF"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-AF');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            British Airways
+                            <input
+                              type="checkbox"
+                              id="airline-BA"
+                              name="airline"
+                              data-id="BA"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-BA');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                        {/* item */}
+                        <div className="maincheck">
+                          <label className="checkboxes">
+                            ITA Airways
+                            <input
+                              type="checkbox"
+                              id="airline-AZ"
+                              name="airline"
+                              data-id="AZ"
+                            />
+                            <span className="checkmark" />
+                          </label>
+                          <span className="price">
+                            <a
+                              href="javascript:void(0)"
+                              style={{ color: "white", textAlign: "right" }}
+                              onclick="return SelectOnlyAirlines('airline-AZ');"
+                            >
+                              Only
+                            </a>
+                          </span>
+                        </div>
+                        {/* End item */}
+                      </div>
+                      <div className="more-contents">
+                        <a href="javascript:void(0)" className="showmore">
+                          <span>+</span>Show More
+                        </a>
+                        <a href="javascript:void(0)" className="showless">
+                          <span>-</span>Show Less
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Departure Airports */}
+                  {/* save-big */}
+                  <div className="save-big">
+                    <img src="/Content/images/savebig.png" />
+                    <h4>Book over the phone for call-only deals</h4>
+                    <div className="phonenbr">
+                      <span>Call Us On</span>
+                      <p>
+                        <a
+                          className="call-phone-number"
+                          href="tel:1-833-914-2482"
+                        >
+                          1-833-914-2482
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                  {/* End save-big */}
+                </div>
+              </div>
+              {/* main Listing */}
+              {/* Class Main Container */}
+              <div className="cover-fltr" />
+              {/* Filter button */}
+              <div className="filter-sortbtn">
+                <a href="javascript:void(0);" className="filterbnt">
+                  <i className="fa fa-th-list" /> FILTER
+                </a>
+              </div>
+              {/* End Filter button */}
+              <div className="right-listing right-bar">
+                {/* ALL FARES */}
+                <section className="all-fairs">
+                  <div className="contents">
+                    <ul className="fixed-content">
+                      <li className="first slider-wrp">
+                        <h2>
+                          <a href="#" onclick="GetMatrixSorting('||')">
+                            ALL FARES
+                          </a>
+                        </h2>
+                      </li>
+                      <li
+                        className="allfares-stp"
+                        onClick={() => handleStopFilter("Non-Stop")}
+                      >
+                        <a
+                          href="#"
+                          className="am-flight"
+                          onclick="GetMatrixSorting('DO||')"
+                        >
+                          Non-Stop
+                        </a>
+                      </li>
+                      <li
+                        className="allfares-more-result"
+                        onClick={() => handleStopFilter("1 Stop")}
+                      >
+                        <a href="#" onclick="GetMatrixSorting('M||')">
+                          1+ Stops
+                        </a>
+                      </li>
+                    </ul>
 
+                    {/* <Carousel/> */}
+
+                    {/* <MyTextCarousel FlightList={FlightList} oneWay={oneWay} /> */}
+                    <MyTextCarousel
+                      FlightList={FlightList}
+                      oneWay={oneWay}
+                      airlinesData={uniqueAirlines}
+                      setActiveFlight={setActiveFlight}
+                      handleStopFilter={handleStopFilter}
+                    />
+                  </div>
+                </section>
                 {/* <Carousel/> */}
+                {/* short by */}
+                <div className="shortby  sort-area" id="dvChpfastprice">
+                  <ul>
+                    <li
+                      className="active tipsy-cheapest sort-price"
+                      onClick={handleCheapest}
+                    >
+                      <input
+                        type="hidden"
+                        id="hdnsortprice"
+                        name="hdnsortprice"
+                        defaultValue="ASC"
+                      />
+                      <a href="javascript:void(0)">cheapest</a>
+                    </li>
+                    <li
+                      className="tipsy-best sort-pricetime "
+                      onClick={handleCheapest}
+                    >
+                      <input
+                        type="hidden"
+                        id="hdnsortpricetime"
+                        name="hdnsortpricetime"
+                        defaultValue="ASC"
+                      />
+                      <a href="javascript:void(0)">recommended</a>
+                    </li>
+                    <li
+                      className="tipsy-fastest sort-traveltime"
+                      onClick={handleQuickest}
+                    >
+                      <input
+                        type="hidden"
+                        id="hdnsorttraveltime"
+                        name="hdnsorttraveltime"
+                        defaultValue="ASC"
+                      />
+                      <a href="javascript:void(0)">quickest</a>
+                    </li>
+                    <li
+                      className="tipsy-earliest sort-earliest"
+                      onClick={handleEarliest}
+                    >
+                      <input
+                        type="hidden"
+                        id="hdnsortearliest"
+                        name="hdnsortearliest"
+                        defaultValue="ASC"
+                      />
+                      <a href="javascript:;">earliest</a>
+                    </li>
+                  </ul>
+                </div>
+                {/*End short by */}
+                {/* Short by price */}
+                <div className="shortbytp">
+                  <div
+                    className="shortbyprice"
+                    style={{ display: "none" }}
+                  ></div>
+                  <div>
+                    <p>
+                      * Airfares include all{" "}
+                      <a
+                        href="javascript:void(0)"
+                        onclick="openpopupwindow('/service-fees')"
+                      >
+                        our service fees
+                      </a>
+                      ,{" "}
+                      <a target="_blank" href="/taxes-and-fee">
+                        taxes and fees
+                      </a>
+                      . Bonuses may apply to some airfares. Read our{" "}
+                      <a target="_blank" href="/baggage-policy">
+                        baggage policy
+                      </a>{" "}
+                      for baggage charge details. Some flights may be for
+                      alternate dates or airports. All intended results may not
+                      be guaranteed.
+                    </p>
+                  </div>
+                </div>
+                {/* End Short by price */}
 
-                {/* <MyTextCarousel FlightList={FlightList} oneWay={oneWay} /> */}
-                <MyTextCarousel
-                  FlightList={FlightList}
-                  oneWay={oneWay}
-                  airlinesData={uniqueAirlines}
-                  setActiveFlight={setActiveFlight}
-                  handleStopFilter={handleStopFilter}
-                />
-              </div>
-            </section>
-            {/* <Carousel/> */}
-            {/* short by */}
-            <div className="shortby  sort-area" id="dvChpfastprice">
-              <ul>
-                <li
-                  className="active tipsy-cheapest sort-price"
-                  onClick={handleCheapest}
-                >
-                  <input
-                    type="hidden"
-                    id="hdnsortprice"
-                    name="hdnsortprice"
-                    defaultValue="ASC"
-                  />
-                  <a href="javascript:void(0)">cheapest</a>
-                </li>
-                <li
-                  className="tipsy-best sort-pricetime "
-                  onClick={handleCheapest}
-                >
-                  <input
-                    type="hidden"
-                    id="hdnsortpricetime"
-                    name="hdnsortpricetime"
-                    defaultValue="ASC"
-                  />
-                  <a href="javascript:void(0)">recommended</a>
-                </li>
-                <li
-                  className="tipsy-fastest sort-traveltime"
-                  onClick={handleQuickest}
-                >
-                  <input
-                    type="hidden"
-                    id="hdnsorttraveltime"
-                    name="hdnsorttraveltime"
-                    defaultValue="ASC"
-                  />
-                  <a href="javascript:void(0)">quickest</a>
-                </li>
-                <li
-                  className="tipsy-earliest sort-earliest"
-                  onClick={handleEarliest}
-                >
-                  <input
-                    type="hidden"
-                    id="hdnsortearliest"
-                    name="hdnsortearliest"
-                    defaultValue="ASC"
-                  />
-                  <a href="javascript:;">earliest</a>
-                </li>
-              </ul>
-            </div>
-            {/*End short by */}
-            {/* Short by price */}
-            <div className="shortbytp">
-              <div className="shortbyprice" style={{ display: "none" }}></div>
-              <div>
-                <p>
-                  * Airfares include all{" "}
-                  <a
-                    href="javascript:void(0)"
-                    onclick="openpopupwindow('/service-fees')"
-                  >
-                    our service fees
-                  </a>
-                  ,{" "}
-                  <a target="_blank" href="/taxes-and-fee">
-                    taxes and fees
-                  </a>
-                  . Bonuses may apply to some airfares. Read our{" "}
-                  <a target="_blank" href="/baggage-policy">
-                    baggage policy
-                  </a>{" "}
-                  for baggage charge details. Some flights may be for alternate
-                  dates or airports. All intended results may not be guaranteed.
-                </p>
-              </div>
-            </div>
-            {/* End Short by price */}
+                {!quickest &&
+                  !earliest &&
+                  cheapest &&
+                  !filter &&
+                  FlightList &&
+                  FlightList.slice(0, visibleCount).map((a) => {
+                    return (
+                      <SearchFlightCard
+                        setSelectedFlight={setSelectedFlight}
+                        setFlightDetailVisible={setFlightDetailVisible}
+                        flight={a}
+                        oneWay={oneWay.toString()}
+                        token={searchParam.get("token")}
+                      />
+                    );
+                  })}
 
-            {!quickest &&
-              !earliest &&
-              cheapest &&
-              !filter &&
-              FlightList &&
-              FlightList.slice(0, visibleCount).map((a) => {
-                return (
-                  <SearchFlightCard
-                    setSelectedFlight={setSelectedFlight}
-                    setFlightDetailVisible={setFlightDetailVisible}
-                    flight={a}
-                    oneWay={oneWay.toString()}
-                    token={searchParam.get("token")}
-                  />
-                );
-              })}
-
-            {/* {!earliest &&
+                {/* {!earliest &&
             FlightList &&
             FlightList.map((a) => {
               return (
@@ -1902,109 +1918,118 @@ const SearchFlight = () => {
                 />
               );
             })} */}
-            {/* listing box */}
-            {earliest &&
-              !filter &&
-              flightListToRenderEarliest.slice(0, visibleCount).map((a) => {
-                return (
-                  <SearchFlightCard
-                    setSelectedFlight={setSelectedFlight}
-                    setFlightDetailVisible={setFlightDetailVisible}
-                    flight={a}
-                    oneWay={oneWay.toString()}
-                    token={searchParam.get("token")}
-                  />
-                );
-              })}
+                {/* listing box */}
+                {earliest &&
+                  !filter &&
+                  flightListToRenderEarliest.slice(0, visibleCount).map((a) => {
+                    return (
+                      <SearchFlightCard
+                        setSelectedFlight={setSelectedFlight}
+                        setFlightDetailVisible={setFlightDetailVisible}
+                        flight={a}
+                        oneWay={oneWay.toString()}
+                        token={searchParam.get("token")}
+                      />
+                    );
+                  })}
 
-            {quickest &&
-              !filter &&
-              flightListToRenderQuickest.slice(0, visibleCount).map((a) => {
-                return (
-                  <SearchFlightCard
-                    setSelectedFlight={setSelectedFlight}
-                    setFlightDetailVisible={setFlightDetailVisible}
-                    flight={a}
-                    oneWay={oneWay.toString()}
-                    token={searchParam.get("token")}
-                  />
-                );
-              })}
+                {quickest &&
+                  !filter &&
+                  flightListToRenderQuickest.slice(0, visibleCount).map((a) => {
+                    return (
+                      <SearchFlightCard
+                        setSelectedFlight={setSelectedFlight}
+                        setFlightDetailVisible={setFlightDetailVisible}
+                        flight={a}
+                        oneWay={oneWay.toString()}
+                        token={searchParam.get("token")}
+                      />
+                    );
+                  })}
 
-            {filter &&
-              filteredFlights.slice(0, visibleCount).map((a) => {
-                return (
-                  <SearchFlightCard
-                    setSelectedFlight={setSelectedFlight}
-                    setFlightDetailVisible={setFlightDetailVisible}
-                    flight={a}
-                    oneWay={oneWay.toString()}
-                    token={searchParam.get("token")}
-                  />
-                );
-              })}
+                {filter &&
+                  filteredFlights.slice(0, visibleCount).map((a) => {
+                    return (
+                      <SearchFlightCard
+                        setSelectedFlight={setSelectedFlight}
+                        setFlightDetailVisible={setFlightDetailVisible}
+                        flight={a}
+                        oneWay={oneWay.toString()}
+                        token={searchParam.get("token")}
+                      />
+                    );
+                  })}
 
-            {/* show more */}
-            <div className="listingbutton pagination-container">
-              <div id="dvAirListing" className="col-xs-12 "></div>
-              <div className="" id="dvPageNumber">
-                <div className="pagination-container">
-                  <ul className="pagination">
-                    <li className="PagedList-skipToNext">
-                      {!quickest &&
-                        !earliest &&
-                        cheapest &&
-                        !filter &&
-                        FlightList &&
-                        filteredFlights.length > visibleCount && (
-                          <a rel="next" onClick={loadMoreResult}>
-                            show more
-                          </a>
-                        )}
+                {/* show more */}
+                <div className="listingbutton pagination-container">
+                  <div id="dvAirListing" className="col-xs-12 "></div>
+                  <div className="" id="dvPageNumber">
+                    <div className="pagination-container">
+                      <ul className="pagination">
+                        <li className="PagedList-skipToNext">
+                          {!quickest &&
+                            !earliest &&
+                            cheapest &&
+                            !filter &&
+                            FlightList &&
+                            filteredFlights.length > visibleCount && (
+                              <a rel="next" onClick={loadMoreResult}>
+                                show more
+                              </a>
+                            )}
 
-                      {earliest &&
-                        !filter &&
-                        flightListToRenderEarliest.length > visibleCount && (
-                          <a rel="next" onClick={loadMoreResult}>
-                            show more
-                          </a>
-                        )}
-                      {quickest &&
-                        !filter &&
-                        flightListToRenderQuickest.length > visibleCount && (
-                          <a rel="next" onClick={loadMoreResult}>
-                            show more
-                          </a>
-                        )}
-                      {filter && filteredFlights.length > visibleCount && (
-                        <a rel="next" onClick={loadMoreResult}>
-                          show more
-                        </a>
-                      )}
-                    </li>
-                  </ul>
+                          {earliest &&
+                            !filter &&
+                            flightListToRenderEarliest.length >
+                              visibleCount && (
+                              <a rel="next" onClick={loadMoreResult}>
+                                show more
+                              </a>
+                            )}
+                          {quickest &&
+                            !filter &&
+                            flightListToRenderQuickest.length >
+                              visibleCount && (
+                              <a rel="next" onClick={loadMoreResult}>
+                                show more
+                              </a>
+                            )}
+                          {filter && filteredFlights.length > visibleCount && (
+                            <a rel="next" onClick={loadMoreResult}>
+                              show more
+                            </a>
+                          )}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
+                <div id="lblMsg" style={{ display: "none" }} />
+                {/* =========== Flight List End============== */}
+                <input type="hidden" id="MinPrice" defaultValue={1028} />
+                <input type="hidden" id="MaxPrice" defaultValue={2177} />
+                <input type="hidden" id="MaxConnectTime" defaultValue={1545} />
+                <input type="hidden" id="MinHourCon" defaultValue={0} />
+                <input type="hidden" id="MaxHourCon" defaultValue={1545} />
+                <input type="hidden" id="MinHourArr" defaultValue={0} />
+                <input type="hidden" id="MaxHourArr" defaultValue={1440} />
+                <input type="hidden" id="hdncurrencySymbol" defaultValue="$" />
+                <input
+                  type="hidden"
+                  id="hdnSortOrder"
+                  defaultValue="Cheapest"
+                />
+                <input type="hidden" id="hdnAMTypeAirPrice" defaultValue="" />
+                {/* End listing box */}
               </div>
             </div>
-            <div id="lblMsg" style={{ display: "none" }} />
-            {/* =========== Flight List End============== */}
-            <input type="hidden" id="MinPrice" defaultValue={1028} />
-            <input type="hidden" id="MaxPrice" defaultValue={2177} />
-            <input type="hidden" id="MaxConnectTime" defaultValue={1545} />
-            <input type="hidden" id="MinHourCon" defaultValue={0} />
-            <input type="hidden" id="MaxHourCon" defaultValue={1545} />
-            <input type="hidden" id="MinHourArr" defaultValue={0} />
-            <input type="hidden" id="MaxHourArr" defaultValue={1440} />
-            <input type="hidden" id="hdncurrencySymbol" defaultValue="$" />
-            <input type="hidden" id="hdnSortOrder" defaultValue="Cheapest" />
-            <input type="hidden" id="hdnAMTypeAirPrice" defaultValue="" />
-            {/* End listing box */}
           </div>
-        </div>
-      </div>
 
-      {/* End main Listing */}
-    </section>
+          {/* End main Listing */}
+        </section>
+      </div>
+      <FooterDesktop />
+    </div>
   );
 };
 export default SearchFlight;
