@@ -1426,7 +1426,7 @@ span.conntecting-airport-chng:before {
   font-size: 13px;
 }
 nav ul li {
-  display: none;
+  /* display: none; */
 }
 nav ul li.show {
   display: block;

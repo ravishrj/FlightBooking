@@ -77,27 +77,27 @@ const NavbarDesktop = () => {
         if (document.head.contains(desktopCss)) {
           document.head.removeChild(desktopCss);
         }
-        if (document.head.contains(desktopHomeCss)) {
-          document.head.removeChild(desktopHomeCss);
-        }
-        if (document.head.contains(listing)) {
-          document.head.removeChild(listing);
-        }
-        if (document.head.contains(owlCarausel)) {
-          document.head.removeChild(owlCarausel);
-        }
-        if (document.head.contains(confirmation)) {
-          document.head.removeChild(confirmation);
-        }
-        if (document.head.contains(flight_popup)) {
-          document.head.removeChild(flight_popup);
-        }
-        if (document.head.contains(e28)) {
-          document.head.removeChild(e28);
-        }
-        if (document.head.contains(lightPick)) {
-          document.head.removeChild(lightPick);
-        }
+        // if (document.head.contains(desktopHomeCss)) {
+        //   document.head.removeChild(desktopHomeCss);
+        // }
+        // if (document.head.contains(listing)) {
+        //   document.head.removeChild(listing);
+        // }
+        // if (document.head.contains(owlCarausel)) {
+        //   document.head.removeChild(owlCarausel);
+        // }
+        // if (document.head.contains(confirmation)) {
+        //   document.head.removeChild(confirmation);
+        // }
+        // if (document.head.contains(flight_popup)) {
+        //   document.head.removeChild(flight_popup);
+        // }
+        // if (document.head.contains(e28)) {
+        //   document.head.removeChild(e28);
+        // }
+        // if (document.head.contains(lightPick)) {
+        //   document.head.removeChild(lightPick);
+        // }
       };
     }
     // If the page is NOT 'Contact Us', load the lightpick CSS and other styles
